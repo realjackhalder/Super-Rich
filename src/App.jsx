@@ -50,21 +50,21 @@ function App() {
         </div>
       )}
       {/* Navbar */}
-      <header className="h-16 flex items-center justify-between px-4 lg:px-6 bg-[#181A20] border-b border-[#2B3139]">
+      <header className="h-16 flex items-center justify-between px-5 lg:px-9 bg-[#070707] border-b border-[#282828]">
         <div className="flex items-center space-x-6">
           <button
             onClick={() => setActiveTab('Exchange Rates')}
-            className="flex items-center space-x-2 text-[#FCD535] font-bold text-xl tracking-tight hover:opacity-80 transition-opacity"
+            className="flex items-center space-x-2 text-[#f4f4ef] font-bold text-lg tracking-[-0.08em] hover:opacity-80 transition-opacity"
           >
-            <Shield className="w-8 h-8" />
-            <span>SuperRich</span>
+            <span className="grid place-items-center w-7 h-7 bg-[#b4ff3a] text-black text-sm tracking-normal">S</span>
+            <span>superrich<span className="text-[#b4ff3a]">.</span></span>
           </button>
-          <nav className="flex space-x-3 sm:space-x-6 text-xs sm:text-sm font-medium text-textMuted">
+          <nav className="flex space-x-3 sm:space-x-6 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.1em] text-[#777772]">
             {['Exchange Rates', 'Markets', 'Wallet'].map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`transition-colors whitespace-nowrap ${activeTab === tab ? 'text-textMain font-bold border-b-2 border-[#FCD535] pb-1' : 'hover:text-textMain pb-1'}`}
+                className={`transition-colors whitespace-nowrap ${activeTab === tab ? 'text-[#f4f4ef] font-bold border-b-2 border-[#b4ff3a] pb-1' : 'hover:text-[#f4f4ef] pb-1'}`}
               >
                 {tab}
               </button>
