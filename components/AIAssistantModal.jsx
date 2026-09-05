@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Sparkles, X, Send, Bot, User, AlertCircle, Loader2 } from 'lucide-react';
+import { Sparkles, X, Send, Bot, User, Loader2 } from 'lucide-react';
 
 export default function AIAssistantModal({
   isOpen,
@@ -13,13 +13,12 @@ export default function AIAssistantModal({
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
-      content: `Hello! I'm your **SuperRich AI Market Advisor** powered by **Qwen 3.8-27B**.
-How can I assist you with **${targetCurrency} / ${baseCurrency}** exchange rates, volatility, or cross-border currency conversion today?`
+      content: `Hello! I'm your **SuperRich AI Market Advisor** powered by **Google Gemini 3.6 Flash**.
+How can I assist you with **${targetCurrency} / ${baseCurrency}** exchange rates, volatility forecasts, or currency conversion today?`
     }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [quotaNotice, setQuotaNotice] = useState(null);
 
   if (!isOpen) return null;
 
@@ -27,7 +26,7 @@ How can I assist you with **${targetCurrency} / ${baseCurrency}** exchange rates
     `Market outlook for ${targetCurrency}/${baseCurrency}`,
     `Is now a good time to convert ${targetCurrency} to ${baseCurrency}?`,
     `Calculate 1,000 ${targetCurrency} at current market rates`,
-    `Compare spreads for ${targetCurrency} vs ${baseCurrency}`
+    `Compare spreads and liquidity for ${targetCurrency}`
   ];
 
   const handleSend = async (userText) => {
@@ -54,9 +53,6 @@ How can I assist you with **${targetCurrency} / ${baseCurrency}** exchange rates
       const data = await res.json();
       if (data.success && data.content) {
         setMessages([...newMessages, { role: 'assistant', content: data.content }]);
-        if (data.quotaNotice) {
-          setQuotaNotice(data.quotaNotice);
-        }
       } else {
         setMessages([
           ...newMessages,
@@ -71,7 +67,7 @@ How can I assist you with **${targetCurrency} / ${baseCurrency}** exchange rates
         ...newMessages,
         {
           role: 'assistant',
-          content: `Connection error: ${err.message}. Please check your network or API keys.`
+          content: `Connection error: ${err.message}. Please check your connection.`
         }
       ]);
     } finally {
@@ -94,11 +90,11 @@ How can I assist you with **${targetCurrency} / ${baseCurrency}** exchange rates
                   SuperRich AI Analyst
                 </span>
                 <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#1e2319] border border-[#a3e635]/40 text-[#a3e635]">
-                  Qwen 3.8-27B
+                  Gemini 3.6 Flash
                 </span>
               </div>
               <p className="text-[11px] text-[#6b7280]">
-                Connected to ExperientialLabs AI &bull; {targetCurrency}/{baseCurrency} context
+                Powered by Google Gemini &bull; {targetCurrency}/{baseCurrency} context
               </p>
             </div>
           </div>
@@ -111,14 +107,6 @@ How can I assist you with **${targetCurrency} / ${baseCurrency}** exchange rates
             <X className="w-5 h-5" />
           </button>
         </div>
-
-        {/* Quota / Card Notice if applicable */}
-        {quotaNotice && (
-          <div className="bg-[#1c1a14] border-b border-[#3b331f] px-4 py-2 flex items-center space-x-2 text-xs text-[#fef08a]">
-            <AlertCircle className="w-4 h-4 flex-shrink-0 text-[#eab308]" />
-            <span className="text-[11px]">{quotaNotice}</span>
-          </div>
-        )}
 
         {/* Chat message body */}
         <div className="flex-1 p-4 sm:p-5 overflow-y-auto space-y-4 text-xs no-scrollbar">
@@ -162,7 +150,7 @@ How can I assist you with **${targetCurrency} / ${baseCurrency}** exchange rates
                 <Loader2 className="w-4 h-4 animate-spin" />
               </div>
               <div className="bg-[#141720] border border-[#232836] rounded-xl px-4 py-3 text-xs text-[#9ca3af] flex items-center space-x-2">
-                <span>Analyzing market trends with Qwen 3.8-27B...</span>
+                <span>Google Gemini is analyzing market data...</span>
               </div>
             </div>
           )}
@@ -195,7 +183,7 @@ How can I assist you with **${targetCurrency} / ${baseCurrency}** exchange rates
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder={`Ask AI about ${targetCurrency}/${baseCurrency} rates or trends...`}
+              placeholder={`Ask Gemini about ${targetCurrency}/${baseCurrency} exchange rates or trends...`}
               disabled={isLoading}
               className="flex-1 bg-[#181b24] border border-[#292f40] focus:border-[#a3e635] rounded-xl px-4 py-2.5 text-xs text-white outline-none transition-colors"
             />

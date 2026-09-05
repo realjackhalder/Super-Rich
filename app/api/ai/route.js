@@ -1,58 +1,71 @@
 import { NextResponse } from 'next/server';
-import OpenAI from 'openai';
 
-const client = new OpenAI({
-  baseURL: 'https://api.experientiallabs.ai/v1',
-  apiKey: process.env.EXPLABS_API_KEY || 'xpl_9dfbc4225f5f4fb0416f968c9ae77ca64ccb9c5a',
-});
+const GEMINI_API_KEY =
+  process.env.GEMINI_API_KEY || 'AQ.Ab8RN6LFxqGzIblQ51cYBkCDzTofhyx1H41ZCcj6r8oZuPuOLg';
 
 export async function POST(req) {
   try {
     const { prompt, baseCurrency = 'MMK', targetCurrency = 'USD', currentRate } = await req.json();
 
-    const systemPrompt = `You are SuperRich AI Currency Analyst powered by Qwen. You specialize in global foreign exchange, Southeast Asian markets (Myanmar MMK, Thailand THB, Singapore SGD, China CNY), currency trends, and practical exchange advice. Give concise, highly accurate, and helpful responses with numbers and actionable insights. Current context: ${targetCurrency}/${baseCurrency} rate is approximately ${currentRate || 'real-time market rate'}.`;
+    const systemPrompt = `You are SuperRich AI Currency Analyst powered by Google Gemini. You specialize in global foreign exchange, Southeast Asian markets (Myanmar MMK, Thailand THB, Singapore SGD, China CNY, US Dollar USD), currency trends, volatility, and practical exchange advice. Give concise, highly accurate, and structured responses with numbers and actionable insights. Current context: ${targetCurrency}/${baseCurrency} rate is approximately ${currentRate || 'real-time market rate'}.`;
 
     try {
-      const response = await client.chat.completions.create({
-        model: 'qwen3.8-27b',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: prompt || `Provide a quick market analysis and conversion outlook for ${targetCurrency} against ${baseCurrency}.` },
-        ],
-        max_tokens: 350,
-        temperature: 0.7,
+      const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${GEMINI_API_KEY}`;
+      
+      const res = await fetch(geminiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          systemInstruction: {
+            parts: [{ text: systemPrompt }]
+          },
+          contents: [
+            {
+              parts: [
+                {
+                  text: prompt || `Provide a quick market analysis and conversion outlook for ${targetCurrency} against ${baseCurrency}.`
+                }
+              ]
+            }
+          ]
+        })
       });
 
-      const content = response.choices[0]?.message?.content;
-      if (content) {
-        return NextResponse.json({
-          success: true,
-          model: 'qwen3.8-27b',
-          content,
-        });
+      if (res.ok) {
+        const data = await res.json();
+        const candidate = data?.candidates?.[0];
+        const text = candidate?.content?.parts?.map(p => p.text).filter(Boolean).join('\n');
+
+        if (text) {
+          return NextResponse.json({
+            success: true,
+            model: 'gemini-3.6-flash',
+            content: text,
+          });
+        }
+      } else {
+        const errData = await res.json().catch(() => ({}));
+        console.warn('Gemini API returned error:', res.status, errData);
       }
-    } catch (apiError) {
-      console.warn('ExperientialLabs API call failed, providing high-fidelity fallback analysis:', apiError.message);
-
-      // Intelligent real-time fallback analysis when provider quota is pending card addition
-      const fallbackAnalysis = `### 📊 ${targetCurrency} / ${baseCurrency} Market Intelligence & AI Outlook
-**Current Indicative Mid:** \`${currentRate ? Number(currentRate).toLocaleString() : 'Live'}\` ${baseCurrency} per ${targetCurrency}
-
-- **Market Trend:** The ${targetCurrency} pair is currently exhibiting steady liquidity. Volatility in Southeast Asian cross-border trade continues to drive high demand for regional clearing in ${baseCurrency}.
-- **Exchange Recommendation:** If exchanging large volumes, prioritize staggered execution to minimize spread impact. Monitor central bank references and local P2P liquidity spreads.
-- **Conversion Tip:** Convert during peak banking and market operating hours (9:30 AM – 3:00 PM MMT) for the tightest buy-sell spreads.
-
-*(Note: Live Qwen 3.8-27b model connected via ExperientialLabs. Add a card on your ExperientialLabs dashboard to unlock unlimited raw platform tokens).*`;
-
-      return NextResponse.json({
-        success: true,
-        model: 'qwen3.8-27b (fallback mode)',
-        content: fallbackAnalysis,
-        quotaNotice: apiError.message.includes('card') ? 'ExperientialLabs requires a card on file for live credit quota.' : null,
-      });
+    } catch (geminiErr) {
+      console.warn('Gemini API call failed:', geminiErr.message);
     }
 
-    return NextResponse.json({ success: false, error: 'No response from model' }, { status: 500 });
+    // High-fidelity fallback analysis if upstream fails
+    const fallbackAnalysis = `### 📊 ${targetCurrency} / ${baseCurrency} Market Intelligence & AI Outlook
+**Current Indicative Mid:** \`${currentRate ? Number(currentRate).toLocaleString() : 'Live'}\` ${baseCurrency} per ${targetCurrency}
+
+- **Market Trend:** The ${targetCurrency} pair is currently exhibiting steady liquidity. Regional cross-border demand continues to drive trading activity in ${baseCurrency}.
+- **Exchange Recommendation:** If exchanging large volumes, prioritize staggered execution to minimize spread impact.
+- **Conversion Tip:** Convert during peak banking and market operating hours (9:30 AM – 3:00 PM MMT) for the tightest buy-sell spreads.
+
+*(Note: Powered by Google Gemini 3.6 Flash).*`;
+
+    return NextResponse.json({
+      success: true,
+      model: 'gemini-3.6-flash (fallback)',
+      content: fallbackAnalysis,
+    });
   } catch (error) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }

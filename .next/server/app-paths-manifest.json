@@ -1,7 +1,7 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
-  "/api/rates/route": "app/api/rates/route.js",
-  "/page": "app/page.js",
   "/api/ai/route": "app/api/ai/route.js",
-  "/api/p2p-rates/route": "app/api/p2p-rates/route.js"
+  "/api/p2p-rates/route": "app/api/p2p-rates/route.js",
+  "/api/rates/route": "app/api/rates/route.js",
+  "/page": "app/page.js"
 }
