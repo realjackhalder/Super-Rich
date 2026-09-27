@@ -1,1 +1,1 @@
-self.__REACT_LOADABLE_MANIFEST='{"components/ChartWidgetNext.jsx -> lightweight-charts":{"id":391,"files":["static/chunks/391.d44f4599ca5b182f.js"]}}';
+self.__REACT_LOADABLE_MANIFEST="{\"components/ChartWidgetNext.jsx -> lightweight-charts\":{\"id\":\"components/ChartWidgetNext.jsx -> lightweight-charts\",\"files\":[\"static/chunks/_app-pages-browser_node_modules_lightweight-charts_dist_lightweight-charts_development_mjs.js\"]}}"

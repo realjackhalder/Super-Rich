@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { Shield, Copy, Check, ExternalLink } from 'lucide-react';
 
 export default function Footer({ onSelectTab }) {
@@ -18,7 +19,16 @@ export default function Footer({ onSelectTab }) {
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
         {/* Brand & Description */}
         <div className="space-y-3">
-          <div className="flex items-center space-x-2 text-white font-extrabold text-lg tracking-tight">
+          <div className="flex items-center space-x-2.5 text-white font-extrabold text-lg tracking-tight">
+            <div className="relative w-6 h-6 rounded-md overflow-hidden flex items-center justify-center bg-[#151912] border border-[#a3e635]/30 shadow-[0_0_8px_rgba(163,230,53,0.15)]">
+              <Image
+                src="/logo.png"
+                alt="SuperRich Logo"
+                width={24}
+                height={24}
+                className="w-full h-full object-cover"
+              />
+            </div>
             <span>SuperRich</span>
             <span className="text-[#a3e635] text-xs font-bold uppercase tracking-widest px-2 py-0.5 rounded bg-[#161d15] border border-[#a3e635]/30">
               LIVE
