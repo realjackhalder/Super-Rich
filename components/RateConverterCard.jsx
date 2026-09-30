@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { ArrowUpDown, ChevronDown, Sparkles, Check } from 'lucide-react';
+import { ArrowUpDown, ChevronDown, Sparkles, Check, Copy, RefreshCw, CheckCircle2 } from 'lucide-react';
 
 export default function RateConverterCard({
   allRates = [],
@@ -17,6 +17,9 @@ export default function RateConverterCard({
   const [formattedTime, setFormattedTime] = useState('10:23 AM');
   const [fromDropdownOpen, setFromDropdownOpen] = useState(false);
   const [toDropdownOpen, setToDropdownOpen] = useState(false);
+  const [fromSearch, setFromSearch] = useState('');
+  const [toSearch, setToSearch] = useState('');
+  const [copied, setCopied] = useState(false);
 
   const fromRef = useRef(null);
   const toRef = useRef(null);
@@ -35,8 +38,14 @@ export default function RateConverterCard({
   // Close dropdowns on outside click
   useEffect(() => {
     function handleClickOutside(e) {
-      if (fromRef.current && !fromRef.current.contains(e.target)) setFromDropdownOpen(false);
-      if (toRef.current && !toRef.current.contains(e.target)) setToDropdownOpen(false);
+      if (fromRef.current && !fromRef.current.contains(e.target)) {
+        setFromDropdownOpen(false);
+        setFromSearch('');
+      }
+      if (toRef.current && !toRef.current.contains(e.target)) {
+        setToDropdownOpen(false);
+        setToSearch('');
+      }
     }
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
@@ -56,18 +65,10 @@ export default function RateConverterCard({
     mid: 1
   };
 
-  // Cross rate calculation against MMK:
-  // 1 FromCurrency = fromItem.mid MMK
-  // 1 ToCurrency = toItem.mid MMK
-  // Hence: 1 FromCurrency = (fromItem.mid / toItem.mid) ToCurrency
   const rawMidRate = (fromItem.mid || 1) / (toItem.mid || 1);
-  const buyRate = rawMidRate * 0.9945;
-  const sellRate = rawMidRate * 1.0055;
-
   const rawAmount = parseFloat((sendAmount || '').replace(/,/g, '')) || 0;
-  const receiveAmount = rawAmount * sellRate;
+  const receiveAmount = rawAmount * rawMidRate;
 
-  // Formatting helpers
   const formatNumber = (num, minDec = 2, maxDec = 4) => {
     if (isNaN(num)) return '0.00';
     const dec = num < 1 ? maxDec : minDec;
@@ -91,211 +92,238 @@ export default function RateConverterCard({
     }
   };
 
+  const handlePresetClick = (amount) => {
+    setSendAmount(formatNumber(amount, 2, 2));
+  };
+
   const handleSwap = () => {
     onChangeFromCurrency(toCurrency);
     onChangeToCurrency(fromCurrency);
   };
 
-  return (
-    <div className="w-full bg-[#101115] border border-[#1e2129] rounded-2xl p-6 sm:p-7 shadow-[0_20px_50px_rgba(0,0,0,0.7)] flex flex-col justify-between relative overflow-hidden">
-      {/* Glow highlight in corner */}
-      <div className="absolute top-0 right-0 w-44 h-44 bg-[#a3e635]/5 rounded-full blur-3xl pointer-events-none" />
+  const handleCopyResult = () => {
+    const text = `${sendAmount} ${fromItem.currency} = ${formatNumber(receiveAmount)} ${toItem.currency} (Rate: 1 ${fromItem.currency} = ${formatNumber(rawMidRate, 2, 4)} ${toItem.currency})`;
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
-      {/* Card Header: LIVE, Timestamp & Pair */}
-      <div className="flex items-center justify-between pb-5 border-b border-[#1b1e25]">
-        <div className="flex items-center space-x-3 text-xs">
-          <div className="flex items-center space-x-1.5">
-            <span className="w-2 h-2 rounded-full bg-[#a3e635] inline-block animate-pulse" />
-            <span className="text-[#a3e635] font-bold tracking-widest text-[11px] uppercase">
-              LIVE
+  const filteredFromRates = allRates.filter((r) =>
+    r.country.toLowerCase().includes(fromSearch.toLowerCase()) ||
+    r.currency.toLowerCase().includes(fromSearch.toLowerCase())
+  );
+
+  const filteredToRates = allRates.filter((r) =>
+    r.country.toLowerCase().includes(toSearch.toLowerCase()) ||
+    r.currency.toLowerCase().includes(toSearch.toLowerCase())
+  );
+
+  return (
+    <div id="converter-section" className="w-full bg-[#FFFFFF] border border-black/10 rounded-2xl p-6 sm:p-8 shadow-xs flex flex-col justify-between">
+      {/* Top Header */}
+      <div>
+        <div className="flex items-center justify-between pb-4 border-b border-black/10">
+          <div>
+            <span className="font-mono text-[10px] uppercase tracking-widest text-[#8C8A84] block">
+              PRECISION CLEARING ENGINE
+            </span>
+            <h3 className="font-serif text-2xl sm:text-3xl text-[#141413] mt-0.5">
+              Live Rate Converter
+            </h3>
+          </div>
+          <div className="flex items-center space-x-2">
+            <span className="w-2 h-2 rounded-full bg-[#1B6B38] animate-pulse"></span>
+            <span className="font-mono text-[11px] text-[#1B6B38] font-semibold uppercase">
+              {source}
             </span>
           </div>
-          <span className="text-[#646b7a] text-[11px] font-medium tracking-wide uppercase">
-            UPDATE {formattedTime}
-          </span>
         </div>
 
-        <div className="flex items-center space-x-2">
-          <button
-            onClick={onOpenAI}
-            className="flex items-center space-x-1 text-[11px] font-bold text-[#a3e635] bg-[#1a2118] border border-[#a3e635]/30 hover:border-[#a3e635] px-2 py-0.5 rounded-full transition-all"
-          >
-            <Sparkles className="w-3 h-3" />
-            <span>AI Outlook</span>
-          </button>
-          <span className="text-[11px] font-bold text-[#8c94a4] tracking-widest uppercase">
-            {fromCurrency} / {toCurrency}
-          </span>
-        </div>
-      </div>
-
-      {/* Dual Rate Columns: BUYING & SELLING */}
-      <div className="grid grid-cols-2 gap-4 py-5">
-        <div>
-          <div className="text-[11px] font-bold text-[#646b7a] uppercase tracking-wider">
-            BUYING
-          </div>
-          <div className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mt-1">
-            {formatNumber(buyRate)}
-          </div>
-          <div className="text-[10px] font-semibold text-[#646b7a] uppercase tracking-widest mt-1">
-            {toCurrency} PER {fromCurrency}
-          </div>
+        {/* Preset Amount Pills */}
+        <div className="mt-4 flex items-center space-x-1.5 overflow-x-auto no-scrollbar py-1">
+          <span className="text-[10px] font-mono uppercase text-[#8C8A84] mr-1">Presets:</span>
+          {[100, 500, 1000, 5000, 10000].map((amt) => (
+            <button
+              key={amt}
+              type="button"
+              onClick={() => handlePresetClick(amt)}
+              className="px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-[#F2EFE9] hover:bg-black/10 text-[#63625D] hover:text-[#141413] transition-colors cursor-pointer"
+            >
+              ${amt.toLocaleString()}
+            </button>
+          ))}
         </div>
 
-        <div>
-          <div className="text-[11px] font-bold text-[#646b7a] uppercase tracking-wider">
-            SELLING
+        {/* Input: You Send */}
+        <div className="mt-4 bg-[#FAF9F5] border border-black/10 rounded-xl p-4">
+          <div className="flex items-center justify-between text-xs font-mono text-[#8C8A84] mb-1">
+            <span>YOU CONVERT</span>
+            <span>BASE SOURCE</span>
           </div>
-          <div className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mt-1">
-            {formatNumber(sellRate)}
-          </div>
-          <div className="text-[10px] font-semibold text-[#646b7a] uppercase tracking-widest mt-1">
-            {toCurrency} PER {fromCurrency}
-          </div>
-        </div>
-      </div>
 
-      {/* Interactive Converter */}
-      <div className="space-y-1 relative pt-1">
-        {/* YOU SEND */}
-        <div className="relative" ref={fromRef}>
-          <label className="block text-[10px] font-bold text-[#646b7a] uppercase tracking-[0.16em] mb-1.5">
-            YOU SEND
-          </label>
-          <div className="bg-[#15171d] border border-[#232731] focus-within:border-[#383e4e] rounded-xl px-4 py-3 flex items-center justify-between transition-colors">
+          <div className="flex items-center justify-between gap-4">
             <input
               type="text"
               value={sendAmount}
               onChange={handleAmountChange}
               onBlur={handleBlur}
-              aria-label="You send amount"
-              className="w-full bg-transparent text-white font-bold text-lg sm:text-xl outline-none placeholder-[#4b5563]"
-              placeholder="1,000.00"
+              aria-label="Conversion Amount"
+              className="bg-transparent font-serif text-3xl sm:text-4xl text-[#141413] outline-none w-full font-mono-num font-normal"
             />
-            <button
-              type="button"
-              onClick={() => setFromDropdownOpen(!fromDropdownOpen)}
-              className="flex items-center space-x-2 pl-3 flex-shrink-0 hover:opacity-80 transition-opacity"
-            >
-              <span className="text-base">{fromItem.flag}</span>
-              <span className="text-xs font-bold text-white uppercase tracking-wide">
-                {fromCurrency}
-              </span>
-              <ChevronDown className="w-3.5 h-3.5 text-[#646b7a]" />
-            </button>
-          </div>
 
-          {/* From Currency Selector Dropdown */}
-          {fromDropdownOpen && (
-            <div className="absolute top-full right-0 mt-1 w-52 bg-[#14161d] border border-[#282d3b] rounded-xl shadow-2xl z-50 p-2 max-h-60 overflow-y-auto">
-              <div className="text-[10px] font-bold text-[#6b7280] px-2 py-1 uppercase">
-                Select Send Currency
-              </div>
-              {allRates.map((c) => (
-                <button
-                  key={c.currency}
-                  onClick={() => {
-                    onChangeFromCurrency(c.currency);
-                    setFromDropdownOpen(false);
-                  }}
-                  className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-colors ${
-                    c.currency === fromCurrency
-                      ? 'bg-[#1e251b] text-white font-bold'
-                      : 'text-[#9ca3af] hover:bg-[#1a1d26] hover:text-white'
-                  }`}
-                >
-                  <div className="flex items-center space-x-2">
-                    <span>{c.flag}</span>
-                    <span>{c.currency}</span>
-                    <span className="text-[10px] text-[#6b7280]">({c.country})</span>
-                  </div>
-                  {c.currency === fromCurrency && <Check className="w-3 h-3 text-[#a3e635]" />}
-                </button>
-              ))}
+            {/* Currency Selector */}
+            <div className="relative" ref={fromRef}>
+              <button
+                type="button"
+                onClick={() => setFromDropdownOpen(!fromDropdownOpen)}
+                className="flex items-center space-x-2 bg-[#FFFFFF] border border-black/15 hover:border-black/30 px-3.5 py-1.5 rounded-full text-xs font-mono transition-colors cursor-pointer shadow-xs"
+              >
+                <span>{fromItem.flag}</span>
+                <span className="font-semibold text-[#141413]">{fromItem.currency}</span>
+                <ChevronDown className="w-3.5 h-3.5 text-[#63625D]" />
+              </button>
+
+              {fromDropdownOpen && (
+                <div className="absolute right-0 top-full mt-1.5 w-60 bg-[#FFFFFF] border border-black/15 rounded-xl shadow-2xl z-50 p-2 max-h-64 overflow-y-auto">
+                  <input
+                    type="text"
+                    placeholder="Search currency..."
+                    value={fromSearch}
+                    onChange={(e) => setFromSearch(e.target.value)}
+                    autoFocus
+                    className="w-full bg-[#FAF9F5] border border-black/10 rounded-md px-2.5 py-1 text-xs font-mono mb-1.5 outline-none"
+                  />
+                  {filteredFromRates.map((r) => (
+                    <button
+                      key={r.currency}
+                      onClick={() => {
+                        onChangeFromCurrency(r.currency);
+                        setFromDropdownOpen(false);
+                        setFromSearch('');
+                      }}
+                      className="w-full flex items-center justify-between px-2.5 py-1.5 hover:bg-black/5 rounded-md text-xs font-mono cursor-pointer"
+                    >
+                      <span className="flex items-center space-x-2">
+                        <span>{r.flag}</span>
+                        <span className="font-medium text-[#141413]">{r.currency}</span>
+                        <span className="text-[#8C8A84] text-[10px]">({r.country})</span>
+                      </span>
+                      {fromCurrency === r.currency && <Check className="w-3.5 h-3.5 text-[#141413]" />}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
 
-        {/* Swap Button */}
-        <div className="relative flex justify-center z-10 -my-2.5">
+        {/* Swap Divider Button */}
+        <div className="relative my-3 flex items-center justify-center">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-black/10"></div>
+          </div>
           <button
-            type="button"
             onClick={handleSwap}
             aria-label="Swap currencies"
-            className="w-9 h-9 rounded-full bg-[#111216] border border-[#a3e635] text-[#a3e635] flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-[0_0_12px_rgba(163,230,53,0.25)] cursor-pointer"
+            className="relative z-10 w-9 h-9 rounded-full bg-[#FFFFFF] border border-black/15 hover:border-black/40 flex items-center justify-center text-[#141413] hover:rotate-180 transition-all shadow-xs cursor-pointer"
+            title="Invert conversion"
           >
-            <ArrowUpDown className="w-4 h-4" />
+            <ArrowUpDown className="w-3.5 h-3.5" />
           </button>
         </div>
 
-        {/* YOU RECEIVE */}
-        <div className="relative" ref={toRef}>
-          <label className="block text-[10px] font-bold text-[#646b7a] uppercase tracking-[0.16em] mb-1.5">
-            YOU RECEIVE (APPROX.)
-          </label>
-          <div className="bg-[#15171d] border border-[#232731] rounded-xl px-4 py-3 flex items-center justify-between">
-            <div className="w-full text-white font-bold text-lg sm:text-xl overflow-x-auto no-scrollbar py-0.5">
-              {formatNumber(receiveAmount, 2, 4)}
-            </div>
-            <button
-              type="button"
-              onClick={() => setToDropdownOpen(!toDropdownOpen)}
-              className="flex items-center space-x-2 pl-3 flex-shrink-0 hover:opacity-80 transition-opacity"
-            >
-              <span className="text-base">{toItem.flag}</span>
-              <span className="text-xs font-bold text-white uppercase tracking-wide">
-                {toCurrency}
-              </span>
-              <ChevronDown className="w-3.5 h-3.5 text-[#646b7a]" />
-            </button>
+        {/* Output: You Receive */}
+        <div className="bg-[#FAF9F5] border border-black/10 rounded-xl p-4">
+          <div className="flex items-center justify-between text-xs font-mono text-[#8C8A84] mb-1">
+            <span>YOU RECEIVE (ESTIMATED)</span>
+            <span className="text-[#1B6B38] font-semibold">0.00% SPREAD BIAS</span>
           </div>
 
-          {/* To Currency Selector Dropdown */}
-          {toDropdownOpen && (
-            <div className="absolute top-full right-0 mt-1 w-52 bg-[#14161d] border border-[#282d3b] rounded-xl shadow-2xl z-50 p-2 max-h-60 overflow-y-auto">
-              <div className="text-[10px] font-bold text-[#6b7280] px-2 py-1 uppercase">
-                Select Receive Currency
-              </div>
-              {allRates.map((c) => (
-                <button
-                  key={c.currency}
-                  onClick={() => {
-                    onChangeToCurrency(c.currency);
-                    setToDropdownOpen(false);
-                  }}
-                  className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-colors ${
-                    c.currency === toCurrency
-                      ? 'bg-[#1e251b] text-white font-bold'
-                      : 'text-[#9ca3af] hover:bg-[#1a1d26] hover:text-white'
-                  }`}
-                >
-                  <div className="flex items-center space-x-2">
-                    <span>{c.flag}</span>
-                    <span>{c.currency}</span>
-                    <span className="text-[10px] text-[#6b7280]">({c.country})</span>
-                  </div>
-                  {c.currency === toCurrency && <Check className="w-3 h-3 text-[#a3e635]" />}
-                </button>
-              ))}
+          <div className="flex items-center justify-between gap-4">
+            <div className="font-serif text-3xl sm:text-4xl text-[#141413] font-mono-num font-normal overflow-hidden text-ellipsis whitespace-nowrap">
+              {formatNumber(receiveAmount)}
             </div>
-          )}
+
+            {/* Currency Selector */}
+            <div className="relative" ref={toRef}>
+              <button
+                type="button"
+                onClick={() => setToDropdownOpen(!toDropdownOpen)}
+                className="flex items-center space-x-2 bg-[#FFFFFF] border border-black/15 hover:border-black/30 px-3.5 py-1.5 rounded-full text-xs font-mono transition-colors cursor-pointer shadow-xs"
+              >
+                <span>{toItem.flag}</span>
+                <span className="font-semibold text-[#141413]">{toItem.currency}</span>
+                <ChevronDown className="w-3.5 h-3.5 text-[#63625D]" />
+              </button>
+
+              {toDropdownOpen && (
+                <div className="absolute right-0 top-full mt-1.5 w-60 bg-[#FFFFFF] border border-black/15 rounded-xl shadow-2xl z-50 p-2 max-h-64 overflow-y-auto">
+                  <input
+                    type="text"
+                    placeholder="Search currency..."
+                    value={toSearch}
+                    onChange={(e) => setToSearch(e.target.value)}
+                    autoFocus
+                    className="w-full bg-[#FAF9F5] border border-black/10 rounded-md px-2.5 py-1 text-xs font-mono mb-1.5 outline-none"
+                  />
+                  {filteredToRates.map((r) => (
+                    <button
+                      key={r.currency}
+                      onClick={() => {
+                        onChangeToCurrency(r.currency);
+                        setToDropdownOpen(false);
+                        setToSearch('');
+                      }}
+                      className="w-full flex items-center justify-between px-2.5 py-1.5 hover:bg-black/5 rounded-md text-xs font-mono cursor-pointer"
+                    >
+                      <span className="flex items-center space-x-2">
+                        <span>{r.flag}</span>
+                        <span className="font-medium text-[#141413]">{r.currency}</span>
+                        <span className="text-[#8C8A84] text-[10px]">({r.country})</span>
+                      </span>
+                      {toCurrency === r.currency && <Check className="w-3.5 h-3.5 text-[#141413]" />}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Card Footer: Mid rate & Source */}
-      <div className="flex items-center justify-between pt-5 mt-4 border-t border-[#1b1e25] text-[11px] font-semibold text-[#788091] uppercase tracking-wider">
-        <div>
-          MID RATE{' '}
-          <span className="text-white font-bold ml-1">
-            {formatNumber(rawMidRate)}
+      {/* Copy Result & Transparency Breakdown */}
+      <div className="mt-5 pt-4 border-t border-black/10 space-y-2.5">
+        <div className="flex items-center justify-between text-xs font-mono">
+          <span className="text-[#8C8A84]">Direct Rate:</span>
+          <span className="font-semibold text-[#141413] font-mono-num">
+            1 {fromItem.currency} = {formatNumber(rawMidRate, 2, 4)} {toItem.currency}
           </span>
         </div>
 
-        <div className="flex items-center space-x-1.5">
-          <span>SOURCE</span>
-          <span className="text-white font-bold">{source}</span>
-          <span className="w-1.5 h-1.5 rounded-full bg-[#a3e635] inline-block" />
+        <div className="flex items-center justify-between text-xs font-mono">
+          <span className="text-[#8C8A84]">Reciprocal Rate:</span>
+          <span className="text-[#63625D] font-mono-num">
+            1 {toItem.currency} = {formatNumber(1 / (rawMidRate || 1), 4, 6)} {fromItem.currency}
+          </span>
+        </div>
+
+        {/* Copy Result Button */}
+        <div className="pt-2 flex items-center justify-between">
+          <button
+            onClick={handleCopyResult}
+            className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-full border border-black/15 bg-[#FAF9F5] hover:bg-black/5 text-xs font-mono text-[#141413] transition-colors cursor-pointer"
+          >
+            {copied ? <Check className="w-3.5 h-3.5 text-[#1B6B38]" /> : <Copy className="w-3.5 h-3.5 text-[#63625D]" />}
+            <span>{copied ? 'Calculation Copied' : 'Copy Calculation'}</span>
+          </button>
+
+          <button
+            onClick={onOpenAI}
+            className="text-xs font-mono text-[#141413] hover:underline flex items-center space-x-1 cursor-pointer"
+          >
+            <Sparkles className="w-3 h-3 text-[#1B6B38]" />
+            <span>Consult AI Advisor</span>
+          </button>
         </div>
       </div>
     </div>

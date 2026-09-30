@@ -8,6 +8,24 @@ export default {
   theme: {
     extend: {
       colors: {
+        nds: {
+          bg: '#FAF9F5',
+          surface: '#FFFFFF',
+          elevated: '#F2EFE9',
+          border: 'rgba(18, 18, 18, 0.12)',
+          borderSubtle: 'rgba(18, 18, 18, 0.06)',
+          ink: '#141413',
+          muted: '#63625D',
+          caption: '#8C8A84',
+          accent: '#1B3B2B',
+          accentLight: 'rgba(27, 59, 43, 0.08)',
+          danger: '#A82828',
+          dangerBg: '#FDF2F2',
+          success: '#1B6B38',
+          successBg: '#F0F9F3',
+          dark: '#0C0D0E',
+          darkSurface: '#161719',
+        },
         darkBg: '#080808',
         cardBg: '#121316',
         cardBorder: '#1e2128',
@@ -22,8 +40,10 @@ export default {
         textDim: '#586069',
       },
       fontFamily: {
+        serif: ['"Instrument Serif"', 'Georgia', 'serif'],
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-        condensed: ['"Arial Black"', 'Impact', '"Barlow Condensed"', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+        condensed: ['"Barlow Condensed"', '"Arial Black"', 'Impact', 'sans-serif'],
       },
       letterSpacing: {
         tightest: '-0.04em',
@@ -33,3 +53,4 @@ export default {
   },
   plugins: [],
 }
+

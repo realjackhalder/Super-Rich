@@ -19,7 +19,7 @@ export default function Sparkline({ data = [], isPositive = true, width = 75, he
     return `${x.toFixed(1)},${y.toFixed(1)}`;
   });
 
-  const strokeColor = isPositive ? '#a3e635' : '#ef4444';
+  const strokeColor = isPositive ? '#1B6B38' : '#A82828';
 
   return (
     <svg

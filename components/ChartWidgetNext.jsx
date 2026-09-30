@@ -25,32 +25,31 @@ export default function ChartWidgetNext({
 
     let chartInstance = null;
 
-    // Dynamically import lightweight-charts to ensure no SSR errors
     import('lightweight-charts').then(({ createChart }) => {
       if (!chartContainerRef.current) return;
 
       chartInstance = createChart(chartContainerRef.current, {
         layout: {
-          background: { type: 'solid', color: '#0f1115' },
-          textColor: '#848E9C',
+          background: { type: 'solid', color: '#141413' },
+          textColor: '#8C8A84',
           attributionLogo: false,
         },
         grid: {
-          vertLines: { color: '#1a1d25' },
-          horzLines: { color: '#1a1d25' },
+          vertLines: { color: 'rgba(255, 255, 255, 0.05)' },
+          horzLines: { color: 'rgba(255, 255, 255, 0.05)' },
         },
         crosshair: {
           mode: 1,
-          vertLine: { color: '#848E9C', width: 1, style: 1 },
-          horzLine: { color: '#848E9C', width: 1, style: 1 },
+          vertLine: { color: 'rgba(255, 255, 255, 0.2)', width: 1, style: 1 },
+          horzLine: { color: 'rgba(255, 255, 255, 0.2)', width: 1, style: 1 },
         },
         timeScale: {
-          borderColor: '#1f232c',
+          borderColor: 'rgba(255, 255, 255, 0.1)',
           timeVisible: true,
           secondsVisible: false,
         },
         rightPriceScale: {
-          borderColor: '#1f232c',
+          borderColor: 'rgba(255, 255, 255, 0.1)',
         },
         width: chartContainerRef.current.clientWidth,
         height: 380,
@@ -59,16 +58,16 @@ export default function ChartWidgetNext({
       chartRef.current = chartInstance;
 
       const candlestickSeries = chartInstance.addCandlestickSeries({
-        upColor: '#a3e635',
-        downColor: '#ef4444',
+        upColor: '#4ADE80',
+        downColor: '#F87171',
         borderVisible: false,
-        wickUpColor: '#a3e635',
-        wickDownColor: '#ef4444',
+        wickUpColor: '#4ADE80',
+        wickDownColor: '#F87171',
       });
       candlestickSeriesRef.current = candlestickSeries;
 
       const volumeSeries = chartInstance.addHistogramSeries({
-        color: '#26a69a',
+        color: 'rgba(74, 222, 128, 0.3)',
         priceFormat: { type: 'volume' },
         priceScaleId: '',
         scaleMargins: { top: 0.8, bottom: 0 },
@@ -97,58 +96,56 @@ export default function ChartWidgetNext({
         volumeData.push({
           time,
           value: Math.random() * 50000 + 10000,
-          color: close >= open ? 'rgba(163, 230, 53, 0.4)' : 'rgba(239, 68, 68, 0.4)'
+          color: close >= open ? 'rgba(74, 222, 128, 0.3)' : 'rgba(248, 113, 113, 0.3)'
         });
       }
 
       candlestickSeries.setData(candleData);
       volumeSeries.setData(volumeData);
-
-      const handleResize = () => {
-        if (chartInstance && chartContainerRef.current) {
-          chartInstance.applyOptions({
-            width: chartContainerRef.current.clientWidth,
-          });
-        }
-      };
-
-      window.addEventListener('resize', handleResize);
-      return () => {
-        window.removeEventListener('resize', handleResize);
-        chartInstance?.remove();
-      };
     });
 
+    const handleResize = () => {
+      if (chartRef.current && chartContainerRef.current) {
+        chartRef.current.applyOptions({
+          width: chartContainerRef.current.clientWidth,
+        });
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
     return () => {
-      if (chartInstance) {
-        chartInstance.remove();
+      window.removeEventListener('resize', handleResize);
+      if (chartRef.current) {
+        chartRef.current.remove();
+        chartRef.current = null;
       }
     };
   }, [isClient, symbol, interval, currentPrice]);
 
   return (
-    <div className="w-full flex flex-col bg-[#0f1115] border border-[#1e222b] rounded-2xl overflow-hidden shadow-xl">
-      {/* Chart Toolbar */}
-      <div className="flex flex-wrap items-center justify-between px-4 py-3 border-b border-[#1b1e26] bg-[#12141a]">
+    <div className="flex flex-col bg-[#141413] border border-white/10 rounded-2xl overflow-hidden shadow-xl">
+      {/* Top Toolbar */}
+      <div className="flex flex-wrap items-center justify-between px-4 py-3 border-b border-white/10 bg-[#1A1A19] gap-3">
         <div className="flex items-center space-x-3">
-          <span className="text-white font-bold text-sm tracking-wider">
-            {symbol}
+          <span className="font-serif text-xl font-normal text-[#FAF9F5]">{symbol}</span>
+          <span className="font-mono text-xs text-[#8C8A84] font-mono-num">
+            {currentPrice.toLocaleString(undefined, { minimumFractionDigits: 2 })}
           </span>
-          <span className="text-xs text-[#a3e635] font-semibold">
-            TradingView
+          <span className="inline-flex items-center text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#4ADE80]/15 text-[#4ADE80]">
+            LIVE FEED
           </span>
         </div>
 
-        {/* Time Interval Tabs */}
-        <div className="flex items-center space-x-1 bg-[#181b22] p-1 rounded-lg border border-[#232734]">
+        {/* Intervals */}
+        <div className="flex items-center space-x-1 font-mono text-xs">
           {intervals.map((int) => (
             <button
               key={int}
               onClick={() => onIntervalChange && onIntervalChange(int)}
-              className={`px-2.5 py-0.5 text-xs font-semibold rounded-md transition-colors ${
+              className={`px-2.5 py-1 rounded transition-colors cursor-pointer ${
                 interval === int
-                  ? 'bg-[#a3e635] text-black font-bold'
-                  : 'text-[#8b94a5] hover:text-white'
+                  ? 'bg-[#FAF9F5] text-[#141413] font-bold'
+                  : 'text-[#8C8A84] hover:text-[#FAF9F5] hover:bg-white/5'
               }`}
             >
               {int}
@@ -157,11 +154,11 @@ export default function ChartWidgetNext({
         </div>
       </div>
 
-      {/* Chart Container */}
-      <div ref={chartContainerRef} className="w-full h-[380px] relative">
+      {/* Chart Canvas */}
+      <div ref={chartContainerRef} className="w-full relative" style={{ minHeight: '380px' }}>
         {!isClient && (
-          <div className="w-full h-full flex items-center justify-center text-xs text-[#686f7e]">
-            Loading interactive chart engine...
+          <div className="h-[380px] w-full flex items-center justify-center font-mono text-xs text-[#8C8A84]">
+            Initializing TradingView Canvas...
           </div>
         )}
       </div>

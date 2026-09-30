@@ -3,8 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import HeroSection from '../components/HeroSection';
+import SelectedWorkSection from '../components/SelectedWorkSection';
+import PriceDisparitySection from '../components/PriceDisparitySection';
+import CurrencyVolatilityRadar from '../components/CurrencyVolatilityRadar';
 import RateConverterCard from '../components/RateConverterCard';
 import RatesTable from '../components/RatesTable';
+import NewsSection from '../components/NewsSection';
 import ToolsView from '../components/ToolsView';
 import CountriesView from '../components/CountriesView';
 import AboutView from '../components/AboutView';
@@ -187,11 +191,11 @@ export default function HomePage() {
   const [baseCurrency, setBaseCurrency] = useState('MMK');
   const [source, setSource] = useState('SUPER RICH');
   const [updatedAt, setUpdatedAt] = useState(new Date().toISOString());
-  const [activeNav, setActiveNav] = useState('RATES');
+  const [activeNav, setActiveNav] = useState('OVERVIEW');
   const [isAIOpen, setIsAIOpen] = useState(false);
   const [zoomedImage, setZoomedImage] = useState(null);
 
-  // Fetch rates from API (integrating localhost:3001 if running)
+  // Fetch live rates
   const fetchRates = async () => {
     try {
       const res = await fetch('/api/rates');
@@ -220,45 +224,108 @@ export default function HomePage() {
     return () => clearInterval(interval);
   }, []);
 
-  // Compute active cross rate for AI context
   const targetItem = rates.find((r) => r.currency === targetCurrency) || rates[0];
   const baseItem = rates.find((r) => r.currency === baseCurrency) || { mid: 1 };
   const currentCrossRate = ((targetItem?.mid || 1) / (baseItem?.mid || 1)).toFixed(2);
 
   const handleCountrySelectToConvert = (currencyCode) => {
     setTargetCurrency(currencyCode);
-    setActiveNav('RATES');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setActiveNav('OVERVIEW');
+    setTimeout(() => {
+      const el = document.getElementById('converter-section');
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  };
+
+  const handleNavigateSection = (sec) => {
+    if (sec === 'RATES_SECTION' || sec === 'RATES') {
+      if (activeNav !== 'OVERVIEW') setActiveNav('OVERVIEW');
+      setTimeout(() => {
+        const el = document.getElementById('rates-section');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    } else if (sec === 'CONVERTER_SECTION') {
+      if (activeNav !== 'OVERVIEW') setActiveNav('OVERVIEW');
+      setTimeout(() => {
+        const el = document.getElementById('converter-section');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    } else if (sec === 'DISPARITY') {
+      if (activeNav !== 'OVERVIEW') setActiveNav('OVERVIEW');
+      setTimeout(() => {
+        const el = document.getElementById('disparity-section');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    } else {
+      setActiveNav(sec);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#070707] text-[#e5e7eb]">
-      {/* Top Navigation */}
+    <div className="min-h-screen flex flex-col bg-[#FAF9F5] text-[#141413]">
+      {/* NDS Navigation Header with Live Ticker Ribbon */}
       <Navbar
         activeNav={activeNav}
-        onNavChange={setActiveNav}
+        onNavChange={handleNavigateSection}
         onOpenAI={() => setIsAIOpen(true)}
+        rates={rates}
+        baseCurrency={baseCurrency}
+        onSelectCurrency={setTargetCurrency}
       />
 
       {/* Main Content Area */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 w-full flex-1 pt-6 sm:pt-8">
-        {activeNav === 'RATES' && (
-          <div className="space-y-6 animate-in fade-in">
-            {/* Top Hero: Two Columns */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-start">
-              {/* Left Column: Title & Multi-Country Chooser */}
+      <main className="max-w-[1360px] mx-auto px-4 sm:px-6 md:px-8 lg:px-12 w-full flex-1">
+        {/* VIEW 1: NDStudio.gov Style Sovereign Portfolio Homepage */}
+        {activeNav === 'OVERVIEW' && (
+          <div className="space-y-4 animate-in fade-in duration-300">
+            {/* Monumental Hero Section */}
+            <HeroSection
+              rates={rates}
+              selectedCurrency={targetCurrency}
+              onSelectCurrency={setTargetCurrency}
+              baseCurrency={baseCurrency}
+              onSelectBaseCurrency={setBaseCurrency}
+              onNavigateToSection={handleNavigateSection}
+            />
+
+            {/* NDStudio "Selected Work" Portfolio Grid */}
+            <SelectedWorkSection
+              onSelectFeature={handleNavigateSection}
+              onOpenAI={() => setIsAIOpen(true)}
+            />
+
+            {/* TrumpRx-Style Cost / Price Disparity Comparison Graphic with interactive simulator */}
+            <PriceDisparitySection
+              rates={rates}
+              baseCurrency={baseCurrency}
+              onExploreRates={() => handleNavigateSection('RATES_SECTION')}
+            />
+
+            {/* Fresh 24h Currency Strength & Volatility Radar */}
+            <CurrencyVolatilityRadar
+              rates={rates}
+              baseCurrency={baseCurrency}
+              onSelectCurrency={(cur) => {
+                setTargetCurrency(cur);
+                const convEl = document.getElementById('converter-section');
+                if (convEl) convEl.scrollIntoView({ behavior: 'smooth' });
+              }}
+            />
+
+            {/* Live Interactive Exchange Board & Precision Converter */}
+            <div className="py-12 grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
               <div className="lg:col-span-7">
-                <HeroSection
+                <RatesTable
                   rates={rates}
-                  selectedCurrency={targetCurrency}
-                  onSelectCurrency={setTargetCurrency}
                   baseCurrency={baseCurrency}
                   onSelectBaseCurrency={setBaseCurrency}
+                  selectedCurrency={targetCurrency}
+                  onSelectCurrency={setTargetCurrency}
                 />
               </div>
 
-              {/* Right Column: Multi-Currency Converter & Live Card */}
-              <div className="lg:col-span-5 w-full">
+              <div className="lg:col-span-5 sticky top-28">
                 <RateConverterCard
                   allRates={rates}
                   fromCurrency={targetCurrency}
@@ -272,19 +339,61 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Bottom Section: Multi-Currency Live Rates Table with Sparklines */}
-            <RatesTable
+            {/* NDStudio-Style News / Market Dispatches */}
+            <NewsSection />
+          </div>
+        )}
+
+        {/* VIEW 2: DEDICATED LIVE EXCHANGE BOARD */}
+        {activeNav === 'RATES' && (
+          <div className="pt-8 space-y-12 animate-in fade-in duration-300">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+              <div className="lg:col-span-7">
+                <RatesTable
+                  rates={rates}
+                  baseCurrency={baseCurrency}
+                  onSelectBaseCurrency={setBaseCurrency}
+                  selectedCurrency={targetCurrency}
+                  onSelectCurrency={setTargetCurrency}
+                />
+              </div>
+              <div className="lg:col-span-5 pt-8 sticky top-28">
+                <RateConverterCard
+                  allRates={rates}
+                  fromCurrency={targetCurrency}
+                  toCurrency={baseCurrency}
+                  onChangeFromCurrency={setTargetCurrency}
+                  onChangeToCurrency={setBaseCurrency}
+                  source={source}
+                  updatedAt={updatedAt}
+                  onOpenAI={() => setIsAIOpen(true)}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* VIEW 3: PRICE DISPARITY DEEP-DIVE */}
+        {activeNav === 'DISPARITY' && (
+          <div className="pt-8 animate-in fade-in duration-300">
+            <PriceDisparitySection
               rates={rates}
               baseCurrency={baseCurrency}
-              onSelectBaseCurrency={setBaseCurrency}
-              selectedCurrency={targetCurrency}
-              onSelectCurrency={setTargetCurrency}
+              onExploreRates={() => handleNavigateSection('RATES_SECTION')}
             />
           </div>
         )}
 
+        {/* VIEW 4: TRADINGVIEW TERMINAL */}
+        {activeNav === 'TOOLS' && (
+          <div className="pt-8 animate-in fade-in duration-300">
+            <ToolsView />
+          </div>
+        )}
+
+        {/* VIEW 5: SOVEREIGN DIRECTORY */}
         {activeNav === 'COUNTRIES' && (
-          <div className="animate-in fade-in">
+          <div className="pt-8 animate-in fade-in duration-300">
             <CountriesView
               rates={rates}
               baseCurrency={baseCurrency}
@@ -293,29 +402,25 @@ export default function HomePage() {
           </div>
         )}
 
-        {activeNav === 'TOOLS' && (
-          <div className="animate-in fade-in">
-            <ToolsView />
-          </div>
-        )}
-
+        {/* VIEW 6: ABOUT CHARTER */}
         {activeNav === 'ABOUT' && (
-          <div className="animate-in fade-in">
+          <div className="pt-8 animate-in fade-in duration-300">
             <AboutView onOpenAI={() => setIsAIOpen(true)} />
           </div>
         )}
 
+        {/* VIEW 7: HELP & SETTLEMENT */}
         {activeNav === 'HELP' && (
-          <div className="animate-in fade-in">
+          <div className="pt-8 animate-in fade-in duration-300">
             <HelpView onZoomImage={setZoomedImage} />
           </div>
         )}
       </main>
 
-      {/* Persistent Global Footer */}
-      <Footer onSelectTab={setActiveNav} />
+      {/* Monumental NDStudio Footer */}
+      <Footer onSelectTab={handleNavigateSection} />
 
-      {/* AI Market Advisor Modal (Powered by Qwen 3.8-27B) */}
+      {/* AI Market Advisor Modal (Google Gemini / Qwen) */}
       <AIAssistantModal
         isOpen={isAIOpen}
         onClose={() => setIsAIOpen(false)}

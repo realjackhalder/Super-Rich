@@ -1,10 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Copy, Check, ExternalLink, ShieldAlert, HeartHandshake, HelpCircle } from 'lucide-react';
+import Image from 'next/image';
+import { Copy, Check, ExternalLink, HelpCircle, QrCode } from 'lucide-react';
 
 export default function HelpView({ onZoomImage }) {
   const [copied, setCopied] = useState(false);
+  const [expandedFaq, setExpandedFaq] = useState(0);
 
   const btcAddress = '12yhkkbbjjqC2cdujWFfCggrDGLmqta262';
 
@@ -16,161 +18,158 @@ export default function HelpView({ onZoomImage }) {
 
   const faqs = [
     {
-      q: 'How often are the exchange rates updated?',
-      a: 'Rates update dynamically every 15–30 seconds via real-time P2P liquidity orderbooks and regional market spreads.'
+      q: 'How frequently are parallel exchange rates refreshed?',
+      a: 'Rates update dynamically every 15–30 seconds via real-time P2P liquidity orderbooks, OTC remittance broker feeds, and regional cross-border clearing channels.'
     },
     {
-      q: 'Can I compare rates against currencies other than MMK?',
-      a: 'Yes! SuperRich supports comparing all rates against any base currency (USD, THB, SGD, EUR, CNY, JPY, etc.) with real-time cross-currency calculations.'
+      q: 'Can I benchmark rates against currencies other than Myanmar Kyat (MMK)?',
+      a: 'Yes. SuperRich allows comparing all rates against any base currency (USD, THB, SGD, EUR, CNY, JPY, GBP, etc.) with real-time cross-currency triangulation.'
     },
     {
-      q: 'How does the AI Market Advisor work?',
-      a: 'The AI Analyst is powered by Qwen 3.8-27B hosted on ExperientialLabs, giving you real-time market sentiment, volatility analysis, and currency conversion tips.'
+      q: 'How does the AI Market Advisor formulate its analysis?',
+      a: 'The advisor is powered by advanced LLM reasoning (Qwen 3.8-27B) trained on macroeconomic trends, regional central bank policy shifts, and historical parallel market spreads.'
     },
     {
-      q: 'Are the displayed rates indicative or guaranteed?',
-      a: 'Rates are indicative market reference points. Always verify the final rate directly with your currency counter or counterparty before executing trades.'
+      q: 'Are these rates legally binding or indicative?',
+      a: 'Rates published on SuperRich represent open-market reference clearing levels. Actual counter transactions may carry small physical handling margins.'
     }
   ];
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-10 pb-20">
+    <div className="w-full max-w-4xl mx-auto space-y-12 pb-24 text-left">
       {/* Title */}
-      <div className="text-center space-y-3 pt-4">
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-          Help &amp; Community Support
+      <div className="space-y-4 pt-6 border-b border-black/10 pb-8">
+        <span className="font-mono text-xs uppercase tracking-widest text-[#8C8A84] block">
+          [ MODULE 06 • SETTLEMENT &amp; SUPPORT ]
+        </span>
+        <h1 className="font-serif text-4xl sm:text-5xl text-[#141413]">
+          Settlement, Questions &amp; Support
         </h1>
-        <p className="text-xs sm:text-sm text-[#8e95a5] max-w-xl mx-auto leading-relaxed">
-          Frequently asked questions, developer API resources, and community donation options to keep
-          the SuperRich platform free and open for everyone.
+        <p className="text-sm sm:text-base text-[#63625D] leading-relaxed">
+          Technical documentation, payment settlement channels, and answers to common operational questions.
         </p>
       </div>
 
-      {/* FAQs */}
-      <div className="bg-[#101217] border border-[#1e222b] rounded-2xl p-6 sm:p-8 shadow-xl space-y-5">
-        <h3 className="text-white font-extrabold text-lg flex items-center gap-2">
-          <HelpCircle className="w-5 h-5 text-[#a3e635]" />
-          Frequently Asked Questions
-        </h3>
+      {/* Accordion FAQs (TechForce.gov Style) */}
+      <div className="space-y-4">
+        <div className="pb-3 border-b border-black/10 flex items-center justify-between">
+          <h2 className="font-serif text-2xl text-[#141413]">
+            Frequently Answered Questions
+          </h2>
+          <span className="font-mono text-xs text-[#8C8A84]">{faqs.length} INQUIRIES</span>
+        </div>
 
-        <div className="space-y-4">
-          {faqs.map((faq, i) => (
-            <div key={i} className="bg-[#151821] border border-[#232836] rounded-xl p-4 space-y-1.5">
-              <h4 className="text-white font-bold text-xs sm:text-sm">{faq.q}</h4>
-              <p className="text-xs text-[#8e95a5] leading-relaxed">{faq.a}</p>
-            </div>
-          ))}
+        <div className="divide-y divide-black/10">
+          {faqs.map((faq, i) => {
+            const isOpen = expandedFaq === i;
+            return (
+              <div key={i} className="py-4">
+                <button
+                  onClick={() => setExpandedFaq(isOpen ? -1 : i)}
+                  className="w-full flex items-center justify-between text-left group"
+                >
+                  <span className="font-serif text-xl sm:text-2xl text-[#141413] group-hover:underline underline-offset-4 decoration-black/30">
+                    {faq.q}
+                  </span>
+                  <span className="font-mono text-lg text-[#8C8A84] group-hover:text-[#141413] transition-colors ml-4 shrink-0">
+                    {isOpen ? '—' : '+'}
+                  </span>
+                </button>
+                {isOpen && (
+                  <p className="mt-3 text-sm text-[#63625D] leading-relaxed pr-8 animate-in fade-in duration-200">
+                    {faq.a}
+                  </p>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 
-      {/* Donation Section */}
-      <div className="bg-[#101217] border border-[#1e222b] rounded-2xl p-6 sm:p-8 shadow-xl space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#1b1e28] pb-4">
-          <div>
-            <h3 className="text-white font-extrabold text-lg flex items-center gap-2">
-              <HeartHandshake className="w-5 h-5 text-[#a3e635]" />
-              Support Platform Development
-            </h3>
-            <p className="text-xs text-[#8b94a5] mt-1">
-              SuperRich is 100% free and open. Your contributions help cover server, API proxy, and AI infrastructure costs.
-            </p>
-          </div>
-          <span className="text-[10px] font-bold uppercase tracking-wider text-[#a3e635] bg-[#1a2318] border border-[#a3e635]/30 px-2.5 py-1 rounded-full self-start sm:self-auto">
-            Community Funded
+      {/* Cross-Border Settlement & Donation Channels */}
+      <div className="bg-[#FFFFFF] border border-black/10 rounded-2xl p-6 sm:p-8 space-y-6">
+        <div>
+          <span className="font-mono text-xs uppercase tracking-widest text-[#8C8A84]">
+            SETTLEMENT RAILS &amp; PUBLIC SUPPORT
           </span>
+          <h3 className="font-serif text-3xl text-[#141413] mt-1">
+            Community Support &amp; Direct QR Rails
+          </h3>
+          <p className="text-xs text-[#63625D] mt-1">
+            Keep this platform 100% ad-free and uncompromised by private exchange syndicates.
+          </p>
         </div>
 
-        {/* QR Code Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 text-center">
-          {/* Binance Pay */}
-          <div className="bg-[#151821] border border-[#232836] rounded-xl p-4 flex flex-col items-center space-y-3 hover:border-[#a3e635]/40 transition-colors">
-            <span className="text-xs font-bold text-white uppercase tracking-wider">Binance Pay</span>
-            <div
-              onClick={() => onZoomImage('/donate.jpg')}
-              className="w-36 h-36 bg-white rounded-lg p-1.5 cursor-zoom-in hover:opacity-90 transition-opacity shadow-md flex items-center justify-center"
-            >
-              <img src="/donate.jpg" alt="Binance Pay QR" className="w-full h-full object-contain" />
-            </div>
-            <span className="text-[10px] text-[#6b7280]">Click image to expand</span>
-          </div>
-
+        {/* QR Code Cards Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-2">
           {/* PromptPay */}
-          <div className="bg-[#151821] border border-[#232836] rounded-xl p-4 flex flex-col items-center space-y-3 hover:border-[#a3e635]/40 transition-colors">
-            <span className="text-xs font-bold text-white uppercase tracking-wider">PromptPay</span>
-            <div
-              onClick={() => onZoomImage('/promptpay.jpg')}
-              className="w-36 h-36 bg-white rounded-lg p-1.5 cursor-zoom-in hover:opacity-90 transition-opacity shadow-md flex items-center justify-center"
-            >
-              <img src="/promptpay.jpg" alt="PromptPay QR" className="w-full h-full object-contain" />
+          <div
+            onClick={() => onZoomImage && onZoomImage('/promptpay.jpg')}
+            className="group cursor-pointer bg-[#FAF9F5] border border-black/10 hover:border-black/30 rounded-xl p-4 flex flex-col items-center text-center transition-all"
+          >
+            <div className="relative w-36 h-36 bg-white border border-black/10 rounded-lg overflow-hidden flex items-center justify-center p-1">
+              <Image
+                src="/promptpay.jpg"
+                alt="PromptPay QR"
+                width={140}
+                height={140}
+                className="w-full h-full object-contain"
+              />
             </div>
-            <span className="text-[10px] text-[#6b7280]">Click image to expand</span>
+            <span className="font-serif text-lg text-[#141413] mt-3">PromptPay THB</span>
+            <span className="font-mono text-[10px] text-[#8C8A84] uppercase mt-0.5">Click to Zoom QR</span>
           </div>
 
-          {/* KBZ Pay */}
-          <div className="bg-[#151821] border border-[#232836] rounded-xl p-4 flex flex-col items-center space-y-3 hover:border-[#a3e635]/40 transition-colors">
-            <span className="text-xs font-bold text-white uppercase tracking-wider">KBZ Pay</span>
-            <div
-              onClick={() => onZoomImage('/kbzpay.jpg')}
-              className="w-36 h-36 bg-white rounded-lg p-1.5 cursor-zoom-in hover:opacity-90 transition-opacity shadow-md flex items-center justify-center"
-            >
-              <img src="/kbzpay.jpg" alt="KBZ Pay QR" className="w-full h-full object-contain" />
+          {/* KBZPay */}
+          <div
+            onClick={() => onZoomImage && onZoomImage('/kbzpay.jpg')}
+            className="group cursor-pointer bg-[#FAF9F5] border border-black/10 hover:border-black/30 rounded-xl p-4 flex flex-col items-center text-center transition-all"
+          >
+            <div className="relative w-36 h-36 bg-white border border-black/10 rounded-lg overflow-hidden flex items-center justify-center p-1">
+              <Image
+                src="/kbzpay.jpg"
+                alt="KBZPay QR"
+                width={140}
+                height={140}
+                className="w-full h-full object-contain"
+              />
             </div>
-            <span className="text-[10px] text-[#6b7280]">Click image to expand</span>
+            <span className="font-serif text-lg text-[#141413] mt-3">KBZPay MMK</span>
+            <span className="font-mono text-[10px] text-[#8C8A84] uppercase mt-0.5">Click to Zoom QR</span>
+          </div>
+
+          {/* Community Donation */}
+          <div
+            onClick={() => onZoomImage && onZoomImage('/donate.jpg')}
+            className="group cursor-pointer bg-[#FAF9F5] border border-black/10 hover:border-black/30 rounded-xl p-4 flex flex-col items-center text-center transition-all"
+          >
+            <div className="relative w-36 h-36 bg-white border border-black/10 rounded-lg overflow-hidden flex items-center justify-center p-1">
+              <Image
+                src="/donate.jpg"
+                alt="Donation QR"
+                width={140}
+                height={140}
+                className="w-full h-full object-contain"
+              />
+            </div>
+            <span className="font-serif text-lg text-[#141413] mt-3">Community Fund</span>
+            <span className="font-mono text-[10px] text-[#8C8A84] uppercase mt-0.5">Click to Zoom QR</span>
           </div>
         </div>
 
-        {/* Bitcoin Address */}
-        <div className="bg-[#151821] border border-[#232836] rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="flex flex-col">
-            <div className="flex items-center space-x-2">
-              <span className="text-xs font-bold text-white uppercase tracking-wider">
-                Bitcoin (BTC)
-              </span>
-              <span className="text-[10px] font-bold text-[#facc15] bg-[#292211] px-2 py-0.5 rounded">
-                Network: BTC
-              </span>
-            </div>
-            <span className="text-xs font-mono text-[#a3e635] mt-1 select-all break-all">
-              {btcAddress}
-            </span>
+        {/* Bitcoin Address Box */}
+        <div className="bg-[#FAF9F5] border border-black/10 rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3 font-mono text-xs">
+          <div>
+            <span className="text-[#8C8A84] uppercase text-[10px] block">On-Chain Settlement (Bitcoin)</span>
+            <span className="text-[#141413] font-mono-num select-all font-medium">{btcAddress}</span>
           </div>
-
           <button
             onClick={() => handleCopy(btcAddress)}
-            className="flex items-center space-x-1.5 px-4 py-2 rounded-lg bg-[#a3e635] text-black font-bold text-xs hover:bg-[#bef264] active:scale-95 transition-all self-start sm:self-auto flex-shrink-0"
+            className="px-4 py-2 rounded-full bg-[#141413] text-[#FAF9F5] hover:bg-black text-xs font-mono uppercase tracking-wider flex items-center space-x-1.5 transition-colors shrink-0"
           >
-            {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-            <span>{copied ? 'Copied!' : 'Copy Address'}</span>
+            {copied ? <Check className="w-3.5 h-3.5 text-[#FAF9F5]" /> : <Copy className="w-3.5 h-3.5 text-[#FAF9F5]" />}
+            <span>{copied ? 'Copied' : 'Copy BTC'}</span>
           </button>
-        </div>
-      </div>
-
-      {/* Official Community Channels */}
-      <div className="bg-[#101217] border border-[#1e222b] rounded-2xl p-6 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div>
-          <h4 className="text-white font-bold text-sm">Join Our Official Community</h4>
-          <p className="text-xs text-[#8b94a5] mt-0.5">Stay informed with daily market reports and updates.</p>
-        </div>
-
-        <div className="flex items-center space-x-3">
-          <a
-            href="https://www.facebook.com/share/1CzKSYWA5q/?mibextid=wwXIfr"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-4 py-2 rounded-xl bg-[#161922] border border-[#252936] hover:border-[#a3e635] text-white text-xs font-bold transition-all flex items-center space-x-1.5"
-          >
-            <span>Facebook</span>
-            <ExternalLink className="w-3.5 h-3.5" />
-          </a>
-          <a
-            href="https://x.com/superrich_tech"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-4 py-2 rounded-xl bg-[#161922] border border-[#252936] hover:border-[#a3e635] text-white text-xs font-bold transition-all flex items-center space-x-1.5"
-          >
-            <span>X (Twitter)</span>
-            <ExternalLink className="w-3.5 h-3.5" />
-          </a>
         </div>
       </div>
     </div>
