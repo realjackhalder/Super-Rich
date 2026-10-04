@@ -4,21 +4,28 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import { Sun, Moon, Search, Globe, Activity } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
-const LANGUAGES = [
-  { code: "en", label: "English" },
-  { code: "es", label: "Español" },
-  { code: "pt", label: "Português" },
-  { code: "fr", label: "Français" },
-  { code: "zh", label: "中文" },
-  { code: "ko", label: "한국어" },
-  { code: "ja", label: "日本語" },
-  { code: "th", label: "ไทย" },
-  { code: "vi", label: "Tiếng Việt" },
-  { code: "bn", label: "বাংলা" },
-  { code: "ar", label: "العربية" },
-  { code: "my", label: "မြန်မာ" },
+export interface LanguageOption {
+  code: string;       // e.g. "EN", "MM", "ES", "ZH"
+  gtCode: string;     // Google Translate code: "en", "my", "es", "zh-CN"
+  label: string;      // Native name
+  flag: string;       // Country flag emoji
+}
+
+const LANGUAGES: LanguageOption[] = [
+  { code: "EN", gtCode: "en", label: "English", flag: "🇺🇸" },
+  { code: "MM", gtCode: "my", label: "မြန်မာ", flag: "🇲🇲" },
+  { code: "ES", gtCode: "es", label: "Español", flag: "🇪🇸" },
+  { code: "ZH", gtCode: "zh-CN", label: "中文", flag: "🇨🇳" },
+  { code: "JA", gtCode: "ja", label: "日本語", flag: "🇯🇵" },
+  { code: "KO", gtCode: "ko", label: "한국어", flag: "🇰🇷" },
+  { code: "FR", gtCode: "fr", label: "Français", flag: "🇫🇷" },
+  { code: "PT", gtCode: "pt", label: "Português", flag: "🇵🇹" },
+  { code: "TH", gtCode: "th", label: "ไทย", flag: "🇹🇭" },
+  { code: "VI", gtCode: "vi", label: "Tiếng Việt", flag: "🇻🇳" },
+  { code: "BN", gtCode: "bn", label: "বাংলা", flag: "🇧🇩" },
+  { code: "AR", gtCode: "ar", label: "العربية", flag: "🇸🇦" },
 ];
 
 export function Navbar() {
@@ -26,11 +33,87 @@ export function Navbar() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
-  const [selectedLang, setSelectedLang] = useState("en");
+  const [selectedLang, setSelectedLang] = useState<LanguageOption>(LANGUAGES[0]);
+  const langRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMounted(true);
+
+    try {
+      const savedCode = localStorage.getItem("sr_selected_lang");
+      if (savedCode) {
+        const match = LANGUAGES.find((l) => l.code === savedCode);
+        if (match) {
+          setSelectedLang(match);
+          return;
+        }
+      }
+
+      // Check existing googtrans cookie
+      const matchCookie = document.cookie.match(/googtrans=\/en\/([a-zA-Z-]+)/);
+      if (matchCookie && matchCookie[1]) {
+        const gt = matchCookie[1];
+        const match = LANGUAGES.find((l) => l.gtCode === gt);
+        if (match) {
+          setSelectedLang(match);
+        }
+      }
+    } catch {
+      // Ignore during SSR
+    }
   }, []);
+
+  // Close dropdown on click outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (langRef.current && !langRef.current.contains(event.target as Node)) {
+        setLangOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleSelectLanguage = (lang: LanguageOption) => {
+    setSelectedLang(lang);
+    setLangOpen(false);
+
+    if (typeof window === "undefined") return;
+
+    try {
+      localStorage.setItem("sr_selected_lang", lang.code);
+
+      if (lang.gtCode === "en") {
+        // Clear translation cookies to restore original English
+        document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${window.location.hostname};`;
+        document.cookie = "googtrans=/en/en; path=/;";
+        document.cookie = `googtrans=/en/en; path=/; domain=${window.location.hostname};`;
+
+        const select = document.querySelector<HTMLSelectElement>(".goog-te-combo");
+        if (select) {
+          select.value = "en";
+          select.dispatchEvent(new Event("change"));
+        }
+        window.location.reload();
+        return;
+      }
+
+      // Set cookie for Google Translate
+      document.cookie = `googtrans=/en/${lang.gtCode}; path=/;`;
+      document.cookie = `googtrans=/en/${lang.gtCode}; path=/; domain=${window.location.hostname};`;
+
+      const select = document.querySelector<HTMLSelectElement>(".goog-te-combo");
+      if (select) {
+        select.value = lang.gtCode;
+        select.dispatchEvent(new Event("change"));
+      } else {
+        window.location.reload();
+      }
+    } catch (err) {
+      console.warn("Language translation error:", err);
+    }
+  };
 
   const navLinks = [
     { href: "/", label: "Leaderboard" },
@@ -77,38 +160,45 @@ export function Navbar() {
           })}
         </nav>
 
-        {/* Right Tools (Language, Theme, Search, Admin) */}
+        {/* Right Tools (Language, Theme) */}
         <div className="flex items-center space-x-2">
           {/* Language Selector */}
-          <div className="relative">
+          <div className="relative" ref={langRef}>
             <button
               onClick={() => setLangOpen(!langOpen)}
-              className="p-2 rounded-full hover:bg-neutral-200/50 dark:hover:bg-neutral-800/50 transition-colors text-neutral-600 dark:text-neutral-300 flex items-center justify-center"
-              title="Select Language"
-              aria-label="Select Language"
+              className="h-8 px-2.5 rounded-full hover:bg-neutral-200/60 dark:hover:bg-neutral-800/60 transition-colors text-neutral-800 dark:text-neutral-200 flex items-center space-x-1.5 text-xs font-medium border border-neutral-300/40 dark:border-neutral-700/50"
+              title={`Language: ${selectedLang.label}`}
+              aria-label="Change language"
             >
-              <Globe className="w-4 h-4" />
+              <span className="text-sm leading-none">{selectedLang.flag}</span>
+              <span className="font-semibold text-[11px] tracking-wide">{selectedLang.code}</span>
             </button>
 
             {langOpen && (
-              <div className="absolute right-0 mt-2 w-36 liquid-glass rounded-2xl shadow-xl py-2 z-50 text-xs border border-surface-borderLight dark:border-surface-borderDark">
-                {LANGUAGES.map((l) => (
-                  <button
-                    key={l.code}
-                    onClick={() => {
-                      setSelectedLang(l.code);
-                      setLangOpen(false);
-                    }}
-                    className={`w-full text-left px-3.5 py-1.5 hover:bg-neutral-200/60 dark:hover:bg-neutral-800/60 transition-colors flex items-center justify-between ${
-                      selectedLang === l.code ? "font-bold text-accent" : ""
-                    }`}
-                  >
-                    <span>{l.label}</span>
-                    {selectedLang === l.code && (
-                      <span className="w-1.5 h-1.5 rounded-full bg-black dark:bg-white"></span>
-                    )}
-                  </button>
-                ))}
+              <div className="absolute right-0 mt-2 w-44 liquid-glass rounded-2xl shadow-xl py-1.5 z-50 text-xs border border-surface-borderLight dark:border-surface-borderDark max-h-[75vh] overflow-y-auto">
+                {LANGUAGES.map((l) => {
+                  const isSelected = selectedLang.code === l.code;
+                  return (
+                    <button
+                      key={l.code}
+                      onClick={() => handleSelectLanguage(l)}
+                      className={`w-full text-left px-3 py-1.5 hover:bg-neutral-200/60 dark:hover:bg-neutral-800/60 transition-colors flex items-center justify-between ${
+                        isSelected ? "font-bold text-accent bg-neutral-200/40 dark:bg-neutral-800/40" : ""
+                      }`}
+                    >
+                      <div className="flex items-center space-x-2">
+                        <span className="text-sm leading-none">{l.flag}</span>
+                        <span className="font-mono text-[10px] uppercase font-bold text-neutral-500 dark:text-neutral-400 w-5">
+                          {l.code}
+                        </span>
+                        <span className="text-xs">{l.label}</span>
+                      </div>
+                      {isSelected && (
+                        <span className="w-1.5 h-1.5 rounded-full bg-black dark:bg-white mr-1"></span>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
             )}
           </div>
