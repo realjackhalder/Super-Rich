@@ -34,7 +34,6 @@ export default function RootLayout({
               <div className="flex items-center space-x-6">
                 <a href="#api" className="hover:underline">Free API</a>
                 <a href="/admin" className="hover:underline">Admin Login</a>
-                <span className="text-neutral-400">Strictly neutral Apple Glass UI</span>
               </div>
             </div>
           </footer>
