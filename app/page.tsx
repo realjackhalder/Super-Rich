@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { INITIAL_50_BILLIONAIRES } from "@/data/billionaires";
 import {
@@ -9,14 +9,48 @@ import {
   ArrowDownRight,
   MapPin,
   TrendingUp,
+  TrendingDown,
   Code,
   ShieldCheck,
   ExternalLink,
+  Activity,
 } from "lucide-react";
 
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCountry, setSelectedCountry] = useState("all");
+  const [rtbStats, setRtbStats] = useState<{
+    date?: string;
+    total?: number;
+    count?: number;
+    topGainers?: any[];
+    topLosers?: any[];
+  } | null>(null);
+
+  useEffect(() => {
+    fetch("/api/rtb/list")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((json) => {
+        if (json?.data?.list) {
+          const list = json.data.list;
+          const sortedByGain = [...list].sort(
+            (a, b) => (b.change?.value || 0) - (a.change?.value || 0)
+          );
+          const sortedByLoss = [...list].sort(
+            (a, b) => (a.change?.value || 0) - (b.change?.value || 0)
+          );
+
+          setRtbStats({
+            date: json.data.date,
+            total: json.data.total,
+            count: json.data.count,
+            topGainers: sortedByGain.slice(0, 3),
+            topLosers: sortedByLoss.slice(0, 3),
+          });
+        }
+      })
+      .catch((err) => console.warn("RTB list fetch skipped:", err));
+  }, []);
 
   const totalWealth = INITIAL_50_BILLIONAIRES.reduce((acc, curr) => acc + curr.netWorth, 0);
 
@@ -40,39 +74,108 @@ export default function HomePage() {
       <section className="text-center py-6 md:py-10 space-y-4">
         <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full text-xs liquid-glass text-neutral-600 dark:text-neutral-300">
           <span className="w-2 h-2 rounded-full bg-gain animate-pulse"></span>
-          <span>Index Tracks 50 Tech Titans Across 12 Countries</span>
+          <span>
+            {rtbStats?.count
+              ? `Real-Time CDN Tracking ${rtbStats.count} Global Billionaires (${rtbStats.date})`
+              : "Tracking Top 50 Tech Titans Across 12 Countries"}
+          </span>
         </div>
         <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-neutral-900 dark:text-white">
           The Real-Time Wealth Index
         </h1>
         <p className="text-base md:text-lg text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto">
-          Childhood-to-present timeline, SEC equity filings, verified residences, court-released email archives, and free public data APIs.
+          Childhood-to-present timelines, SEC equity filings, verified municipal residences, and real-time data powered by RTB API & Grokipedia.
         </p>
 
         {/* Global Wealth Stats Card */}
-        <div className="max-w-xl mx-auto pt-4">
+        <div className="max-w-2xl mx-auto pt-4">
           <div className="liquid-glass rounded-3xl p-6 shadow-sm flex items-center justify-around text-center">
             <div>
               <div className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">
-                Top 50 Combined Wealth
+                Top 50 Combined
               </div>
               <div className="text-2xl md:text-3xl font-extrabold text-neutral-900 dark:text-white mt-1">
-                ${(totalWealth / 1000).toFixed(2)} Trillion
+                ${(totalWealth / 1000).toFixed(2)}T
               </div>
             </div>
             <div className="h-10 w-[1px] bg-neutral-300 dark:bg-neutral-800"></div>
             <div>
               <div className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">
-                Rankings Updated
+                Global Total (Forbes RTB)
+              </div>
+              <div className="text-2xl md:text-3xl font-extrabold text-neutral-900 dark:text-white mt-1">
+                {rtbStats?.total
+                  ? `$${(rtbStats.total / 1e6).toFixed(2)}T`
+                  : "$20.4T"}
+              </div>
+            </div>
+            <div className="h-10 w-[1px] bg-neutral-300 dark:bg-neutral-800"></div>
+            <div>
+              <div className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">
+                Live Status
               </div>
               <div className="text-sm md:text-base font-semibold text-gain flex items-center justify-center mt-1">
                 <span className="w-2 h-2 rounded-full bg-gain mr-1.5"></span>
-                Every Minute
+                Active Sync
               </div>
             </div>
           </div>
         </div>
       </section>
+
+      {/* Real-time Movers Strip (inspired by realtimebillionaires.de) */}
+      {rtbStats?.topGainers && rtbStats.topGainers.length > 0 && (
+        <section className="space-y-3">
+          <div className="flex items-center justify-between text-xs text-neutral-500 font-semibold px-2">
+            <span className="uppercase tracking-wider flex items-center space-x-1.5">
+              <TrendingUp className="w-3.5 h-3.5 text-gain" />
+              <span>Today's Top Daily Movers (RTB CDN)</span>
+            </span>
+            <span className="text-[11px] font-mono text-neutral-400">
+              realtimebillionaires.de sync
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+            {rtbStats.topGainers.map((mover, idx) => (
+              <div
+                key={idx}
+                className="liquid-glass rounded-2xl p-3 space-y-1 text-xs border border-apple-borderLight dark:border-apple-borderDark"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold truncate">{mover.name}</span>
+                  <span className="text-neutral-400 text-[10px]">#{mover.rank}</span>
+                </div>
+                <div className="flex items-center justify-between text-gain font-semibold">
+                  <span>${(mover.networth / 1000).toFixed(1)}B</span>
+                  <span className="text-[11px] flex items-center">
+                    <ArrowUpRight className="w-3 h-3" />
+                    +${(mover.change?.value / 1000).toFixed(1)}B
+                  </span>
+                </div>
+              </div>
+            ))}
+            {rtbStats.topLosers?.map((mover, idx) => (
+              <div
+                key={idx}
+                className="liquid-glass rounded-2xl p-3 space-y-1 text-xs border border-apple-borderLight dark:border-apple-borderDark"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold truncate">{mover.name}</span>
+                  <span className="text-neutral-400 text-[10px]">#{mover.rank}</span>
+                </div>
+                <div className="flex items-center justify-between text-loss font-semibold">
+                  <span>${(mover.networth / 1000).toFixed(1)}B</span>
+                  <span className="text-[11px] flex items-center">
+                    <ArrowDownRight className="w-3 h-3" />
+                    -${Math.abs(mover.change?.value / 1000).toFixed(1)}B
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Top 3 Spotlight Cards (Apple Liquid Glass) */}
       <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -91,7 +194,9 @@ export default function HomePage() {
                   </span>
                   <div className="flex items-center space-x-1 text-xs text-neutral-500">
                     <MapPin className="w-3.5 h-3.5 text-neutral-400" />
-                    <span>{person.currentCity}, {person.currentCountry}</span>
+                    <span>
+                      {person.currentCity}, {person.currentCountry}
+                    </span>
                   </div>
                 </div>
 
@@ -112,8 +217,14 @@ export default function HomePage() {
                       isPositive ? "text-gain" : "text-loss"
                     }`}
                   >
-                    {isPositive ? <ArrowUpRight className="w-3.5 h-3.5 mr-0.5" /> : <ArrowDownRight className="w-3.5 h-3.5 mr-0.5" />}
-                    {isPositive ? "+" : ""}${Math.abs(person.netWorthChangeDay).toFixed(1)}B today ({isPositive ? "+" : ""}{person.netWorthChangePercent}%)
+                    {isPositive ? (
+                      <ArrowUpRight className="w-3.5 h-3.5 mr-0.5" />
+                    ) : (
+                      <ArrowDownRight className="w-3.5 h-3.5 mr-0.5" />
+                    )}
+                    {isPositive ? "+" : ""}
+                    ${Math.abs(person.netWorthChangeDay).toFixed(1)}B today ({isPositive ? "+" : ""}
+                    {person.netWorthChangePercent}%)
                   </div>
                 </div>
               </div>
@@ -155,7 +266,9 @@ export default function HomePage() {
               onChange={(e) => setSelectedCountry(e.target.value)}
               className="liquid-glass rounded-full px-3 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-accent bg-transparent cursor-pointer"
             >
-              <option value="all" className="bg-white dark:bg-black">All Countries ({uniqueCountries.length})</option>
+              <option value="all" className="bg-white dark:bg-black">
+                All Countries ({uniqueCountries.length})
+              </option>
               {uniqueCountries.map((c) => (
                 <option key={c} value={c} className="bg-white dark:bg-black">
                   {c}
@@ -192,7 +305,10 @@ export default function HomePage() {
                         #{person.rank}
                       </td>
                       <td className="py-3.5 px-4 font-semibold text-neutral-900 dark:text-neutral-100">
-                        <Link href={`/p/${person.slug}`} className="hover:underline flex items-center space-x-1.5">
+                        <Link
+                          href={`/p/${person.slug}`}
+                          className="hover:underline flex items-center space-x-1.5"
+                        >
                           <span>{person.name}</span>
                           {person.rank <= 5 && (
                             <ShieldCheck className="w-3.5 h-3.5 text-accent inline" />
@@ -215,7 +331,9 @@ export default function HomePage() {
                       <td className="py-3.5 px-4 text-neutral-600 dark:text-neutral-400">
                         <div className="flex items-center space-x-1">
                           <MapPin className="w-3 h-3 text-neutral-400" />
-                          <span>{person.currentCity}, {person.currentCountry}</span>
+                          <span>
+                            {person.currentCity}, {person.currentCountry}
+                          </span>
                         </div>
                       </td>
                       <td className="py-3.5 px-4 text-neutral-600 dark:text-neutral-400 font-medium">
@@ -242,27 +360,25 @@ export default function HomePage() {
       <section className="solid-card rounded-3xl p-8 space-y-4" id="api">
         <div className="flex items-center space-x-2 text-accent">
           <Code className="w-5 h-5" />
-          <span className="font-semibold text-xs uppercase tracking-wider">Free Public API</span>
+          <span className="font-semibold text-xs uppercase tracking-wider">
+            Free Public API & RTB CDN Sync
+          </span>
         </div>
-        <h2 className="text-2xl font-bold tracking-tight">Integrate SuperRich Live Data For Free</h2>
+        <h2 className="text-2xl font-bold tracking-tight">
+          Integrate SuperRich Live Data For Free
+        </h2>
         <p className="text-xs text-neutral-500 max-w-xl">
-          Integrate real-time rankings and billionaire data into your own applications with zero subscription costs. Supports 13 languages.
+          Integrate real-time rankings, asset breakdowns, and billionaire data into your own applications with zero subscription costs.
         </p>
 
         <div className="liquid-glass rounded-2xl p-4 font-mono text-xs overflow-x-auto text-neutral-800 dark:text-neutral-200 border border-apple-borderLight dark:border-apple-borderDark">
           <div className="text-neutral-400">// Fetch Top Tech Billionaires Live</div>
-          <div className="text-accent mt-1">curl -X GET https://superrich.tech/api/v1/rankings</div>
-          <div className="text-neutral-400 mt-2">// Response Preview:</div>
-          <div className="text-neutral-500 mt-1 whitespace-pre">
-{`{
-  "status": "success",
-  "total": 50,
-  "updated_at": "${new Date().toISOString()}",
-  "data": [
-    { "rank": 1, "slug": "elon-musk", "name": "Elon Musk", "net_worth_billion": 412.6, "city": "Austin", "country": "United States" },
-    { "rank": 2, "slug": "larry-ellison", "name": "Larry Ellison", "net_worth_billion": 218.4, "city": "Lanai", "country": "United States" }
-  ]
-}`}
+          <div className="text-accent mt-1">
+            curl -X GET https://superrich.tech/api/v1/rankings
+          </div>
+          <div className="text-neutral-400 mt-2">// Fetch Real-Time CDN Assets</div>
+          <div className="text-accent mt-1">
+            curl -X GET https://superrich.tech/api/rtb/profile/elon-musk
           </div>
         </div>
       </section>
