@@ -11,15 +11,14 @@ const LANGUAGES = [
   { code: "es", label: "Español" },
   { code: "pt", label: "Português" },
   { code: "fr", label: "Français" },
-  { code: "zh", label: "中文 (Mandarin)" },
+  { code: "zh", label: "中文" },
   { code: "ko", label: "한국어" },
   { code: "ja", label: "日本語" },
   { code: "th", label: "ไทย" },
   { code: "vi", label: "Tiếng Việt" },
   { code: "bn", label: "বাংলা" },
-  { code: "ar", label: "العربية (RTL)" },
+  { code: "ar", label: "العربية" },
   { code: "my", label: "မြန်မာ" },
-  { code: "id", label: "Bahasa Indonesia" },
 ];
 
 export function Navbar() {
@@ -84,18 +83,15 @@ export function Navbar() {
           <div className="relative">
             <button
               onClick={() => setLangOpen(!langOpen)}
-              className="p-2 rounded-full hover:bg-neutral-200/50 dark:hover:bg-neutral-800/50 transition-colors text-neutral-600 dark:text-neutral-300 flex items-center space-x-1 text-xs"
+              className="p-2 rounded-full hover:bg-neutral-200/50 dark:hover:bg-neutral-800/50 transition-colors text-neutral-600 dark:text-neutral-300 flex items-center justify-center"
               title="Select Language"
+              aria-label="Select Language"
             >
               <Globe className="w-4 h-4" />
-              <span className="uppercase font-semibold text-[11px]">{selectedLang}</span>
             </button>
 
             {langOpen && (
-              <div className="absolute right-0 mt-2 w-48 liquid-glass rounded-2xl shadow-xl py-2 z-50 text-xs border border-surface-borderLight dark:border-surface-borderDark">
-                <div className="px-3 py-1 font-semibold text-neutral-400 text-[10px] uppercase tracking-wider">
-                  13 Languages
-                </div>
+              <div className="absolute right-0 mt-2 w-36 liquid-glass rounded-2xl shadow-xl py-2 z-50 text-xs border border-surface-borderLight dark:border-surface-borderDark">
                 {LANGUAGES.map((l) => (
                   <button
                     key={l.code}
@@ -108,7 +104,9 @@ export function Navbar() {
                     }`}
                   >
                     <span>{l.label}</span>
-                    <span className="uppercase opacity-50 text-[10px]">{l.code}</span>
+                    {selectedLang === l.code && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-black dark:bg-white"></span>
+                    )}
                   </button>
                 ))}
               </div>
