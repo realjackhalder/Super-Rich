@@ -7,26 +7,38 @@ import { Sun, Moon, Search, Globe, Activity } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 
 export interface LanguageOption {
-  code: string;       // e.g. "EN", "MM", "ES", "ZH"
-  gtCode: string;     // Google Translate code: "en", "mm", "es", "zh-CN"
   label: string;      // Native name
-  flag: string;       // Country flag emoji
 }
 
 const LANGUAGES: LanguageOption[] = [
-  { code: "EN", gtCode: "en", label: "English", flag: "🇺🇸" },
-  { code: "MM", gtCode: "mm", label: "မြန်မာ", flag: "🇲🇲" },
-  { code: "ES", gtCode: "es", label: "Español", flag: "🇪🇸" },
-  { code: "ZH", gtCode: "zh-CN", label: "中文", flag: "🇨🇳" },
-  { code: "JA", gtCode: "ja", label: "日本語", flag: "🇯🇵" },
-  { code: "KO", gtCode: "ko", label: "한국어", flag: "🇰🇷" },
-  { code: "FR", gtCode: "fr", label: "Français", flag: "🇫🇷" },
-  { code: "PT", gtCode: "pt", label: "Português", flag: "🇵🇹" },
-  { code: "TH", gtCode: "th", label: "ไทย", flag: "🇹🇭" },
-  { code: "VI", gtCode: "vi", label: "Tiếng Việt", flag: "🇻🇳" },
-  { code: "BN", gtCode: "bn", label: "বাংলা", flag: "🇧🇩" },
-  { code: "AR", gtCode: "ar", label: "العربية", flag: "🇸🇦" },
+  { label: "English" },
+  { label: "မြန်မာ" },
+  { label: "Español" },
+  { label: "中文" },
+  { label: "日本語" },
+  { label: "한국어" },
+  { label: "Français" },
+  { label: "Português" },
+  { label: "ไทย" },
+  { label: "Tiếng Việt" },
+  { label: "বাংলা" },
+  { label: "العربية" },
 ];
+
+const TRANSLATION_MAP: Record<string, string> = {
+  English: "en",
+  မြန်မာ: "mm",
+  Español: "es",
+  中文: "zh-CN",
+  日本語: "ja",
+  한국어: "ko",
+  Français: "fr",
+  Português: "pt",
+  ไทย: "th",
+  "Tiếng Việt": "vi",
+  বাংলা: "bn",
+  العربية: "ar",
+};
 
 export function Navbar() {
   const pathname = usePathname();
@@ -40,9 +52,9 @@ export function Navbar() {
     setMounted(true);
 
     try {
-      const savedCode = localStorage.getItem("sr_selected_lang");
-      if (savedCode) {
-        const match = LANGUAGES.find((l) => l.code === savedCode);
+      const saved = localStorage.getItem("sr_selected_lang");
+      if (saved) {
+        const match = LANGUAGES.find((l) => l.label === saved);
         if (match) {
           setSelectedLang(match);
           return;
@@ -53,9 +65,12 @@ export function Navbar() {
       const matchCookie = document.cookie.match(/googtrans=\/en\/([a-zA-Z-]+)/);
       if (matchCookie && matchCookie[1]) {
         const gt = matchCookie[1];
-        const match = LANGUAGES.find((l) => l.gtCode === gt || (gt === "my" && l.code === "MM"));
-        if (match) {
-          setSelectedLang(match);
+        const labelKey = Object.keys(TRANSLATION_MAP).find(
+          (key) => TRANSLATION_MAP[key] === gt || (gt === "my" && key === "မြန်မာ")
+        );
+        if (labelKey) {
+          const match = LANGUAGES.find((l) => l.label === labelKey);
+          if (match) setSelectedLang(match);
         }
       }
     } catch {
@@ -81,9 +96,10 @@ export function Navbar() {
     if (typeof window === "undefined") return;
 
     try {
-      localStorage.setItem("sr_selected_lang", lang.code);
+      localStorage.setItem("sr_selected_lang", lang.label);
+      const gtCode = TRANSLATION_MAP[lang.label] || "en";
 
-      if (lang.gtCode === "en") {
+      if (gtCode === "en") {
         // Clear translation cookies to restore original English
         document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
         document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${window.location.hostname};`;
@@ -100,20 +116,20 @@ export function Navbar() {
       }
 
       // Set cookie for Google Translate
-      document.cookie = `googtrans=/en/${lang.gtCode}; path=/;`;
-      document.cookie = `googtrans=/en/${lang.gtCode}; path=/; domain=${window.location.hostname};`;
-      if (lang.gtCode === "mm") {
+      document.cookie = `googtrans=/en/${gtCode}; path=/;`;
+      document.cookie = `googtrans=/en/${gtCode}; path=/; domain=${window.location.hostname};`;
+      if (gtCode === "mm") {
         document.cookie = `googtrans=/en/my; path=/;`;
         document.cookie = `googtrans=/en/my; path=/; domain=${window.location.hostname};`;
       }
 
       const select = document.querySelector<HTMLSelectElement>(".goog-te-combo");
       if (select) {
-        if (lang.gtCode === "mm") {
+        if (gtCode === "mm") {
           const hasMm = Array.from(select.options).some((o) => o.value === "mm");
           select.value = hasMm ? "mm" : "my";
         } else {
-          select.value = lang.gtCode;
+          select.value = gtCode;
         }
         select.dispatchEvent(new Event("change"));
       } else {
@@ -175,33 +191,27 @@ export function Navbar() {
           <div className="relative" ref={langRef}>
             <button
               onClick={() => setLangOpen(!langOpen)}
-              className="h-8 px-2.5 rounded-full hover:bg-neutral-200/60 dark:hover:bg-neutral-800/60 transition-colors text-neutral-800 dark:text-neutral-200 flex items-center space-x-1.5 text-xs font-medium border border-neutral-300/40 dark:border-neutral-700/50"
+              className="h-8 px-3 rounded-full hover:bg-neutral-200/60 dark:hover:bg-neutral-800/60 transition-colors text-neutral-800 dark:text-neutral-200 flex items-center space-x-1.5 text-xs font-medium border border-neutral-300/40 dark:border-neutral-700/50"
               title={`Language: ${selectedLang.label}`}
               aria-label="Change language"
             >
-              <span className="text-sm leading-none">{selectedLang.flag}</span>
-              <span className="font-semibold text-[11px] tracking-wide">{selectedLang.code}</span>
+              <Globe className="w-3.5 h-3.5 text-neutral-500 dark:text-neutral-400" />
+              <span className="text-xs font-medium">{selectedLang.label}</span>
             </button>
 
             {langOpen && (
-              <div className="absolute right-0 mt-2 w-44 liquid-glass rounded-2xl shadow-xl py-1.5 z-50 text-xs border border-surface-borderLight dark:border-surface-borderDark max-h-[75vh] overflow-y-auto">
+              <div className="absolute right-0 mt-2 w-36 liquid-glass rounded-2xl shadow-xl py-1.5 z-50 text-xs border border-surface-borderLight dark:border-surface-borderDark max-h-[75vh] overflow-y-auto">
                 {LANGUAGES.map((l) => {
-                  const isSelected = selectedLang.code === l.code;
+                  const isSelected = selectedLang.label === l.label;
                   return (
                     <button
-                      key={l.code}
+                      key={l.label}
                       onClick={() => handleSelectLanguage(l)}
-                      className={`w-full text-left px-3 py-1.5 hover:bg-neutral-200/60 dark:hover:bg-neutral-800/60 transition-colors flex items-center justify-between ${
+                      className={`w-full text-left px-3.5 py-1.5 hover:bg-neutral-200/60 dark:hover:bg-neutral-800/60 transition-colors flex items-center justify-between ${
                         isSelected ? "font-bold text-accent bg-neutral-200/40 dark:bg-neutral-800/40" : ""
                       }`}
                     >
-                      <div className="flex items-center space-x-2">
-                        <span className="text-sm leading-none">{l.flag}</span>
-                        <span className="font-mono text-[10px] uppercase font-bold text-neutral-500 dark:text-neutral-400 w-5">
-                          {l.code}
-                        </span>
-                        <span className="text-xs">{l.label}</span>
-                      </div>
+                      <span>{l.label}</span>
                       {isSelected && (
                         <span className="w-1.5 h-1.5 rounded-full bg-black dark:bg-white mr-1"></span>
                       )}
