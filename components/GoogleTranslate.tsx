@@ -36,6 +36,49 @@ export function GoogleTranslate() {
     if (window.google && window.google.translate && window.googleTranslateElementInit) {
       window.googleTranslateElementInit();
     }
+
+    // Function to enforce 0 top offset and hide any Google Translate banner
+    const suppressBanner = () => {
+      if (document.body && document.body.style.top !== "0px" && document.body.style.top !== "") {
+        document.body.style.setProperty("top", "0px", "important");
+        document.body.style.setProperty("position", "static", "important");
+      }
+      if (document.documentElement && document.documentElement.style.top !== "0px" && document.documentElement.style.top !== "") {
+        document.documentElement.style.setProperty("top", "0px", "important");
+      }
+
+      // Hide banner iframes or container elements
+      const banners = document.querySelectorAll<HTMLElement>(
+        'iframe.goog-te-banner-frame, .goog-te-banner-frame, .VIpgJd-ZVi9od-ORHb-OEVmcd, body > .skiptranslate, body > div.skiptranslate, iframe[id*=":1.container"]'
+      );
+      banners.forEach((el) => {
+        el.style.setProperty("display", "none", "important");
+        el.style.setProperty("visibility", "hidden", "important");
+        el.style.setProperty("height", "0px", "important");
+        el.style.setProperty("width", "0px", "important");
+        el.style.setProperty("opacity", "0", "important");
+        el.style.setProperty("pointer-events", "none", "important");
+      });
+    };
+
+    suppressBanner();
+
+    const observer = new MutationObserver(suppressBanner);
+    observer.observe(document.body, {
+      childList: true,
+      subtree: false,
+      attributes: true,
+      attributeFilter: ["style", "class"],
+    });
+
+    const interval = setInterval(suppressBanner, 250);
+    const timeout = setTimeout(() => clearInterval(interval), 10000);
+
+    return () => {
+      observer.disconnect();
+      clearInterval(interval);
+      clearTimeout(timeout);
+    };
   }, []);
 
   return (
