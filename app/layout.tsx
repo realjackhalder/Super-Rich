@@ -29,7 +29,7 @@ export default function RootLayout({
           <footer className="w-full border-t border-neutral-200/60 dark:border-neutral-800/80 py-8 px-4 text-center text-xs text-neutral-500">
             <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
               <div>
-                © {new Date().getFullYear()} SuperRich. All facts sourced & verified against official SEC filings, court records, and Wikidata.
+                © {new Date().getFullYear()} SuperRich.
               </div>
               <div className="flex items-center space-x-6">
                 <a href="#api" className="hover:underline">Free API</a>
