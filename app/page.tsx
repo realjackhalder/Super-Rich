@@ -140,7 +140,7 @@ export default function HomePage() {
             {rtbStats.topGainers.map((mover, idx) => (
               <div
                 key={idx}
-                className="liquid-glass rounded-2xl p-3 space-y-1 text-xs border border-apple-borderLight dark:border-apple-borderDark"
+                className="liquid-glass rounded-2xl p-3 space-y-1 text-xs border border-surface-borderLight dark:border-surface-borderDark"
               >
                 <div className="flex items-center justify-between">
                   <span className="font-semibold truncate">{mover.name}</span>
@@ -158,7 +158,7 @@ export default function HomePage() {
             {rtbStats.topLosers?.map((mover, idx) => (
               <div
                 key={idx}
-                className="liquid-glass rounded-2xl p-3 space-y-1 text-xs border border-apple-borderLight dark:border-apple-borderDark"
+                className="liquid-glass rounded-2xl p-3 space-y-1 text-xs border border-surface-borderLight dark:border-surface-borderDark"
               >
                 <div className="flex items-center justify-between">
                   <span className="font-semibold truncate">{mover.name}</span>
@@ -279,7 +279,7 @@ export default function HomePage() {
         </div>
 
         {/* Table of Billionaires */}
-        <div className="liquid-glass rounded-3xl overflow-hidden border border-apple-borderLight dark:border-apple-borderDark">
+        <div className="liquid-glass rounded-3xl overflow-hidden border border-surface-borderLight dark:border-surface-borderDark">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead className="border-b border-neutral-200/60 dark:border-neutral-800/80 bg-neutral-100/40 dark:bg-neutral-900/40 text-neutral-500 uppercase tracking-wider font-semibold">
@@ -356,22 +356,31 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Free Public API Section */}
+      {/* API Overview Section */}
       <section className="solid-card rounded-3xl p-8 space-y-4" id="api">
-        <div className="flex items-center space-x-2 text-accent">
-          <Code className="w-5 h-5" />
-          <span className="font-semibold text-xs uppercase tracking-wider">
-            Free Public API & RTB CDN Sync
-          </span>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2 text-accent">
+            <Code className="w-5 h-5" />
+            <span className="font-semibold text-xs uppercase tracking-wider">
+              API Overview
+            </span>
+          </div>
+          <Link
+            href="/docs"
+            className="text-xs font-semibold text-accent hover:underline flex items-center space-x-1"
+          >
+            <span>View Full API Docs</span>
+            <ArrowUpRight className="w-3.5 h-3.5" />
+          </Link>
         </div>
         <h2 className="text-2xl font-bold tracking-tight">
-          Integrate SuperRich Live Data For Free
+          Integrate SuperRich Live Data
         </h2>
         <p className="text-xs text-neutral-500 max-w-xl">
           Integrate real-time rankings, asset breakdowns, and billionaire data into your own applications with zero subscription costs.
         </p>
 
-        <div className="liquid-glass rounded-2xl p-4 font-mono text-xs overflow-x-auto text-neutral-800 dark:text-neutral-200 border border-apple-borderLight dark:border-apple-borderDark">
+        <div className="liquid-glass rounded-2xl p-4 font-mono text-xs overflow-x-auto text-neutral-800 dark:text-neutral-200 border border-surface-borderLight dark:border-surface-borderDark">
           <div className="text-neutral-400">// Fetch Top Tech Billionaires Live</div>
           <div className="text-accent mt-1">
             curl -X GET https://superrich.tech/api/v1/rankings

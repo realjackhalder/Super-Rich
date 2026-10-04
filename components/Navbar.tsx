@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
-import { Sun, Moon, Search, Globe, Shield, Activity } from "lucide-react";
+import { Sun, Moon, Search, Globe, Activity } from "lucide-react";
 import { useState, useEffect } from "react";
 
 const LANGUAGES = [
@@ -36,8 +36,9 @@ export function Navbar() {
   const navLinks = [
     { href: "/", label: "Leaderboard" },
     { href: "/#timeline", label: "Timeline" },
-    { href: "/#companies", label: "Companies" },
-    { href: "/#api", label: "Free API" },
+    { href: "/docs", label: "API Overview" },
+    { href: "/about", label: "About" },
+    { href: "/faq", label: "FAQ" },
   ];
 
   return (
@@ -91,7 +92,7 @@ export function Navbar() {
             </button>
 
             {langOpen && (
-              <div className="absolute right-0 mt-2 w-48 liquid-glass rounded-2xl shadow-xl py-2 z-50 text-xs border border-apple-borderLight dark:border-apple-borderDark">
+              <div className="absolute right-0 mt-2 w-48 liquid-glass rounded-2xl shadow-xl py-2 z-50 text-xs border border-surface-borderLight dark:border-surface-borderDark">
                 <div className="px-3 py-1 font-semibold text-neutral-400 text-[10px] uppercase tracking-wider">
                   13 Languages
                 </div>
@@ -124,15 +125,6 @@ export function Navbar() {
               {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </button>
           )}
-
-          {/* Admin Control Access */}
-          <Link
-            href="/admin"
-            className="p-2 rounded-full hover:bg-neutral-200/50 dark:hover:bg-neutral-800/50 transition-colors text-neutral-500 hover:text-neutral-900 dark:hover:text-white"
-            title="Admin Panel"
-          >
-            <Shield className="w-4 h-4" />
-          </Link>
         </div>
       </div>
     </header>

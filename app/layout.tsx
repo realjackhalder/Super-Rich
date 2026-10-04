@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Navbar } from "@/components/Navbar";
@@ -31,9 +32,13 @@ export default function RootLayout({
               <div>
                 © {new Date().getFullYear()} SuperRich.
               </div>
-              <div className="flex items-center space-x-6">
-                <a href="#api" className="hover:underline">Free API</a>
-                <a href="/admin" className="hover:underline">Admin Login</a>
+              <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+                <Link href="/about" className="hover:underline">About</Link>
+                <Link href="/docs" className="hover:underline">API Overview</Link>
+                <Link href="/faq" className="hover:underline">FAQ</Link>
+                <Link href="/terms" className="hover:underline">Terms</Link>
+                <Link href="/legal" className="hover:underline">Legal</Link>
+                <Link href="/cookies" className="hover:underline">Cookies</Link>
               </div>
             </div>
           </footer>

@@ -116,7 +116,7 @@ export default async function AdminDashboardPage() {
           {pendingQueue.map((item) => (
             <div
               key={item.id}
-              className="liquid-glass rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 border border-apple-borderLight dark:border-apple-borderDark"
+              className="liquid-glass rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 border border-surface-borderLight dark:border-surface-borderDark"
             >
               <div className="space-y-1">
                 <div className="flex items-center space-x-2 text-xs">

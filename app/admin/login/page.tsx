@@ -39,7 +39,7 @@ export default function AdminLoginPage() {
 
   return (
     <div className="min-h-[70vh] flex items-center justify-center px-4">
-      <div className="liquid-glass rounded-3xl p-8 max-w-md w-full space-y-6 shadow-xl border border-apple-borderLight dark:border-apple-borderDark">
+      <div className="liquid-glass rounded-3xl p-8 max-w-md w-full space-y-6 shadow-xl border border-surface-borderLight dark:border-surface-borderDark">
         <div className="text-center space-y-2">
           <div className="w-12 h-12 rounded-full bg-black dark:bg-white text-white dark:text-black flex items-center justify-center mx-auto shadow-sm">
             <Shield className="w-6 h-6" />

@@ -712,7 +712,7 @@ export default function BillionaireProfilePage({
                 {person.legal.map((item, idx) => (
                   <div
                     key={idx}
-                    className="liquid-glass rounded-2xl p-5 space-y-2 border border-apple-borderLight dark:border-apple-borderDark"
+                    className="liquid-glass rounded-2xl p-5 space-y-2 border border-surface-borderLight dark:border-surface-borderDark"
                   >
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <h4 className="font-semibold text-sm">{item.caseName}</h4>
@@ -793,7 +793,7 @@ export default function BillionaireProfilePage({
                   {person.courtEmails.map((cEmail, idx) => (
                     <div
                       key={idx}
-                      className="liquid-glass rounded-2xl p-5 space-y-3 font-mono text-xs border border-apple-borderLight dark:border-apple-borderDark"
+                      className="liquid-glass rounded-2xl p-5 space-y-3 font-mono text-xs border border-surface-borderLight dark:border-surface-borderDark"
                     >
                       <div className="flex items-center justify-between text-neutral-500 border-b border-neutral-200/50 dark:border-neutral-800/80 pb-2">
                         <span>
