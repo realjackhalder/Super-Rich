@@ -8,14 +8,14 @@ import { useState, useEffect, useRef } from "react";
 
 export interface LanguageOption {
   code: string;       // e.g. "EN", "MM", "ES", "ZH"
-  gtCode: string;     // Google Translate code: "en", "my", "es", "zh-CN"
+  gtCode: string;     // Google Translate code: "en", "mm", "es", "zh-CN"
   label: string;      // Native name
   flag: string;       // Country flag emoji
 }
 
 const LANGUAGES: LanguageOption[] = [
   { code: "EN", gtCode: "en", label: "English", flag: "🇺🇸" },
-  { code: "MM", gtCode: "my", label: "မြန်မာ", flag: "🇲🇲" },
+  { code: "MM", gtCode: "mm", label: "မြန်မာ", flag: "🇲🇲" },
   { code: "ES", gtCode: "es", label: "Español", flag: "🇪🇸" },
   { code: "ZH", gtCode: "zh-CN", label: "中文", flag: "🇨🇳" },
   { code: "JA", gtCode: "ja", label: "日本語", flag: "🇯🇵" },
@@ -53,7 +53,7 @@ export function Navbar() {
       const matchCookie = document.cookie.match(/googtrans=\/en\/([a-zA-Z-]+)/);
       if (matchCookie && matchCookie[1]) {
         const gt = matchCookie[1];
-        const match = LANGUAGES.find((l) => l.gtCode === gt);
+        const match = LANGUAGES.find((l) => l.gtCode === gt || (gt === "my" && l.code === "MM"));
         if (match) {
           setSelectedLang(match);
         }
@@ -102,10 +102,19 @@ export function Navbar() {
       // Set cookie for Google Translate
       document.cookie = `googtrans=/en/${lang.gtCode}; path=/;`;
       document.cookie = `googtrans=/en/${lang.gtCode}; path=/; domain=${window.location.hostname};`;
+      if (lang.gtCode === "mm") {
+        document.cookie = `googtrans=/en/my; path=/;`;
+        document.cookie = `googtrans=/en/my; path=/; domain=${window.location.hostname};`;
+      }
 
       const select = document.querySelector<HTMLSelectElement>(".goog-te-combo");
       if (select) {
-        select.value = lang.gtCode;
+        if (lang.gtCode === "mm") {
+          const hasMm = Array.from(select.options).some((o) => o.value === "mm");
+          select.value = hasMm ? "mm" : "my";
+        } else {
+          select.value = lang.gtCode;
+        }
         select.dispatchEvent(new Event("change"));
       } else {
         window.location.reload();
