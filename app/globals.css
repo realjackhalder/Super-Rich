@@ -2,105 +2,62 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  :root {
-    --color-surface: #FAF9F5;
-    --color-surface-elevated: #F2EFE9;
-    --color-ink: #141413;
-    --color-muted: #66645E;
-    --color-caption: #8C8A84;
-    --color-border: rgba(20, 20, 19, 0.12);
-  }
-
-  body {
-    background-color: var(--color-surface);
-    color: var(--color-ink);
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
-  }
-
-  ::selection {
-    background-color: #141413;
-    color: #FAF9F5;
-  }
+:root {
+  --bg-color: #F2F2F7;
+  --text-primary: #000000;
+  --text-secondary: #6E6E73;
+  --glass-bg: rgba(255, 255, 255, 0.65);
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.04);
+  --card-bg: #FFFFFF;
+  --card-border: rgba(0, 0, 0, 0.06);
 }
 
-@layer utilities {
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-  .no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-
-  .font-serif-display {
-    font-family: 'Instrument Serif', Georgia, serif;
-    letter-spacing: -0.02em;
-  }
-
-  .font-mono-num {
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
-    font-feature-settings: 'tnum' on, 'lnum' on;
-  }
-
-  .nds-grid {
-    width: 100%;
-    max-width: 1360px;
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-  }
-
-  @media (min-width: 768px) {
-    .nds-grid {
-      padding-left: 2.5rem;
-      padding-right: 2.5rem;
-    }
-  }
-
-  @media (min-width: 1280px) {
-    .nds-grid {
-      padding-left: 3.5rem;
-      padding-right: 3.5rem;
-    }
-  }
+.dark {
+  --bg-color: #000000;
+  --text-primary: #FFFFFF;
+  --text-secondary: #8B8B90;
+  --glass-bg: rgba(28, 28, 30, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.35);
+  --card-bg: #16181C;
+  --card-border: rgba(255, 255, 255, 0.08);
 }
 
-/* Subtle editorial scrollbar */
+body {
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Liquid Glass Utilities */
+.liquid-glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.solid-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+}
+
+/* Custom scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
-
 ::-webkit-scrollbar-track {
-  background: #FAF9F5;
+  background: transparent;
 }
-
 ::-webkit-scrollbar-thumb {
-  background: rgba(20, 20, 19, 0.2);
-  border-radius: 9999px;
+  background: rgba(128, 128, 128, 0.25);
+  border-radius: 999px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(20, 20, 19, 0.4);
+  background: rgba(128, 128, 128, 0.45);
 }
-
-/* Continuous Marquee Animation */
-@keyframes ticker {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}
-
-.animate-ticker {
-  animation: ticker 40s linear infinite;
-}
-
-
