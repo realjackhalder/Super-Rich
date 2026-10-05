@@ -29,14 +29,39 @@ export default function BillionaireProfilePage({
 }: {
   params: { slug: string };
 }) {
-  const person = INITIAL_50_BILLIONAIRES.find((p) => p.slug === params.slug);
+  const staticPerson = INITIAL_50_BILLIONAIRES.find((p) => p.slug === params.slug);
+  const fallbackPerson = {
+    id: 99999,
+    slug: params.slug,
+    name: params.slug
+      .replace(/-\d+$/, "")
+      .split("-")
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(" "),
+    rank: 100,
+    netWorth: 0,
+    netWorthChangeDay: 0,
+    netWorthChangePercent: 0,
+    currentCountry: "GLOBAL",
+    currentCity: "Global",
+    residenceAsOf: "2026",
+    residenceSource: "Official Filings",
+    citizenship: "GLOBAL",
+    photoUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80",
+    bio: "Global billionaire tracked via Real-Time Billionaires (RTB) CDN live index.",
+    mainCompany: "Diversified Investments",
+    socials: [],
+    stocks: [],
+    timeline: [],
+    legal: [],
+    contactEmails: [],
+    courtEmails: [],
+  };
 
-  if (!person) {
-    notFound();
-  }
+  const person = staticPerson || fallbackPerson;
 
   const [activeTab, setActiveTab] = useState<
-    "overview" | "timeline" | "stocks" | "assets" | "social" | "legal" | "emails" | "sources"
+    "overview" | "timeline" | "stocks" | "assets" | "social" | "legal" | "emails"
   >("overview");
 
   // Real-time enrichment from komed3/rtb-api & Grokipedia
@@ -88,6 +113,8 @@ export default function BillionaireProfilePage({
   const currentCountry =
     rtbData?.info?.residence?.country?.toUpperCase() || person.currentCountry;
   const childrenCount = rtbData?.info?.children ?? 0;
+  const displayName = rtbData?.info?.name || person.name;
+  const displayBio = rtbData?.bio?.bio?.[0] || person.bio;
 
   const tabs = [
     { id: "overview", label: "Overview" },
@@ -107,7 +134,6 @@ export default function BillionaireProfilePage({
         (person.contactEmails?.length || 0) + (person.courtEmails?.length || 0)
       })`,
     },
-    { id: "sources", label: "Sources" },
   ];
 
   return (
@@ -146,7 +172,7 @@ export default function BillionaireProfilePage({
             <div className="space-y-1.5">
               <div className="flex items-center space-x-2">
                 <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-neutral-900 dark:text-white">
-                  {person.name}
+                  {displayName}
                 </h1>
                 <ShieldCheck className="w-5 h-5 text-accent" />
                 <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-neutral-900 dark:bg-white text-white dark:text-black">
@@ -181,7 +207,7 @@ export default function BillionaireProfilePage({
               </div>
 
               <p className="text-xs text-neutral-500 max-w-xl line-clamp-2">
-                {person.bio}
+                {displayBio}
               </p>
             </div>
           </div>

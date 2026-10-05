@@ -120,8 +120,15 @@ export function normalizeRTBUri(slugOrName: string): string {
     .replace(/[\s_]+/g, "-");
 }
 
+const memoryCache = new Map<string, { data: any; expiry: number }>();
+
 async function fetchFromRTB<T>(path: string): Promise<T | null> {
   const cleanPath = path.replace(/^\//, "");
+  const cached = memoryCache.get(cleanPath);
+  if (cached && cached.expiry > Date.now()) {
+    return cached.data as T;
+  }
+
   const primaryUrl = `${BASE_URL.replace(/\/$/, "")}/${cleanPath}`;
   const fallbackUrl = `${FALLBACK_BASE_URL}/${cleanPath}`;
 
@@ -130,37 +137,30 @@ async function fetchFromRTB<T>(path: string): Promise<T | null> {
     "User-Agent": "SuperRich-Index/2.0 (realtimebillionaires integration)",
   };
 
-  try {
-    const res = await fetch(primaryUrl, {
-      method: "GET",
-      headers,
-      signal: AbortSignal.timeout(5000),
-      cache: "no-store",
-    });
+  // Prioritize raw.githubusercontent.com for sub-second responses, with statically as secondary
+  const endpoints = [fallbackUrl, primaryUrl];
 
-    if (res.ok) {
-      return (await res.json()) as T;
+  for (const url of endpoints) {
+    try {
+      const res = await fetch(url, {
+        method: "GET",
+        headers,
+        signal: AbortSignal.timeout(3500),
+        cache: "no-store",
+      });
+
+      if (res.ok) {
+        const data = (await res.json()) as T;
+        // Cache in memory for 60 seconds for instantaneous UI interactions
+        memoryCache.set(cleanPath, { data, expiry: Date.now() + 60 * 1000 });
+        return data;
+      }
+    } catch (err) {
+      // Try next endpoint
     }
-  } catch (err) {
-    console.warn(`[RTB API] Primary URL failed (${primaryUrl}), trying fallback.`);
   }
 
-  // Fallback to raw GitHub
-  try {
-    const res = await fetch(fallbackUrl, {
-      method: "GET",
-      headers,
-      signal: AbortSignal.timeout(5000),
-      cache: "no-store",
-    });
-
-    if (res.ok) {
-      return (await res.json()) as T;
-    }
-  } catch (err) {
-    console.error(`[RTB API] Both primary and fallback failed for ${path}:`, err);
-  }
-
+  console.warn(`[RTB API] Failed to fetch remote data for ${path}, falling back to local dataset.`);
   return null;
 }
 

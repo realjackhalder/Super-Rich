@@ -20,10 +20,32 @@ export default function LegalPage() {
       </div>
 
       <div className="space-y-3">
-        <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight">Legal Notice & Disclaimers</h1>
+        <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight">Legal Center</h1>
         <p className="text-sm md:text-base text-neutral-600 dark:text-neutral-400">
-          Important disclosures concerning mathematical valuations, third-party public records, and intellectual property.
+          Official regulatory disclaimers, terms of service, and privacy disclosures.
         </p>
+
+        {/* Legal Hub Navigation */}
+        <div className="flex flex-wrap items-center gap-2 pt-2 border-b border-neutral-200/60 dark:border-neutral-800/80 pb-3">
+          <Link
+            href="/legal"
+            className="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-black text-white dark:bg-white dark:text-black shadow-sm"
+          >
+            Legal Notice &amp; Disclaimers
+          </Link>
+          <Link
+            href="/legal/terms"
+            className="px-3.5 py-1.5 rounded-full text-xs font-medium liquid-glass text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white transition-colors"
+          >
+            Terms of Service
+          </Link>
+          <Link
+            href="/legal/cookies"
+            className="px-3.5 py-1.5 rounded-full text-xs font-medium liquid-glass text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white transition-colors"
+          >
+            Cookie Policy
+          </Link>
+        </div>
       </div>
 
       <div className="space-y-6 text-xs text-neutral-700 dark:text-neutral-300 leading-relaxed">

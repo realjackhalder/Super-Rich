@@ -69,7 +69,7 @@ export async function getGrokipediaPage(
     const res = await fetch(endpoint, {
       method: "GET",
       headers,
-      signal: AbortSignal.timeout(6000),
+      signal: AbortSignal.timeout(2000),
       cache: "no-store",
     });
 

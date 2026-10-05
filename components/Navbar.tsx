@@ -143,13 +143,14 @@ export function Navbar() {
   const navLinks = [
     { href: "/", label: "Leaderboard" },
     { href: "/#timeline", label: "Timeline" },
-    { href: "/docs", label: "API Overview" },
+    { href: "/docs", label: "Docs" },
+    { href: "/status", label: "Status" },
     { href: "/about", label: "About" },
     { href: "/faq", label: "FAQ" },
   ];
 
   return (
-    <header className="sticky top-4 z-50 w-full px-4 max-w-7xl mx-auto">
+    <header className="sticky top-3 z-50 w-full px-4 max-w-7xl mx-auto mt-2">
       <div className="liquid-glass rounded-full px-5 py-3 flex items-center justify-between transition-all duration-200">
         {/* Brand Logo */}
         <Link href="/" className="flex items-center space-x-2.5 group">
