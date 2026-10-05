@@ -130,9 +130,7 @@ export default function BillionaireProfilePage({
     { id: "legal", label: `Legal & Charges (${person.legal?.length || 0})` },
     {
       id: "emails",
-      label: `Emails (${
-        (person.contactEmails?.length || 0) + (person.courtEmails?.length || 0)
-      })`,
+      label: `Court Emails (${person.courtEmails?.length || 0})`,
     },
   ];
 
@@ -178,12 +176,6 @@ export default function BillionaireProfilePage({
                 <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-neutral-900 dark:bg-white text-white dark:text-black">
                   #{rtbData?.latest?.rank || person.rank}
                 </span>
-                {rtbData && (
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-gain/10 text-gain">
-                    <span className="w-1.5 h-1.5 rounded-full bg-gain mr-1 animate-pulse"></span>
-                    CDN LIVE
-                  </span>
-                )}
               </div>
 
               {/* Residence strictly Country + City */}
@@ -237,23 +229,26 @@ export default function BillionaireProfilePage({
           </div>
         </div>
 
-        {/* Social media links row */}
-        {person.socials && person.socials.length > 0 && (
-          <div className="pt-2 flex flex-wrap items-center gap-2">
-            <span className="text-xs text-neutral-400 mr-2">Verified Profiles:</span>
-            {person.socials.map((s, idx) => (
-              <a
-                key={idx}
-                href={s.url}
-                target="_blank"
-                rel="noreferrer"
-                className="liquid-glass px-3 py-1 rounded-full text-xs font-medium hover:bg-neutral-200/50 dark:hover:bg-neutral-800/50 flex items-center space-x-1.5 transition-colors"
-              >
-                <span className="capitalize">{s.platform}</span>
-                <span className="text-neutral-400 font-normal">{s.handle}</span>
-                <ExternalLink className="w-3 h-3 text-neutral-400" />
-              </a>
-            ))}
+        {/* Social media links row (strictly social platforms, excluding generic websites) */}
+        {person.socials &&
+          person.socials.filter((s) => s.platform.toLowerCase() !== "website").length > 0 && (
+            <div className="pt-2 flex flex-wrap items-center gap-2">
+              <span className="text-xs text-neutral-400 mr-2">Verified Profiles:</span>
+              {person.socials
+                .filter((s) => s.platform.toLowerCase() !== "website")
+                .map((s, idx) => (
+                  <a
+                    key={idx}
+                    href={s.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="liquid-glass px-3 py-1 rounded-full text-xs font-medium hover:bg-neutral-200/50 dark:hover:bg-neutral-800/50 flex items-center space-x-1.5 transition-colors"
+                  >
+                    <span className="capitalize">{s.platform}</span>
+                    <span className="text-neutral-400 font-normal">{s.handle}</span>
+                    <ExternalLink className="w-3 h-3 text-neutral-400" />
+                  </a>
+                ))}
 
             {/* Grokipedia Link Chip */}
             {grokipediaData && (
@@ -436,32 +431,6 @@ export default function BillionaireProfilePage({
             </div>
 
             <div className="space-y-6">
-              {/* Residence & Public Records card */}
-              <div className="liquid-glass rounded-3xl p-6 space-y-3 text-xs">
-                <h3 className="font-bold uppercase tracking-wider text-neutral-500">
-                  Verified Residence
-                </h3>
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-2 font-semibold text-sm">
-                    <MapPin className="w-4 h-4 text-accent" />
-                    <span>
-                      {currentCity}, {currentCountry}
-                    </span>
-                  </div>
-                  <div className="text-neutral-500">
-                    <span className="font-medium text-neutral-700 dark:text-neutral-300">
-                      Reporting Basis:{" "}
-                    </span>
-                    {person.residenceSource}
-                  </div>
-                  <div className="text-neutral-400 text-[11px]">
-                    Note: Municipal-level only. Exact street addresses are
-                    never collected to protect safety and comply with privacy
-                    laws.
-                  </div>
-                </div>
-              </div>
-
               {/* Annual historical net worth preview if available */}
               {rtbData?.annual && (
                 <div className="solid-card rounded-3xl p-6 space-y-3 text-xs">
@@ -697,7 +666,9 @@ export default function BillionaireProfilePage({
           <div className="solid-card rounded-3xl p-6 space-y-6">
             <h3 className="text-lg font-bold">Verified Social Media Presence</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {person.socials?.map((soc, idx) => (
+              {person.socials
+                ?.filter((soc) => soc.platform.toLowerCase() !== "website")
+                .map((soc, idx) => (
                 <a
                   key={idx}
                   href={soc.url}
@@ -778,33 +749,7 @@ export default function BillionaireProfilePage({
         {/* TAB 7: EMAILS */}
         {activeTab === "emails" && (
           <div className="space-y-6">
-            {/* Section A: Contact Emails */}
-            <div className="solid-card rounded-3xl p-6 space-y-4">
-              <h3 className="text-lg font-bold">
-                Public Contact & Investor Relations Emails
-              </h3>
-              <p className="text-xs text-neutral-500">
-                Verified public corporate, media, and foundation points of
-                contact.
-              </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                {person.contactEmails?.map((em, idx) => (
-                  <div key={idx} className="liquid-glass rounded-2xl p-4 space-y-1">
-                    <div className="text-[11px] uppercase font-bold text-neutral-500 tracking-wider">
-                      {em.department.replace("_", " ")}
-                    </div>
-                    <div className="font-mono text-xs font-semibold select-all text-neutral-900 dark:text-white">
-                      {em.email}
-                    </div>
-                    <div className="text-[10px] text-neutral-400 pt-1">
-                      Source: {em.source}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Section B: Court-Released Emails */}
+            {/* Court-Released Emails */}
             <div className="solid-card rounded-3xl p-6 space-y-4">
               <h3 className="text-lg font-bold">
                 Court-Released Email Archives
@@ -866,39 +811,8 @@ export default function BillionaireProfilePage({
             </div>
           </div>
         )}
-
-        {/* TAB 8: SOURCES */}
-        {activeTab === "sources" && (
-          <div className="solid-card rounded-3xl p-6 space-y-4">
-            <h3 className="text-lg font-bold">Audit Trail & Data Sources</h3>
-            <p className="text-xs text-neutral-500">
-              In accordance with our methodology, every claim links to official
-              documentation, public databases, and real-time feeds.
-            </p>
-            <ul className="list-disc list-inside text-xs space-y-2 text-neutral-700 dark:text-neutral-300">
-              <li>
-                <strong>Real-Time Billionaires API</strong> (komed3/rtb-api &
-                realtimebillionaires.de) - Live net worth, rank, daily movers,
-                and asset share counts
-              </li>
-              <li>
-                <strong>xAI Grokipedia Knowledge Base</strong> (grokipedia-api) -
-                Full-text articles and citation verification
-              </li>
-              <li>
-                U.S. Securities and Exchange Commission (SEC EDGAR) - Form 4 &
-                Schedule 13D
-              </li>
-              <li>Wikidata Entity Registry (CC0 Public Domain)</li>
-              <li>Wikipedia English Foundation (CC BY-SA 4.0)</li>
-              <li>
-                CourtListener / Free Law Project (Federal Docket Exhibits)
-              </li>
-              <li>Polymarket & Kalshi Prediction Event Resolutions</li>
-            </ul>
-          </div>
-        )}
       </div>
     </div>
   );
 }
+
