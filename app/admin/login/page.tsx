@@ -3,16 +3,23 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Shield, Lock, User, ArrowRight } from "lucide-react";
+import { Turnstile } from "@/components/Turnstile";
 
 export default function AdminLoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!turnstileToken) {
+      setError("Please complete the Cloudflare security verification.");
+      return;
+    }
+
     setError("");
     setLoading(true);
 
@@ -20,7 +27,12 @@ export default function AdminLoginPage() {
       const res = await fetch("/api/admin/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({
+          username,
+          password,
+          turnstileToken,
+          "cf-turnstile-response": turnstileToken,
+        }),
       });
 
       const data = await res.json();
@@ -90,6 +102,17 @@ export default function AdminLoginPage() {
               />
             </div>
           </div>
+
+          {/* Cloudflare Turnstile Verification */}
+          <Turnstile
+            onVerify={(token) => setTurnstileToken(token)}
+            onExpire={() => setTurnstileToken("")}
+          />
+          <input
+            type="hidden"
+            name="cf-turnstile-response"
+            value={turnstileToken}
+          />
 
           <button
             type="submit"
