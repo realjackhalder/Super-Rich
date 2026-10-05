@@ -35,7 +35,6 @@ export default function RootLayout({
               <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
                 <Link href="/about" className="hover:underline">About</Link>
                 <a href="https://docs.superrich.tech" className="hover:underline">Docs</a>
-                <a href="https://status.superrich.tech" className="hover:underline">Status</a>
                 <Link href="/faq" className="hover:underline">FAQ</Link>
                 <div className="flex items-center space-x-1.5 text-neutral-400">
                   <Link href="/legal" className="text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white hover:underline">

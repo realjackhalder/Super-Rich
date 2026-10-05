@@ -10,7 +10,6 @@ export async function GET() {
       status: "operational",
       domain: "https://api.superrich.tech",
       docs: "https://docs.superrich.tech",
-      status_page: "https://status.superrich.tech",
       endpoints: {
         rtb_list: {
           url: "https://api.superrich.tech/rtb/list",

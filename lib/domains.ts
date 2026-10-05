@@ -2,12 +2,11 @@
  * Helper to resolve dynamic URLs across SuperRich subdomains:
  * - superrich.tech (Main site)
  * - docs.superrich.tech (Documentation)
- * - status.superrich.tech (Uptime & telemetry)
  * - api.superrich.tech (Public read-only API)
  * - admin.superrich.tech (Admin management portal)
  */
 
-export type SubdomainType = "main" | "docs" | "status" | "api" | "admin";
+export type SubdomainType = "main" | "docs" | "api" | "admin";
 
 export function getDomainUrl(subdomain?: SubdomainType): string {
   if (typeof window !== "undefined") {
