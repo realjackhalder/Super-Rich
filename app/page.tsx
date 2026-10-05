@@ -691,13 +691,13 @@ export default function HomePage() {
               API Overview
             </span>
           </div>
-          <Link
-            href="/docs"
+          <a
+            href="https://docs.superrich.tech"
             className="text-xs font-semibold text-accent hover:underline flex items-center space-x-1"
           >
             <span>View Full API Docs</span>
             <ArrowUpRight className="w-3.5 h-3.5" />
-          </Link>
+          </a>
         </div>
         <h2 className="text-2xl font-bold tracking-tight">
           Integrate SuperRich Live Data
@@ -709,11 +709,11 @@ export default function HomePage() {
         <div className="liquid-glass rounded-2xl p-4 font-mono text-xs overflow-x-auto text-neutral-800 dark:text-neutral-200 border border-surface-borderLight dark:border-surface-borderDark">
           <div className="text-neutral-400">// Fetch Top Tech Billionaires Live</div>
           <div className="text-accent mt-1">
-            curl -X GET https://superrich.tech/api/v1/rankings
+            curl -X GET https://api.superrich.tech/v1/rankings
           </div>
           <div className="text-neutral-400 mt-2">// Fetch Real-Time CDN Assets</div>
           <div className="text-accent mt-1">
-            curl -X GET https://superrich.tech/api/rtb/profile/elon-musk
+            curl -X GET https://api.superrich.tech/rtb/profile/elon-musk
           </div>
         </div>
       </section>

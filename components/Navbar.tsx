@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import { Sun, Moon, Search, Globe, Activity } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
+import { getDomainUrl } from "@/lib/domains";
 
 export interface LanguageOption {
   label: string;      // Native name
@@ -140,20 +141,32 @@ export function Navbar() {
     }
   };
 
+  const isDocs =
+    (typeof window !== "undefined" && window.location.hostname.startsWith("docs.")) ||
+    pathname.startsWith("/docs");
+
+  const isStatus =
+    (typeof window !== "undefined" && window.location.hostname.startsWith("status.")) ||
+    pathname.startsWith("/status");
+
+  const mainUrl = mounted ? getDomainUrl("main") : "https://superrich.tech";
+  const docsUrl = mounted ? getDomainUrl("docs") : "https://docs.superrich.tech";
+  const statusUrl = mounted ? getDomainUrl("status") : "https://status.superrich.tech";
+
   const navLinks = [
-    { href: "/", label: "Leaderboard" },
-    { href: "/#timeline", label: "Timeline" },
-    { href: "/docs", label: "Docs" },
-    { href: "/status", label: "Status" },
-    { href: "/about", label: "About" },
-    { href: "/faq", label: "FAQ" },
+    { href: `${mainUrl}/`, label: "Leaderboard", isActive: pathname === "/" && !isDocs && !isStatus },
+    { href: `${mainUrl}/#timeline`, label: "Timeline", isActive: false },
+    { href: docsUrl, label: "Docs", isActive: isDocs },
+    { href: statusUrl, label: "Status", isActive: isStatus },
+    { href: `${mainUrl}/about`, label: "About", isActive: pathname === "/about" },
+    { href: `${mainUrl}/faq`, label: "FAQ", isActive: pathname === "/faq" },
   ];
 
   return (
     <header className="sticky top-3 z-50 w-full px-4 max-w-7xl mx-auto mt-2">
       <div className="liquid-glass rounded-full px-5 py-3 flex items-center justify-between transition-all duration-200">
         {/* Brand Logo */}
-        <Link href="/" className="flex items-center space-x-2.5 group">
+        <a href={mainUrl} className="flex items-center space-x-2.5 group">
           <div className="w-8 h-8 rounded-full bg-black dark:bg-white text-white dark:text-black flex items-center justify-center font-bold text-sm tracking-tighter shadow-sm">
             SR
           </div>
@@ -164,24 +177,23 @@ export function Navbar() {
             <span className="w-1.5 h-1.5 rounded-full bg-gain mr-1 animate-pulse"></span>
             LIVE
           </span>
-        </Link>
+        </a>
 
         {/* Center Nav Links */}
         <nav className="hidden md:flex items-center space-x-1 lg:space-x-2">
           {navLinks.map((link) => {
-            const isActive = pathname === link.href;
             return (
-              <Link
-                key={link.href}
+              <a
+                key={link.label}
                 href={link.href}
                 className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all ${
-                  isActive
+                  link.isActive
                     ? "bg-black text-white dark:bg-white dark:text-black shadow-sm"
                     : "text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200/50 dark:hover:bg-neutral-800/50"
                 }`}
               >
                 {link.label}
-              </Link>
+              </a>
             );
           })}
         </nav>

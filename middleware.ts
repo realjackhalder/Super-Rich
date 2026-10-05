@@ -146,48 +146,201 @@ export function middleware(request: NextRequest) {
 
   // 2. Subdomain: docs.superrich.tech
   if (subdomain === "docs") {
-    // If it's an API request originating from docs, let it pass through
-    if (!pathname.startsWith("/api")) {
-      let rewritePath = pathname;
-      if (pathname === "/") {
-        rewritePath = "/docs";
-      } else if (!pathname.startsWith("/docs")) {
-        rewritePath = `/docs${pathname}`;
+    // Clean up /docs path to root
+    if (pathname === "/docs" || pathname === "/docs/") {
+      const targetUrl = new URL(request.url);
+      if (hostname.includes("localhost") || hostname.includes("127.0.0.1")) {
+        targetUrl.host = `docs.localhost:${targetUrl.port || 3000}`;
+      } else {
+        targetUrl.host = "docs.superrich.tech";
+        targetUrl.port = "";
+        targetUrl.protocol = "https:";
       }
-      url.pathname = rewritePath;
+      targetUrl.pathname = "/";
+      return NextResponse.redirect(targetUrl, 301);
+    }
+
+    // Let API routes pass through
+    if (pathname.startsWith("/api")) {
+      return NextResponse.next();
+    }
+
+    // If user accesses main site routes from docs subdomain, redirect to main site
+    if (
+      pathname === "/about" ||
+      pathname === "/faq" ||
+      pathname.startsWith("/legal") ||
+      pathname.startsWith("/p/")
+    ) {
+      const mainUrl = new URL(request.url);
+      if (hostname.includes("localhost") || hostname.includes("127.0.0.1")) {
+        mainUrl.host = `localhost:${mainUrl.port || 3000}`;
+      } else {
+        mainUrl.host = "superrich.tech";
+        mainUrl.port = "";
+        mainUrl.protocol = "https:";
+      }
+      return NextResponse.redirect(mainUrl, 307);
+    }
+
+    // Rewrite root / to /docs so docs page is rendered
+    if (pathname === "/") {
+      url.pathname = "/docs";
       return NextResponse.rewrite(url);
     }
+
+    let rewritePath = pathname;
+    if (!pathname.startsWith("/docs")) {
+      rewritePath = `/docs${pathname}`;
+    }
+    url.pathname = rewritePath;
+    return NextResponse.rewrite(url);
   }
 
   // 3. Subdomain: status.superrich.tech
   if (subdomain === "status") {
-    if (!pathname.startsWith("/api")) {
-      let rewritePath = pathname;
-      if (pathname === "/") {
-        rewritePath = "/status";
-      } else if (!pathname.startsWith("/status")) {
-        rewritePath = `/status${pathname}`;
+    if (pathname === "/status" || pathname === "/status/") {
+      const targetUrl = new URL(request.url);
+      if (hostname.includes("localhost") || hostname.includes("127.0.0.1")) {
+        targetUrl.host = `status.localhost:${targetUrl.port || 3000}`;
+      } else {
+        targetUrl.host = "status.superrich.tech";
+        targetUrl.port = "";
+        targetUrl.protocol = "https:";
       }
-      url.pathname = rewritePath;
+      targetUrl.pathname = "/";
+      return NextResponse.redirect(targetUrl, 301);
+    }
+
+    if (pathname.startsWith("/api")) {
+      return NextResponse.next();
+    }
+
+    if (
+      pathname === "/about" ||
+      pathname === "/faq" ||
+      pathname.startsWith("/legal") ||
+      pathname.startsWith("/p/")
+    ) {
+      const mainUrl = new URL(request.url);
+      if (hostname.includes("localhost") || hostname.includes("127.0.0.1")) {
+        mainUrl.host = `localhost:${mainUrl.port || 3000}`;
+      } else {
+        mainUrl.host = "superrich.tech";
+        mainUrl.port = "";
+        mainUrl.protocol = "https:";
+      }
+      return NextResponse.redirect(mainUrl, 307);
+    }
+
+    if (pathname === "/") {
+      url.pathname = "/status";
       return NextResponse.rewrite(url);
     }
+
+    let rewritePath = pathname;
+    if (!pathname.startsWith("/status")) {
+      rewritePath = `/status${pathname}`;
+    }
+    url.pathname = rewritePath;
+    return NextResponse.rewrite(url);
   }
 
   // 4. Subdomain: admin.superrich.tech
   if (subdomain === "admin") {
-    if (!pathname.startsWith("/api")) {
-      let rewritePath = pathname;
-      if (pathname === "/") {
-        rewritePath = "/admin";
-      } else if (!pathname.startsWith("/admin")) {
-        rewritePath = `/admin${pathname}`;
+    if (pathname === "/admin" || pathname === "/admin/") {
+      const targetUrl = new URL(request.url);
+      if (hostname.includes("localhost") || hostname.includes("127.0.0.1")) {
+        targetUrl.host = `admin.localhost:${targetUrl.port || 3000}`;
+      } else {
+        targetUrl.host = "admin.superrich.tech";
+        targetUrl.port = "";
+        targetUrl.protocol = "https:";
       }
-      url.pathname = rewritePath;
+      targetUrl.pathname = "/";
+      return NextResponse.redirect(targetUrl, 301);
+    }
+
+    if (pathname === "/admin/login") {
+      const targetUrl = new URL(request.url);
+      if (hostname.includes("localhost") || hostname.includes("127.0.0.1")) {
+        targetUrl.host = `admin.localhost:${targetUrl.port || 3000}`;
+      } else {
+        targetUrl.host = "admin.superrich.tech";
+        targetUrl.port = "";
+        targetUrl.protocol = "https:";
+      }
+      targetUrl.pathname = "/login";
+      return NextResponse.redirect(targetUrl, 301);
+    }
+
+    if (pathname.startsWith("/api")) {
+      return NextResponse.next();
+    }
+
+    if (pathname === "/") {
+      url.pathname = "/admin";
       return NextResponse.rewrite(url);
     }
+
+    if (pathname === "/login") {
+      url.pathname = "/admin/login";
+      return NextResponse.rewrite(url);
+    }
+
+    let rewritePath = pathname;
+    if (!pathname.startsWith("/admin")) {
+      rewritePath = `/admin${pathname}`;
+    }
+    url.pathname = rewritePath;
+    return NextResponse.rewrite(url);
   }
 
   // Default Apex Domain routing (superrich.tech / localhost:3000)
+  if (!subdomain || subdomain === "www") {
+    // When a user visits /docs on the main site, redirect directly to docs.superrich.tech
+    if (pathname === "/docs" || pathname.startsWith("/docs/")) {
+      const docsUrl = new URL(request.url);
+      if (hostname.includes("localhost") || hostname.includes("127.0.0.1")) {
+        docsUrl.host = `docs.localhost:${docsUrl.port || 3000}`;
+      } else {
+        docsUrl.host = "docs.superrich.tech";
+        docsUrl.port = "";
+        docsUrl.protocol = "https:";
+      }
+      docsUrl.pathname = pathname === "/docs" ? "/" : pathname.replace(/^\/docs/, "") || "/";
+      return NextResponse.redirect(docsUrl, 307);
+    }
+
+    // When a user visits /status on the main site, redirect directly to status.superrich.tech
+    if (pathname === "/status" || pathname.startsWith("/status/")) {
+      const statusUrl = new URL(request.url);
+      if (hostname.includes("localhost") || hostname.includes("127.0.0.1")) {
+        statusUrl.host = `status.localhost:${statusUrl.port || 3000}`;
+      } else {
+        statusUrl.host = "status.superrich.tech";
+        statusUrl.port = "";
+        statusUrl.protocol = "https:";
+      }
+      statusUrl.pathname = pathname === "/status" ? "/" : pathname.replace(/^\/status/, "") || "/";
+      return NextResponse.redirect(statusUrl, 307);
+    }
+
+    // When a user visits /admin on the main site, redirect directly to admin.superrich.tech
+    if (pathname === "/admin" || pathname.startsWith("/admin/")) {
+      const adminUrl = new URL(request.url);
+      if (hostname.includes("localhost") || hostname.includes("127.0.0.1")) {
+        adminUrl.host = `admin.localhost:${adminUrl.port || 3000}`;
+      } else {
+        adminUrl.host = "admin.superrich.tech";
+        adminUrl.port = "";
+        adminUrl.protocol = "https:";
+      }
+      adminUrl.pathname = pathname === "/admin" ? "/" : pathname.replace(/^\/admin/, "") || "/";
+      return NextResponse.redirect(adminUrl, 307);
+    }
+  }
+
   const response = NextResponse.next();
   if (pathname.startsWith("/api")) {
     response.headers.set("Access-Control-Allow-Origin", "*");

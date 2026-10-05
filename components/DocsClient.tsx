@@ -35,13 +35,13 @@ export function DocsClient() {
     <div className="max-w-5xl mx-auto space-y-8 py-2">
       {/* Back button */}
       <div>
-        <Link
-          href="/"
+        <a
+          href="https://superrich.tech"
           className="inline-flex items-center space-x-1.5 text-xs text-neutral-500 hover:text-black dark:hover:text-white transition-colors"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
-          <span>Back to Global Index</span>
-        </Link>
+          <span>Back to Global Index (superrich.tech)</span>
+        </a>
       </div>
 
       {/* Header */}
