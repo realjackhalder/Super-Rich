@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Shield, Lock, User, ArrowRight } from "lucide-react";
-import { Turnstile } from "@/components/Turnstile";
+import { Turnstile, TurnstileRef } from "@/components/Turnstile";
 
 export default function AdminLoginPage() {
   const [username, setUsername] = useState("");
@@ -11,6 +11,7 @@ export default function AdminLoginPage() {
   const [turnstileToken, setTurnstileToken] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const turnstileRef = useRef<TurnstileRef>(null);
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -41,9 +42,14 @@ export default function AdminLoginPage() {
         router.refresh();
       } else {
         setError(data.message || "Invalid credentials");
+        // Cloudflare Turnstile tokens are single-use: reset widget to allow retry
+        setTurnstileToken("");
+        turnstileRef.current?.reset();
       }
     } catch {
       setError("An unexpected network error occurred");
+      setTurnstileToken("");
+      turnstileRef.current?.reset();
     } finally {
       setLoading(false);
     }
@@ -105,8 +111,14 @@ export default function AdminLoginPage() {
 
           {/* Cloudflare Turnstile Verification */}
           <Turnstile
+            ref={turnstileRef}
+            action="login"
             onVerify={(token) => setTurnstileToken(token)}
             onExpire={() => setTurnstileToken("")}
+            onError={() => {
+              setTurnstileToken("");
+              setError("Verification error. Please retry.");
+            }}
           />
           <input
             type="hidden"

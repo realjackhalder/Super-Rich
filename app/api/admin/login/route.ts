@@ -15,7 +15,9 @@ export async function POST(request: Request) {
       request.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
       "127.0.0.1";
 
-    const turnstileResult = await verifyTurnstile(token, clientIp);
+    const turnstileResult = await verifyTurnstile(token, clientIp, {
+      action: "login",
+    });
     if (!turnstileResult.success) {
       return NextResponse.json(
         {
