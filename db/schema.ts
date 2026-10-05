@@ -184,6 +184,15 @@ export const reviewQueue = pgTable("review_queue", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// 12. Users
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  fullName: text("full_name"),
+  phone: text("phone"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+
 // Relational Definitions
 export const peopleRelations = relations(people, ({ many }) => ({
   socialAccounts: many(socialAccounts),

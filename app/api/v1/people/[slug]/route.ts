@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { INITIAL_50_BILLIONAIRES } from "@/data/billionaires";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(
   request: Request,
   { params }: { params: { slug: string } }

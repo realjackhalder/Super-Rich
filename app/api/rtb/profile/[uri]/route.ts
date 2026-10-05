@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getRTBFullProfile, normalizeRTBUri } from "@/lib/rtb";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(
   request: Request,
   { params }: { params: { uri: string } }

@@ -103,7 +103,7 @@ export type RTBAnnualReport = Record<string, RTBAnnualYear>;
 
 const BASE_URL =
   process.env.RTB_API_BASE_URL ||
-  "https://cdn.statically.io/gh/komed3/rtb-api/v1/api";
+  "https://cdn.statically.io/gh/komed3/rtb-api@main/api";
 
 const FALLBACK_BASE_URL =
   "https://raw.githubusercontent.com/komed3/rtb-api/main/api";
@@ -134,7 +134,8 @@ async function fetchFromRTB<T>(path: string): Promise<T | null> {
     const res = await fetch(primaryUrl, {
       method: "GET",
       headers,
-      next: { revalidate: 86400 }, // Cache 24h
+      signal: AbortSignal.timeout(5000),
+      cache: "no-store",
     });
 
     if (res.ok) {
@@ -149,7 +150,8 @@ async function fetchFromRTB<T>(path: string): Promise<T | null> {
     const res = await fetch(fallbackUrl, {
       method: "GET",
       headers,
-      next: { revalidate: 86400 },
+      signal: AbortSignal.timeout(5000),
+      cache: "no-store",
     });
 
     if (res.ok) {

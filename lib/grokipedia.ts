@@ -69,10 +69,8 @@ export async function getGrokipediaPage(
     const res = await fetch(endpoint, {
       method: "GET",
       headers,
-      next: {
-        // Next.js ISR cache: revalidate every 24 hours (86400 seconds)
-        revalidate: options?.cacheTtlSeconds ?? 86400,
-      },
+      signal: AbortSignal.timeout(6000),
+      cache: "no-store",
     });
 
     if (res.status === 404) {
