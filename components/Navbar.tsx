@@ -13,32 +13,32 @@ export interface LanguageOption {
 
 const LANGUAGES: LanguageOption[] = [
   { label: "English" },
-  { label: "မြန်မာ" },
   { label: "Español" },
+  { label: "Français" },
+  { label: "Português" },
   { label: "中文" },
   { label: "日本語" },
   { label: "한국어" },
-  { label: "Français" },
-  { label: "Português" },
-  { label: "ไทย" },
-  { label: "Tiếng Việt" },
-  { label: "বাংলা" },
   { label: "العربية" },
+  { label: "Tiếng Việt" },
+  { label: "ไทย" },
+  { label: "বাংলা" },
+  { label: "မြန်မာ" },
 ];
 
 const TRANSLATION_MAP: Record<string, string> = {
   English: "en",
-  မြန်မာ: "mm",
   Español: "es",
+  Français: "fr",
+  Português: "pt",
   中文: "zh-CN",
   日本語: "ja",
   한국어: "ko",
-  Français: "fr",
-  Português: "pt",
-  ไทย: "th",
-  "Tiếng Việt": "vi",
-  বাংলা: "bn",
   العربية: "ar",
+  "Tiếng Việt": "vi",
+  ไทย: "th",
+  বাংলা: "bn",
+  မြန်မာ: "mm",
 };
 
 export function Navbar() {
