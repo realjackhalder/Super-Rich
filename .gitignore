@@ -26,3 +26,7 @@ yarn-error.log*
 .DS_Store
 *.pem
 *.tsbuildinfo
+
+# Cloudflare OpenNext / Wrangler
+.open-next/
+.wrangler/
