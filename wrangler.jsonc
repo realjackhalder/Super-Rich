@@ -12,5 +12,9 @@
   },
   "observability": {
     "enabled": true
+  },
+  "vars": {
+    "NEXT_PUBLIC_TURNSTILE_SITE_KEY": "0x4AAAAAAFOpJjrkemn-gauB",
+    "TURNSTILE_HOSTNAMES": "superrich.tech,www.superrich.tech,localhost,127.0.0.1"
   }
 }
