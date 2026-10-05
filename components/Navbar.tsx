@@ -145,19 +145,13 @@ export function Navbar() {
     (typeof window !== "undefined" && window.location.hostname.startsWith("docs.")) ||
     pathname.startsWith("/docs");
 
-  const isStatus =
-    (typeof window !== "undefined" && window.location.hostname.startsWith("status.")) ||
-    pathname.startsWith("/status");
-
   const mainUrl = mounted ? getDomainUrl("main") : "https://superrich.tech";
   const docsUrl = mounted ? getDomainUrl("docs") : "https://docs.superrich.tech";
-  const statusUrl = mounted ? getDomainUrl("status") : "https://status.superrich.tech";
 
   const navLinks = [
-    { href: `${mainUrl}/`, label: "Leaderboard", isActive: pathname === "/" && !isDocs && !isStatus },
+    { href: `${mainUrl}/`, label: "Leaderboard", isActive: pathname === "/" && !isDocs },
     { href: `${mainUrl}/#timeline`, label: "Timeline", isActive: false },
     { href: docsUrl, label: "Docs", isActive: isDocs },
-    { href: statusUrl, label: "Status", isActive: isStatus },
     { href: `${mainUrl}/about`, label: "About", isActive: pathname === "/about" },
     { href: `${mainUrl}/faq`, label: "FAQ", isActive: pathname === "/faq" },
   ];
