@@ -603,10 +603,12 @@ export default function HomePage() {
                         >
                           <span>{person.name}</span>
                           {person.hasFullProfile && (
-                            <ShieldCheck
-                              className="w-3.5 h-3.5 text-accent inline shrink-0"
+                            <span
                               title="Verified Dossier & Timeline"
-                            />
+                              className="inline-flex items-center"
+                            >
+                              <ShieldCheck className="w-3.5 h-3.5 text-accent inline shrink-0" />
+                            </span>
                           )}
                         </Link>
                       </td>
