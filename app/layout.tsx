@@ -83,20 +83,8 @@ export default function RootLayout({
             </main>
             <CookieConsent />
           </LanguageProvider>
-          <footer className="w-full border-t border-neutral-200/60 dark:border-neutral-800/80 py-8 px-4 text-center text-xs text-neutral-500">
-            <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center space-x-2">
-                <div className="relative w-5 h-5 rounded-md overflow-hidden shrink-0 flex items-center justify-center bg-black/5 dark:bg-white/5">
-                  <Image
-                    src="/diamond-crystal-.jpeg"
-                    alt="SuperRich"
-                    width={20}
-                    height={20}
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-                <span>© {new Date().getFullYear()} SuperRich. Real-Time Global Wealth Index.</span>
-              </div>
+          <footer className="w-full border-t border-neutral-200/60 dark:border-neutral-800/80 py-8 px-4 text-xs text-neutral-500">
+            <div className="max-w-7xl mx-auto flex flex-col items-center justify-center gap-3 text-center">
               <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-neutral-500">
                 <Link href="/about" className="hover:text-black dark:hover:text-white hover:underline transition-colors">
                   About
@@ -116,6 +104,16 @@ export default function RootLayout({
                 <Link href="/legal/cookies" className="hover:text-black dark:hover:text-white hover:underline transition-colors">
                   Cookies
                 </Link>
+              </div>
+              <div className="flex items-center justify-center space-x-2 text-neutral-500">
+                <Image
+                  src="/diamond-crystal-.jpeg"
+                  alt="SuperRich"
+                  width={18}
+                  height={18}
+                  className="w-4 h-4 object-contain shrink-0"
+                />
+                <span>© {new Date().getFullYear()} SuperRich.</span>
               </div>
             </div>
           </footer>

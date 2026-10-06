@@ -31,7 +31,7 @@ export default function CompaniesListClient({ initialCompanies }: Props) {
   const [sortBy, setSortBy] = useState<"marketCapDesc" | "marketCapAsc" | "gainers" | "losers" | "rank">(
     "rank"
   );
-  const [layoutView, setLayoutView] = useState<"grid" | "table">("grid");
+  const [layoutView, setLayoutView] = useState<"grid" | "table">("table");
 
   // Summary statistics
   const totalMarketCap = useMemo(() => {

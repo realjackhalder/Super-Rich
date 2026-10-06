@@ -11,7 +11,7 @@ import { useLanguage, SUPPORTED_LANGUAGES, LanguageItem } from "@/context/Langua
 
 export function Navbar() {
   const pathname = usePathname();
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const { language, languageItem, setLanguage, t } = useLanguage();
@@ -41,34 +41,57 @@ export function Navbar() {
     (typeof window !== "undefined" && window.location.hostname.startsWith("docs.")) ||
     pathname.startsWith("/docs");
 
-  const buildUrl = (subdomain: "main" | "docs", path: string) => {
-    return mounted ? getDomainUrl(subdomain, path, theme) : path;
-  };
+  const mainBase = isDocs ? (mounted ? getDomainUrl("main", "/") : "https://superrich.tech") : "";
+  const docsBase = !isDocs ? (mounted ? getDomainUrl("docs", "/") : "https://docs.superrich.tech") : "";
 
   const navLinks = [
-    { href: buildUrl("main", "/"), label: t("nav.leaderboard"), isActive: pathname === "/" && !isDocs },
     {
-      href: buildUrl("main", "/companies"),
+      id: "leaderboard",
+      href: isDocs ? mainBase : "/",
+      label: t("nav.leaderboard"),
+      isActive: pathname === "/" && !isDocs,
+    },
+    {
+      id: "companies",
+      href: isDocs ? `${mainBase}/companies` : "/companies",
       label: t("nav.companies"),
       isActive: (pathname.startsWith("/companies") || pathname.startsWith("/c")) && !isDocs,
     },
-    { href: buildUrl("docs", "/"), label: t("nav.docs"), isActive: isDocs },
-    { href: buildUrl("main", "/about"), label: t("nav.about"), isActive: pathname === "/about" },
-    { href: buildUrl("main", "/faq"), label: t("nav.faq"), isActive: pathname === "/faq" },
+    {
+      id: "docs",
+      href: isDocs ? "/" : (docsBase || "/docs"),
+      label: t("nav.docs"),
+      isActive: isDocs,
+    },
+    {
+      id: "about",
+      href: isDocs ? `${mainBase}/about` : "/about",
+      label: t("nav.about"),
+      isActive: pathname === "/about",
+    },
+    {
+      id: "faq",
+      href: isDocs ? `${mainBase}/faq` : "/faq",
+      label: t("nav.faq"),
+      isActive: pathname === "/faq",
+    },
   ];
 
   return (
     <header className="sticky top-3 z-50 w-full px-4 max-w-7xl mx-auto mt-2">
       <div className="liquid-glass rounded-full px-5 py-3 flex items-center justify-between transition-all duration-200">
         {/* Brand Logo */}
-        <a href={buildUrl("main", "/")} className="flex items-center space-x-2.5 group">
-          <div className="relative w-8 h-8 rounded-xl overflow-hidden shadow-sm group-hover:scale-105 transition-transform duration-200 ring-1 ring-black/10 dark:ring-white/10 shrink-0 bg-neutral-900/5 dark:bg-white/5 flex items-center justify-center p-0.5">
+        <Link
+          href={isDocs ? (mounted ? getDomainUrl("main", "/") : "https://superrich.tech") : "/"}
+          className="flex items-center space-x-2.5 group"
+        >
+          <div className="relative w-8 h-8 shrink-0 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
             <Image
               src="/diamond-crystal-.jpeg"
               alt="SuperRich Logo"
               width={32}
               height={32}
-              className="w-full h-full object-contain filter drop-shadow-sm group-hover:scale-110 transition-transform duration-200"
+              className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-200"
               priority
             />
           </div>
@@ -77,26 +100,26 @@ export function Navbar() {
               SuperRich
             </span>
           </div>
-          <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-neutral-200/60 dark:bg-neutral-800/80 text-neutral-600 dark:text-neutral-300">
-            <span className="w-1.5 h-1.5 rounded-full bg-gain mr-1 animate-pulse"></span>
-            {t("nav.live")}
-          </span>
-        </a>
+        </Link>
 
         {/* Center Nav Links */}
         <nav className="hidden md:flex items-center space-x-1 lg:space-x-2">
           {navLinks.map((link) => {
-            return (
-              <a
-                key={link.href}
-                href={link.href}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all ${link.isActive
-                  ? "bg-black text-white dark:bg-white dark:text-black shadow-sm"
-                  : "text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200/50 dark:hover:bg-neutral-800/50"
-                  }`}
-              >
+            const isExternal = link.href.startsWith("http");
+            const className = `px-3.5 py-1.5 rounded-full text-xs font-medium transition-all ${
+              link.isActive
+                ? "bg-black text-white dark:bg-white dark:text-black shadow-sm"
+                : "text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200/50 dark:hover:bg-neutral-800/50"
+            }`;
+
+            return isExternal ? (
+              <a key={link.id} href={link.href} className={className}>
                 {link.label}
               </a>
+            ) : (
+              <Link key={link.id} href={link.href} className={className}>
+                {link.label}
+              </Link>
             );
           })}
         </nav>
@@ -138,15 +161,22 @@ export function Navbar() {
           </div>
 
           {/* Theme Switcher */}
-          {mounted && (
-            <button
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="p-2 rounded-full hover:bg-neutral-200/50 dark:hover:bg-neutral-800/50 transition-colors text-neutral-600 dark:text-neutral-300"
-              aria-label="Toggle theme"
-            >
-              {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-            </button>
-          )}
+          <button
+            onClick={() => {
+              const current =
+                resolvedTheme ||
+                theme ||
+                (typeof document !== "undefined" && document.documentElement.classList.contains("dark")
+                  ? "dark"
+                  : "light");
+              setTheme(current === "dark" ? "light" : "dark");
+            }}
+            className="p-2 rounded-full hover:bg-neutral-200/50 dark:hover:bg-neutral-800/50 transition-colors text-neutral-600 dark:text-neutral-300 flex items-center justify-center w-8 h-8"
+            aria-label="Toggle theme"
+          >
+            <Sun className="w-4 h-4 hidden dark:block" />
+            <Moon className="w-4 h-4 block dark:hidden" />
+          </button>
         </div>
       </div>
     </header>

@@ -204,28 +204,22 @@ export default function BillionairesHomeClient({
 }: Props) {
   const router = useRouter();
   const { t } = useLanguage();
-  const [layoutView, setLayoutView] = useState<"grid" | "table">("grid");
+  const [layoutView, setLayoutView] = useState<"grid" | "table">("table");
 
   useEffect(() => {
     try {
       const params = new URLSearchParams(window.location.search);
       const v = params.get("view");
-      if (v === "table" || v === "grid") {
-        setLayoutView(v);
+      if (v === "grid") {
+        setLayoutView("grid");
       } else {
-        const saved = localStorage.getItem("superrich_layout_view");
-        if (saved === "table" || saved === "grid") {
-          setLayoutView(saved);
-        }
+        setLayoutView("table");
       }
     } catch (_) {}
   }, []);
 
   const handleSetLayout = (view: "grid" | "table") => {
     setLayoutView(view);
-    try {
-      localStorage.setItem("superrich_layout_view", view);
-    } catch (_) {}
   };
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedIndustry, setSelectedIndustry] = useState("all");
