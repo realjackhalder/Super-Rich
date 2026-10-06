@@ -19,6 +19,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { CompanyData } from "@/data/companies";
+import { getCompanyLogoUrl } from "@/lib/company-logos";
 
 interface Props {
   initialCompanies: CompanyData[];
@@ -136,8 +137,18 @@ export default function CompaniesListClient({ initialCompanies }: Props) {
             <span className="font-medium uppercase tracking-wider text-[11px]">#1 Most Valued Company</span>
             <Sparkles className="w-4 h-4 text-accent" />
           </div>
-          <div className="text-2xl font-serif font-bold text-neutral-900 dark:text-white tracking-tight flex items-baseline space-x-2">
-            <span>{topCompany.name}</span>
+          <div className="flex items-center space-x-2.5">
+            <div className="relative w-7 h-7 rounded-full overflow-hidden shrink-0 flex items-center justify-center bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-1 shadow-sm">
+              <img
+                src={getCompanyLogoUrl(topCompany.slug, topCompany.ticker)}
+                alt={topCompany.name}
+                className="w-full h-full object-contain"
+                loading="lazy"
+              />
+            </div>
+            <div className="text-xl sm:text-2xl font-serif font-bold text-neutral-900 dark:text-white tracking-tight truncate">
+              {topCompany.name}
+            </div>
           </div>
           <p className="text-[11px] text-gain font-mono">
             {formatValuation(topCompany.marketCapBillion)} ({topCompany.ticker})
@@ -150,8 +161,18 @@ export default function CompaniesListClient({ initialCompanies }: Props) {
             <span className="font-medium uppercase tracking-wider text-[11px]">Top 24h Gainer</span>
             <TrendingUp className="w-4 h-4 text-gain" />
           </div>
-          <div className="text-2xl font-serif font-bold text-neutral-900 dark:text-white tracking-tight truncate">
-            {topGainer.shortName}
+          <div className="flex items-center space-x-2.5">
+            <div className="relative w-7 h-7 rounded-full overflow-hidden shrink-0 flex items-center justify-center bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-1 shadow-sm">
+              <img
+                src={getCompanyLogoUrl(topGainer.slug, topGainer.ticker)}
+                alt={topGainer.name}
+                className="w-full h-full object-contain"
+                loading="lazy"
+              />
+            </div>
+            <div className="text-xl sm:text-2xl font-serif font-bold text-neutral-900 dark:text-white tracking-tight truncate">
+              {topGainer.shortName}
+            </div>
           </div>
           <p className="text-[11px] text-gain font-mono">
             +{topGainer.changeDayPercent.toFixed(2)}% (+${topGainer.changeDayBillion.toFixed(1)}B)
@@ -178,11 +199,13 @@ export default function CompaniesListClient({ initialCompanies }: Props) {
         {/* Title & Search / Controls Bar */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-2xl sm:text-3xl font-serif font-bold text-neutral-900 dark:text-white tracking-tight">
-              {t("companies.title")}
-            </h2>
-            <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
-              {t("companies.subtitle")}
+            <h1 className="text-3xl sm:text-4xl font-serif font-bold tracking-tight text-neutral-900 dark:text-white flex items-baseline space-x-2">
+              <span>Top</span>
+              <span className="text-sky-500 dark:text-sky-400 font-mono">100</span>
+              <span>Most Valued Companies</span>
+            </h1>
+            <p className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 mt-1 font-sans">
+              Live enterprise market capitalizations, share prices, and cross-linked billionaire stakes
             </p>
           </div>
 
@@ -278,11 +301,30 @@ export default function CompaniesListClient({ initialCompanies }: Props) {
                   href={`/c/${company.slug}`}
                   className="group relative bg-white dark:bg-[#18181b] border border-neutral-200/90 dark:border-neutral-800 rounded-2xl overflow-hidden hover:border-neutral-400 dark:hover:border-neutral-700 transition-all flex flex-col justify-between shadow-sm p-5 space-y-4"
                 >
-                  {/* Top Header: Rank & Ticker */}
+                  {/* Top Header: Rank, Logo & Ticker */}
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 border border-neutral-200 dark:border-neutral-700">
-                      #{company.rank}
-                    </span>
+                    <div className="flex items-center space-x-2">
+                      <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 border border-neutral-200 dark:border-neutral-700">
+                        #{company.rank}
+                      </span>
+                      <div className="relative w-7 h-7 rounded-full overflow-hidden shrink-0 flex items-center justify-center bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-1 shadow-sm">
+                        <img
+                          src={getCompanyLogoUrl(company.slug, company.ticker)}
+                          alt={company.name}
+                          className="w-full h-full object-contain shrink-0"
+                          loading="lazy"
+                          onError={(e) => {
+                            const img = e.currentTarget;
+                            img.style.display = "none";
+                            const fallback = img.parentElement?.querySelector(".company-card-avatar-fallback") as HTMLElement;
+                            if (fallback) fallback.style.display = "flex";
+                          }}
+                        />
+                        <div className="company-card-avatar-fallback hidden absolute inset-0 rounded-full bg-neutral-100 dark:bg-neutral-800 items-center justify-center text-[9px] font-bold font-mono text-neutral-800 dark:text-neutral-200 select-none">
+                          {company.ticker.slice(0, 3)}
+                        </div>
+                      </div>
+                    </div>
                     <span className="text-[11px] font-mono uppercase px-2 py-0.5 rounded bg-neutral-100 dark:bg-neutral-900 text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-800">
                       {company.ticker} • {company.exchange}
                     </span>
@@ -290,7 +332,7 @@ export default function CompaniesListClient({ initialCompanies }: Props) {
 
                   {/* Company Title & Sector */}
                   <div>
-                    <h3 className="font-serif font-bold text-lg text-neutral-900 dark:text-white group-hover:text-accent transition-colors truncate">
+                    <h3 className="font-semibold text-base text-neutral-900 dark:text-white group-hover:text-accent transition-colors truncate tracking-tight">
                       {company.name}
                     </h3>
                     <p className="text-xs text-neutral-500 dark:text-neutral-400 font-medium truncate mt-0.5">
@@ -405,24 +447,42 @@ export default function CompaniesListClient({ initialCompanies }: Props) {
                         <td className="py-3.5 px-4 font-semibold text-neutral-900 dark:text-neutral-100">
                           <Link
                             href={`/c/${company.slug}`}
-                            className="flex items-center space-x-3 hover:text-accent transition-colors"
+                            className="flex items-center space-x-3 hover:text-accent transition-colors group/link"
                           >
-                            <div className="w-8 h-8 rounded-lg bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 flex items-center justify-center text-xs font-bold font-mono text-neutral-800 dark:text-neutral-200 shrink-0">
-                              {company.ticker.slice(0, 3)}
+                            <div className="relative w-8 h-8 rounded-full overflow-hidden shrink-0 flex items-center justify-center bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-1 shadow-sm group-hover/link:border-accent/40 transition-colors">
+                              <img
+                                src={getCompanyLogoUrl(company.slug, company.ticker)}
+                                alt={company.name}
+                                className="w-full h-full object-contain shrink-0"
+                                loading="lazy"
+                                onError={(e) => {
+                                  const img = e.currentTarget;
+                                  img.style.display = "none";
+                                  const fallback = img.parentElement?.querySelector(".company-avatar-fallback") as HTMLElement;
+                                  if (fallback) fallback.style.display = "flex";
+                                }}
+                              />
+                              <div
+                                className="company-avatar-fallback hidden absolute inset-0 rounded-full bg-neutral-100 dark:bg-neutral-800 items-center justify-center text-[10px] font-bold font-mono text-neutral-800 dark:text-neutral-200 select-none"
+                              >
+                                {company.ticker.slice(0, 3)}
+                              </div>
                             </div>
                             <div>
-                              <div className="flex items-center space-x-1.5 font-serif font-bold text-sm">
+                              <div className="flex items-center space-x-1.5 font-semibold text-sm text-neutral-900 dark:text-neutral-100 tracking-tight group-hover/link:underline">
                                 <span>{company.name}</span>
                               </div>
-                              <div className="text-[11px] text-neutral-500 dark:text-neutral-400 font-mono">
-                                {company.ticker} • {company.exchange}
+                              <div className="text-[11px] text-neutral-500 dark:text-neutral-400 font-mono flex items-center space-x-1.5 mt-0.5">
+                                <span className="font-semibold text-neutral-700 dark:text-neutral-300">{company.ticker}</span>
+                                <span>•</span>
+                                <span>{company.exchange}</span>
                               </div>
                             </div>
                           </Link>
                         </td>
 
                         <td className="py-3.5 px-4 font-bold text-neutral-900 dark:text-white">
-                          <div className="flex items-center space-x-1.5 font-serif text-sm">
+                          <div className="flex items-center space-x-1.5 font-semibold text-sm tracking-tight">
                             <span>{formatValuation(company.marketCapBillion)}</span>
                           </div>
                           <div className="text-[10px] text-neutral-400 font-mono">
@@ -455,8 +515,10 @@ export default function CompaniesListClient({ initialCompanies }: Props) {
                           ${company.sharePrice.toFixed(2)}
                         </td>
 
-                        <td className="py-3.5 px-4 text-neutral-600 dark:text-neutral-400">
-                          {company.sector}
+                        <td className="py-3.5 px-4">
+                          <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-neutral-100 dark:bg-neutral-800/80 text-neutral-700 dark:text-neutral-300 border border-neutral-200/80 dark:border-neutral-700/80">
+                            {company.sector}
+                          </span>
                         </td>
 
                         <td className="py-3.5 px-4 text-neutral-500">

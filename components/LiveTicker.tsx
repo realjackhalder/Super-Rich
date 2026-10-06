@@ -57,22 +57,27 @@ export function LiveTicker() {
         .then((json) => {
           if (!isMounted) return;
           if (json?.data?.list && Array.isArray(json.data.list)) {
-            const list = json.data.list;
+            // Strictly restrict to Top 100 billionaires (rank 1 to 100)
+            const list = json.data.list.filter(
+              (item: any) => typeof item.rank === "number" && item.rank >= 1 && item.rank <= 100
+            );
 
-            // 1. Top gainers (biggest positive daily change)
+            // 1. Top gainers within top 100
             const topGainers = [...list]
               .filter((item: any) => (item.change?.value || 0) > 0)
               .sort((a, b) => (b.change?.value || 0) - (a.change?.value || 0))
               .slice(0, 10);
 
-            // 2. Top losers (biggest negative daily change)
+            // 2. Top losers within top 100
             const topLosers = [...list]
               .filter((item: any) => (item.change?.value || 0) < 0)
               .sort((a, b) => (a.change?.value || 0) - (b.change?.value || 0))
               .slice(0, 10);
 
-            // 3. Top net worth titans
-            const topTitans = list.slice(0, 10);
+            // 3. Top net worth titans within top 100
+            const topTitans = [...list]
+              .sort((a, b) => (a.rank || 999) - (b.rank || 999))
+              .slice(0, 10);
 
             // Interleave gainers and losers so movement rhythm constantly alternates
             const interleaved: any[] = [];
@@ -83,12 +88,12 @@ export function LiveTicker() {
               if (topTitans[i]) interleaved.push(topTitans[i]);
             }
 
-            // Deduplicate by name
+            // Deduplicate by name and ensure rank <= 100
             const seen = new Set<string>();
             const combined: TickerItem[] = [];
 
             for (const item of interleaved) {
-              if (!seen.has(item.name)) {
+              if (!seen.has(item.name) && item.rank >= 1 && item.rank <= 100) {
                 seen.add(item.name);
                 combined.push({
                   id: `rtb-${item.uri || item.rank}`,

@@ -20,6 +20,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { CompanyData } from "@/data/companies";
+import { getCompanyLogoUrl } from "@/lib/company-logos";
 
 interface Props {
   company: CompanyData;
@@ -103,13 +104,31 @@ export default function CompanyProfileClient({ company }: Props) {
 
         {/* Company Title & Valuation */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pt-2">
-          <div>
-            <h1 className="text-3xl sm:text-5xl font-serif font-bold text-neutral-900 dark:text-white tracking-tight">
-              {company.name}
-            </h1>
-            <p className="text-sm sm:text-base text-neutral-500 dark:text-neutral-400 mt-2 max-w-2xl">
-              Headquartered in {company.headquarters} • Led by CEO {company.ceo}
-            </p>
+          <div className="flex items-start sm:items-center space-x-4">
+            <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl overflow-hidden shrink-0 flex items-center justify-center bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-2 shadow-md">
+              <img
+                src={getCompanyLogoUrl(company.slug, company.ticker)}
+                alt={company.name}
+                className="w-full h-full object-contain"
+                onError={(e) => {
+                  const img = e.currentTarget;
+                  img.style.display = "none";
+                  const fallback = img.parentElement?.querySelector(".company-avatar-fallback") as HTMLElement;
+                  if (fallback) fallback.style.display = "flex";
+                }}
+              />
+              <div className="company-avatar-fallback hidden absolute inset-0 rounded-2xl bg-neutral-100 dark:bg-neutral-800 items-center justify-center text-sm font-bold font-mono text-neutral-800 dark:text-neutral-200 select-none">
+                {company.ticker}
+              </div>
+            </div>
+            <div>
+              <h1 className="text-3xl sm:text-5xl font-serif font-bold text-neutral-900 dark:text-white tracking-tight">
+                {company.name}
+              </h1>
+              <p className="text-sm sm:text-base text-neutral-500 dark:text-neutral-400 mt-2 max-w-2xl">
+                Headquartered in {company.headquarters} • Led by CEO {company.ceo}
+              </p>
+            </div>
           </div>
 
           {/* Big Market Cap Display */}

@@ -254,10 +254,13 @@ export default function BillionairesHomeClient({
     topLosers?: any[];
   } | null>(() => {
     if (serverRtbData?.list && Array.isArray(serverRtbData.list)) {
-      const sortedByGain = [...serverRtbData.list].sort(
+      const top100List = serverRtbData.list.filter(
+        (item: any) => typeof item.rank === "number" && item.rank >= 1 && item.rank <= 100
+      );
+      const sortedByGain = [...top100List].sort(
         (a, b) => (b.change?.value || 0) - (a.change?.value || 0)
       );
-      const sortedByLoss = [...serverRtbData.list].sort(
+      const sortedByLoss = [...top100List].sort(
         (a, b) => (a.change?.value || 0) - (b.change?.value || 0)
       );
       return {
@@ -438,7 +441,9 @@ export default function BillionairesHomeClient({
       if (rtbRes.ok) {
         const rtbJson = await rtbRes.json();
         if (rtbJson?.data?.list) {
-          const liveItems: any[] = rtbJson.data.list;
+          const liveItems: any[] = rtbJson.data.list.filter(
+            (item: any) => typeof item.rank === "number" && item.rank >= 1 && item.rank <= 100
+          );
           const sortedByGain = [...liveItems].sort(
             (a, b) => (b.change?.value || 0) - (a.change?.value || 0)
           );

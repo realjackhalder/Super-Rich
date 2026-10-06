@@ -12,6 +12,7 @@ const config: Config = {
     extend: {
       fontFamily: {
         sans: [
+          "Inter",
           "-apple-system",
           "BlinkMacSystemFont",
           "SF Pro Display",
@@ -22,6 +23,7 @@ const config: Config = {
           "sans-serif",
         ],
         serif: [
+          "Playfair Display",
           "Georgia",
           "Cambria",
           "Times New Roman",
