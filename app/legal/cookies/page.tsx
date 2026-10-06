@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft, Cookie, ShieldCheck } from "lucide-react";
+import { ArrowLeft, Cookie, Lock } from "lucide-react";
 import { CookiePreferencesTrigger } from "@/components/CookieConsent";
 
 export const metadata = {
@@ -52,7 +52,7 @@ export default function CookiesPage() {
       <div className="solid-card rounded-3xl p-8 space-y-6 text-xs text-neutral-700 dark:text-neutral-300 leading-relaxed">
         <section className="space-y-2">
           <div className="flex items-center space-x-2 text-accent font-bold text-sm">
-            <ShieldCheck className="w-4 h-4" />
+            <Lock className="w-4 h-4" />
             <span>Zero Third-Party Advertising Trackers</span>
           </div>
           <p>

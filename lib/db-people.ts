@@ -8,6 +8,7 @@ import { db } from "@/db";
 import { people } from "@/db/schema";
 import { desc, asc, eq, sql } from "drizzle-orm";
 import { syncBillionairesToSupabase } from "@/lib/sync";
+import { formatCountryName } from "@/lib/countries";
 
 export interface DBBillionaire {
   id: number;
@@ -21,6 +22,7 @@ export interface DBBillionaire {
   bloombergRank?: number;
   currentCountry: string;
   currentCity: string;
+  citizenship?: string;
   mainCompany: string;
   industry?: string;
   photoUrl?: string;
@@ -63,8 +65,9 @@ export async function getBillionairesFromDB(limit = 100): Promise<DBBillionaire[
         netWorthChangePercent: parseFloat(r.netWorthChangePercent || "0"),
         bloombergNetWorth: r.bloombergNetWorth ? parseFloat(r.bloombergNetWorth) : undefined,
         bloombergRank: r.bloombergRank ?? undefined,
-        currentCountry: r.currentCountry,
-        currentCity: r.currentCity,
+        currentCountry: formatCountryName(r.currentCountry) || "United States",
+        currentCity: r.currentCity?.toLowerCase() === "global" ? "" : (r.currentCity || ""),
+        citizenship: r.citizenship ? formatCountryName(r.citizenship) : formatCountryName(r.currentCountry) || "United States",
         mainCompany: r.mainCompany || "Enterprise",
         industry: r.industry ?? undefined,
         photoUrl: r.photoUrl ?? undefined,
@@ -126,8 +129,9 @@ export async function getBillionaireBySlugFromDB(slug: string): Promise<DBBillio
         netWorthChangePercent: parseFloat(r.netWorthChangePercent || "0"),
         bloombergNetWorth: r.bloombergNetWorth ? parseFloat(r.bloombergNetWorth) : undefined,
         bloombergRank: r.bloombergRank ?? undefined,
-        currentCountry: r.currentCountry,
-        currentCity: r.currentCity,
+        currentCountry: formatCountryName(r.currentCountry) || "United States",
+        currentCity: r.currentCity?.toLowerCase() === "global" ? "" : (r.currentCity || ""),
+        citizenship: r.citizenship ? formatCountryName(r.citizenship) : formatCountryName(r.currentCountry) || "United States",
         mainCompany: r.mainCompany || "Enterprise",
         industry: r.industry ?? undefined,
         photoUrl: r.photoUrl ?? undefined,

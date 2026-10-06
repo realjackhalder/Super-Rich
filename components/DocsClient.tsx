@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useTheme } from "next-themes";
+import { getDomainUrl } from "@/lib/domains";
 import {
   Zap,
   ArrowLeft,
@@ -10,7 +12,7 @@ import {
   Copy,
   Check,
   Key,
-  ShieldCheck,
+  UserCheck,
   Scale,
   Building,
   DollarSign,
@@ -20,6 +22,7 @@ import {
 } from "lucide-react";
 
 export function DocsClient() {
+  const { theme } = useTheme();
   const [activeTab, setActiveTab] = useState<"quickstart" | "endpoints" | "code" | "methodology">("quickstart");
   const [selectedEndpoint, setSelectedEndpoint] = useState<"rtb_list" | "rtb_profile" | "rankings" | "person">("rtb_list");
   const [codeLang, setCodeLang] = useState<"curl" | "javascript" | "python">("curl");
@@ -36,7 +39,7 @@ export function DocsClient() {
       {/* Back button */}
       <div>
         <a
-          href="https://superrich.tech"
+          href={getDomainUrl("main", "/", theme)}
           className="inline-flex items-center space-x-1.5 text-xs text-neutral-500 hover:text-black dark:hover:text-white transition-colors"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
@@ -556,7 +559,7 @@ for person in data["data"]["list"][:5]:
 
             <div className="liquid-glass rounded-3xl p-6 space-y-3">
               <div className="w-10 h-10 rounded-2xl bg-accent/10 text-accent flex items-center justify-center font-bold">
-                <ShieldCheck className="w-5 h-5" />
+                <UserCheck className="w-5 h-5" />
               </div>
               <h3 className="text-base font-bold">4. Human-in-the-Loop Review</h3>
               <p className="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed">

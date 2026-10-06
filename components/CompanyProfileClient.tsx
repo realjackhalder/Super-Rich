@@ -9,7 +9,6 @@ import {
   Building2,
   TrendingUp,
   Globe2,
-  ShieldCheck,
   UserCheck,
   ExternalLink,
   DollarSign,
@@ -410,7 +409,7 @@ export default function CompanyProfileClient({ company }: Props) {
             href="/"
             className="px-4 py-2.5 rounded-full text-xs font-semibold bg-neutral-50 dark:bg-[#222226] text-neutral-900 dark:text-white border border-neutral-200 dark:border-neutral-700 hover:bg-[#2c2c30] transition-colors"
           >
-            Billionaires Leaderboard (/p/)
+            Billionaires Leaderboard
           </Link>
         </div>
       </section>

@@ -3,6 +3,8 @@
  * Tracks Bloomberg's real-time valuations to contrast against Forbes RTB.
  */
 
+import { formatCountryName } from "@/lib/countries";
+
 export interface BloombergBillionaire {
   rank: number;
   name: string;
@@ -79,7 +81,7 @@ export async function fetchBloombergIndex(): Promise<BloombergBillionaire[]> {
               rank: Number(parts[0]) || i,
               name: parts[2].trim(),
               slug: parts[4] || parts[2].toLowerCase().replace(/\s+/g, "-"),
-              country: parts[7] || "Global",
+              country: formatCountryName(parts[7]) || "United States",
               industry: parts[9] || "Technology",
               netWorth: Math.round((rawWorth / 1e9) * 10) / 10,
               changeDay: Math.round((rawChange / 1e9) * 10) / 10,

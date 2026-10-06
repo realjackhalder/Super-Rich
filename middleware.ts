@@ -177,7 +177,9 @@ export function middleware(request: NextRequest) {
       pathname === "/about" ||
       pathname === "/faq" ||
       pathname.startsWith("/legal") ||
-      pathname.startsWith("/p/")
+      pathname.startsWith("/p/") ||
+      pathname.startsWith("/c/") ||
+      pathname.startsWith("/companies")
     ) {
       const mainUrl = new URL(request.url);
       if (hostname.includes("localhost") || hostname.includes("127.0.0.1")) {
@@ -187,7 +189,19 @@ export function middleware(request: NextRequest) {
         mainUrl.port = "";
         mainUrl.protocol = "https:";
       }
-      return NextResponse.redirect(mainUrl, 307);
+
+      const themeVal =
+        url.searchParams.get("theme") ||
+        request.cookies.get("superrich-theme")?.value;
+      if (themeVal && !mainUrl.searchParams.has("theme")) {
+        mainUrl.searchParams.set("theme", themeVal);
+      }
+
+      const res = NextResponse.redirect(mainUrl, 307);
+      if (themeVal) {
+        res.cookies.set("superrich-theme", themeVal, { path: "/", maxAge: 31536000, sameSite: "lax" });
+      }
+      return res;
     }
 
     // Rewrite root / to /docs so docs page is rendered
@@ -267,7 +281,19 @@ export function middleware(request: NextRequest) {
         docsUrl.protocol = "https:";
       }
       docsUrl.pathname = pathname === "/docs" ? "/" : pathname.replace(/^\/docs/, "") || "/";
-      return NextResponse.redirect(docsUrl, 307);
+
+      const themeVal =
+        url.searchParams.get("theme") ||
+        request.cookies.get("superrich-theme")?.value;
+      if (themeVal && !docsUrl.searchParams.has("theme")) {
+        docsUrl.searchParams.set("theme", themeVal);
+      }
+
+      const res = NextResponse.redirect(docsUrl, 307);
+      if (themeVal) {
+        res.cookies.set("superrich-theme", themeVal, { path: "/", maxAge: 31536000, sameSite: "lax" });
+      }
+      return res;
     }
 
     // Redirect any lingering /status traffic to home
@@ -287,6 +313,12 @@ export function middleware(request: NextRequest) {
         adminUrl.protocol = "https:";
       }
       adminUrl.pathname = pathname === "/admin" ? "/" : pathname.replace(/^\/admin/, "") || "/";
+
+      const themeVal = request.cookies.get("superrich-theme")?.value;
+      if (themeVal && !adminUrl.searchParams.has("theme")) {
+        adminUrl.searchParams.set("theme", themeVal);
+      }
+
       return NextResponse.redirect(adminUrl, 307);
     }
   }

@@ -7,7 +7,6 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   MapPin,
-  ShieldCheck,
   Building,
   TrendingUp,
   Scale,
@@ -20,6 +19,8 @@ import {
   Sparkles,
   BookOpen,
 } from "lucide-react";
+import { VERIFIED_PORTRAITS } from "@/components/BillionairesHomeClient";
+import { formatCountryName } from "@/lib/countries";
 
 interface Props {
   serverProfile: any;
@@ -96,12 +97,18 @@ export default function BillionaireProfileClient({
     ? Number(rtbData.latest.change.pct).toFixed(2)
     : "0.00";
 
-  const currentCity = person.currentCity || rtbData?.info?.residence?.city || "Global";
-  const currentCountry = person.currentCountry || rtbData?.info?.residence?.country?.toUpperCase() || "Global";
+  const rawCountry = person.currentCountry || rtbData?.info?.residence?.country;
+  const currentCountry = formatCountryName(rawCountry) || "United States";
+  const currentCity =
+    person.currentCity && person.currentCity.toLowerCase() !== "global"
+      ? person.currentCity
+      : rtbData?.info?.residence?.city || "";
+  const rawCitizenship = person.citizenship || rtbData?.info?.citizenship;
+  const citizenship = formatCountryName(rawCitizenship) || currentCountry;
   const childrenCount = rtbData?.info?.children ?? 0;
   const displayName = person.name || rtbData?.info?.name || slug;
   const displayBio = person.bio || rtbData?.bio?.bio?.[0] || "";
-  const photoUrl = person.photoUrl || rtbData?.info?.image;
+  const photoUrl = VERIFIED_PORTRAITS[slug] || person.photoUrl || rtbData?.info?.image;
 
   const tabs = [
     { id: "overview", label: "Overview" },
@@ -144,7 +151,7 @@ export default function BillionaireProfileClient({
                 <img
                   src={photoUrl}
                   alt={displayName}
-                  className="w-full h-full object-cover grayscale contrast-110"
+                  className="w-full h-full object-cover object-center"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center font-bold text-2xl text-neutral-400">
@@ -158,7 +165,6 @@ export default function BillionaireProfileClient({
                 <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-neutral-900 dark:text-white">
                   {displayName}
                 </h1>
-                <ShieldCheck className="w-5 h-5 text-accent" />
                 <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-neutral-900 dark:bg-white text-white dark:text-black">
                   #{person.rank || (slug === "elon-musk" ? 1 : "-")}
                 </span>
@@ -169,19 +175,17 @@ export default function BillionaireProfileClient({
                 <div className="flex items-center space-x-1 font-medium text-neutral-900 dark:text-neutral-200">
                   <MapPin className="w-3.5 h-3.5 text-neutral-400" />
                   <span>
-                    {currentCity}, {currentCountry}
+                    {currentCity ? `${currentCity}, ${currentCountry}` : currentCountry}
                   </span>
                 </div>
                 <span>·</span>
-                <span>Citizenship: {person.citizenship || "Global"}</span>
+                <span>Citizenship: {citizenship}</span>
                 {childrenCount > 0 && (
                   <>
                     <span>·</span>
                     <span>{childrenCount} Children</span>
                   </>
                 )}
-                <span>·</span>
-                <span>As of 2026</span>
               </div>
 
               <p className="text-xs text-neutral-500 max-w-xl line-clamp-2">

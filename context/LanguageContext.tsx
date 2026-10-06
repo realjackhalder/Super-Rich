@@ -1183,7 +1183,9 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem(LANGUAGE_STORAGE_KEY);
+      const matchCookie = document.cookie.match(/(?:^|; )superrich-lang=([^;]+)/);
+      const cookieLang = matchCookie ? decodeURIComponent(matchCookie[1]) : null;
+      const saved = cookieLang || localStorage.getItem(LANGUAGE_STORAGE_KEY);
       if (saved) {
         // Try matching by code or by label
         const match = SUPPORTED_LANGUAGES.find(
@@ -1202,6 +1204,14 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     setLanguageState(code);
     try {
       localStorage.setItem(LANGUAGE_STORAGE_KEY, code);
+      const isProd = window.location.hostname.indexOf("superrich.tech") !== -1;
+      const domainPart = isProd
+        ? "; domain=.superrich.tech"
+        : window.location.hostname.indexOf("localhost") !== -1
+        ? "; domain=localhost"
+        : "";
+      document.cookie = `superrich-lang=${code}; path=/; max-age=31536000; SameSite=Lax${domainPart}`;
+      document.cookie = `superrich-lang=${code}; path=/; max-age=31536000; SameSite=Lax`;
     } catch {
       // Ignore
     }

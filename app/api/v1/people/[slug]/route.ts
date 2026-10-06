@@ -5,6 +5,7 @@ import { getGrokipediaPage } from "@/lib/grokipedia";
 import { getWikipediaSummary } from "@/lib/wikipedia";
 import { getBloombergForPerson } from "@/lib/bloomberg";
 import { INITIAL_50_BILLIONAIRES } from "@/data/billionaires";
+import { formatCountryName } from "@/lib/countries";
 
 export const dynamic = "force-dynamic";
 
@@ -61,8 +62,27 @@ export async function GET(
           changeDayBillion: bloomberg.changeDay,
         }
       : null,
-    currentCountry: dbPerson?.currentCountry || staticPerson?.currentCountry || "Global",
-    currentCity: dbPerson?.currentCity || staticPerson?.currentCity || "Global",
+    citizenship:
+      formatCountryName(
+        staticPerson?.citizenship ||
+        dbPerson?.citizenship ||
+        rtb?.info?.citizenship ||
+        rtb?.latest?.citizenship ||
+        dbPerson?.currentCountry ||
+        staticPerson?.currentCountry
+      ) || "United States",
+    currentCountry:
+      formatCountryName(
+        dbPerson?.currentCountry ||
+        staticPerson?.currentCountry ||
+        rtb?.info?.residence?.country
+      ) || "United States",
+    currentCity:
+      (dbPerson?.currentCity && dbPerson.currentCity.toLowerCase() !== "global")
+        ? dbPerson.currentCity
+        : (staticPerson?.currentCity && staticPerson.currentCity.toLowerCase() !== "global")
+        ? staticPerson.currentCity
+        : rtb?.info?.residence?.city || "",
     mainCompany: dbPerson?.mainCompany || staticPerson?.mainCompany || rtb?.info?.source?.join(" & ") || "Enterprise",
     photoUrl: wiki?.photoUrl || dbPerson?.photoUrl || staticPerson?.photoUrl,
     bio: wiki?.extract || dbPerson?.bio || staticPerson?.bio,

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import { Sun, Moon, Globe } from "lucide-react";
@@ -40,32 +41,42 @@ export function Navbar() {
     (typeof window !== "undefined" && window.location.hostname.startsWith("docs.")) ||
     pathname.startsWith("/docs");
 
-  const mainUrl = mounted ? getDomainUrl("main") : "https://superrich.tech";
-  const docsUrl = mounted ? getDomainUrl("docs") : "https://docs.superrich.tech";
+  const buildUrl = (subdomain: "main" | "docs", path: string) => {
+    return mounted ? getDomainUrl(subdomain, path, theme) : path;
+  };
 
   const navLinks = [
-    { href: `${mainUrl}/`, label: t("nav.leaderboard"), isActive: pathname === "/" && !isDocs },
+    { href: buildUrl("main", "/"), label: t("nav.leaderboard"), isActive: pathname === "/" && !isDocs },
     {
-      href: `${mainUrl}/companies`,
+      href: buildUrl("main", "/companies"),
       label: t("nav.companies"),
       isActive: (pathname.startsWith("/companies") || pathname.startsWith("/c")) && !isDocs,
     },
-    { href: docsUrl, label: t("nav.docs"), isActive: isDocs },
-    { href: `${mainUrl}/about`, label: t("nav.about"), isActive: pathname === "/about" },
-    { href: `${mainUrl}/faq`, label: t("nav.faq"), isActive: pathname === "/faq" },
+    { href: buildUrl("docs", "/"), label: t("nav.docs"), isActive: isDocs },
+    { href: buildUrl("main", "/about"), label: t("nav.about"), isActive: pathname === "/about" },
+    { href: buildUrl("main", "/faq"), label: t("nav.faq"), isActive: pathname === "/faq" },
   ];
 
   return (
     <header className="sticky top-3 z-50 w-full px-4 max-w-7xl mx-auto mt-2">
       <div className="liquid-glass rounded-full px-5 py-3 flex items-center justify-between transition-all duration-200">
         {/* Brand Logo */}
-        <a href={mainUrl} className="flex items-center space-x-2.5 group">
-          <div className="w-8 h-8 rounded-full bg-black dark:bg-white text-white dark:text-black flex items-center justify-center font-bold text-sm tracking-tighter shadow-sm">
-            SR
+        <a href={buildUrl("main", "/")} className="flex items-center space-x-2.5 group">
+          <div className="relative w-8 h-8 rounded-xl overflow-hidden shadow-sm group-hover:scale-105 transition-transform duration-200 ring-1 ring-black/10 dark:ring-white/10 shrink-0 bg-neutral-900/5 dark:bg-white/5 flex items-center justify-center p-0.5">
+            <Image
+              src="/diamond-crystal-.jpeg"
+              alt="SuperRich Logo"
+              width={32}
+              height={32}
+              className="w-full h-full object-contain filter drop-shadow-sm group-hover:scale-110 transition-transform duration-200"
+              priority
+            />
           </div>
-          <span className="font-semibold text-base tracking-tight hover:opacity-80 transition-opacity">
-            SuperRich
-          </span>
+          <div className="flex items-baseline">
+            <span className="font-bold text-lg tracking-tight text-black dark:text-white select-none">
+              SuperRich
+            </span>
+          </div>
           <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-neutral-200/60 dark:bg-neutral-800/80 text-neutral-600 dark:text-neutral-300">
             <span className="w-1.5 h-1.5 rounded-full bg-gain mr-1 animate-pulse"></span>
             {t("nav.live")}
@@ -79,11 +90,10 @@ export function Navbar() {
               <a
                 key={link.href}
                 href={link.href}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all ${
-                  link.isActive
-                    ? "bg-black text-white dark:bg-white dark:text-black shadow-sm"
-                    : "text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200/50 dark:hover:bg-neutral-800/50"
-                }`}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all ${link.isActive
+                  ? "bg-black text-white dark:bg-white dark:text-black shadow-sm"
+                  : "text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200/50 dark:hover:bg-neutral-800/50"
+                  }`}
               >
                 {link.label}
               </a>
@@ -113,9 +123,8 @@ export function Navbar() {
                     <button
                       key={l.code}
                       onClick={() => handleSelectLanguage(l)}
-                      className={`w-full text-left px-3.5 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800/60 transition-colors flex items-center justify-between text-neutral-800 dark:text-neutral-200 ${
-                        isSelected ? "font-bold text-accent bg-neutral-100/80 dark:bg-neutral-800/50" : ""
-                      }`}
+                      className={`w-full text-left px-3.5 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800/60 transition-colors flex items-center justify-between text-neutral-800 dark:text-neutral-200 ${isSelected ? "font-bold text-accent bg-neutral-100/80 dark:bg-neutral-800/50" : ""
+                        }`}
                     >
                       <span>{l.label}</span>
                       {isSelected && (

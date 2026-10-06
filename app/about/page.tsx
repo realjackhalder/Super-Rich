@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ShieldCheck, Database, Globe, Scale, ArrowLeft } from "lucide-react";
+import { Database, Globe, Scale, ArrowLeft } from "lucide-react";
 
 export const metadata = {
   title: "About SuperRich — Methodology & Architecture",

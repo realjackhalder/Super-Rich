@@ -14,7 +14,6 @@ import {
   Sparkles,
   Globe2,
   ExternalLink,
-  ShieldCheck,
   DollarSign,
   UserCheck,
   ChevronDown,
@@ -394,7 +393,8 @@ export default function CompaniesListClient({ initialCompanies }: Props) {
                     return (
                       <tr
                         key={company.id}
-                        className="hover:bg-neutral-200/30 dark:hover:bg-neutral-800/30 transition-colors group"
+                        onClick={() => window.location.href = `/c/${company.slug}`}
+                        className="hover:bg-neutral-200/30 dark:hover:bg-neutral-800/30 transition-colors group cursor-pointer"
                       >
                         <td className="py-3.5 px-4 text-center">
                           <span className="font-bold text-neutral-700 dark:text-neutral-300 font-mono">
@@ -515,7 +515,7 @@ export default function CompaniesListClient({ initialCompanies }: Props) {
               href="/"
               className="px-4 py-2 rounded-full text-xs font-semibold bg-black dark:bg-white text-white dark:text-black hover:opacity-90 transition-opacity shadow-sm"
             >
-              View Billionaires Index (/p/)
+              View Billionaires Index
             </Link>
           </div>
         </div>

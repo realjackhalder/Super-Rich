@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       : `$${company.marketCapBillion.toFixed(1)} Billion`;
 
   return {
-    title: `${company.name} (${company.ticker}) Valuation & Dossier | SuperRich`,
+    title: `${company.name} (${company.ticker}) Valuation & Profile | SuperRich`,
     description: `${company.name} market capitalization: ${val}. Real-time share price, leadership, key divisions, and billionaire stakeholders on SuperRich Index.`,
   };
 }

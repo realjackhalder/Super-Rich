@@ -5,20 +5,17 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { DBBillionaire } from "@/lib/db-people";
 import { RTBListResponse, RTBListItem } from "@/lib/rtb";
+import { formatCountryName } from "@/lib/countries";
 import { useLanguage } from "@/context/LanguageContext";
 import {
   Search,
   ArrowUpRight,
   ArrowDownRight,
   MapPin,
-  ShieldCheck,
-  RefreshCw,
   Database,
-  ExternalLink,
   LayoutGrid,
   List,
   Sparkles,
-  Code,
   ChevronDown,
 } from "lucide-react";
 
@@ -138,9 +135,55 @@ export function getInitials(name: string): string {
 }
 
 export const VERIFIED_PORTRAITS: Record<string, string> = {
-  "elon-musk": "/images/billionaires/elon-musk.jpg",
-  "larry-ellison": "/images/billionaires/larry-ellison.jpg",
-  "mark-zuckerberg": "/images/billionaires/mark-zuckerberg.jpg",
+  // Top Billionaires with custom high-grade framed portraits
+  "elon-musk": "https://upload.wikimedia.org/wikipedia/commons/9/95/Elon_Musk_%2854816836217%29_%28cropped_5%29.jpg",
+  "larry-ellison": "https://upload.wikimedia.org/wikipedia/commons/4/47/Larry_Ellison_2016.png",
+  "mark-zuckerberg": "https://upload.wikimedia.org/wikipedia/commons/0/0e/F20250904AH-2824_%2854778373111%29_%283x4_cropped_on_Zuckerberg_following_the_rule_of_thirds%29.jpg",
+
+  // Top 100 global billionaires with verified CDN portraits
+  "francoise-bettencourt-meyers": "https://imageio.forbes.com/specials-images/imageserve/605e26e3c65f7c2596bd3e15/0x0.jpg?format=jpg&crop=1080,1080,x0,y0,safe&height=416&width=416&fit=bounds",
+  "jeff-yass": "https://imageio.forbes.com/specials-images/imageserve/60649a21472ae5b09dad20b1/0x0.jpg?format=jpg&crop=816,816,x3,y0,safe&height=416&width=416&fit=bounds",
+  "german-larrea-mota-velasco": "https://imageio.forbes.com/specials-images/imageserve/597a47174bbe6f3eb800b6b8/0x0.jpg?format=jpg&crop=1702,1701,x1901,y368,safe&height=416&width=416&fit=bounds",
+  "zhong-shanshan": "https://imageio.forbes.com/specials-images/imageserve/60380e390357bc1fbfc0bc32/0x0.jpg?format=jpg&crop=1211,1212,x116,y201,safe&height=416&width=416&fit=bounds",
+  "dieter-schwarz": "https://imageio.forbes.com/specials-images/imageserve/6050f48ca1ab099ed6e290cc/0x0.jpg?format=jpg&crop=800,800,x0,y0,safe&height=416&width=416&fit=bounds",
+  "john-mars": "https://imageio.forbes.com/specials-images/imageserve/5ba41e08a7ea434e4c6948eb/0x0.jpg?format=jpg&crop=1348,1348,x53,y9,safe&height=416&width=416&fit=bounds",
+  "iris-fontbona": "https://imageio.forbes.com/specials-images/imageserve/5c6db2974bbe6f0ec75418f0/0x0.jpg?format=jpg&crop=367,367,x124,y0,safe&height=416&width=416&fit=bounds",
+  "giovanni-ferrero": "https://imageio.forbes.com/specials-images/imageserve/5b11bc5ca7ea436b547f29cb/0x0.jpg?format=jpg&crop=1222,1221,x622,y361,safe&height=416&width=416&fit=bounds",
+  "mark-mateschitz": "https://imageio.forbes.com/specials-images/imageserve/642b2ae09caa113a6ce1c15e/0x0.jpg?format=jpg&crop=2478,2475,x898,y239,safe&height=416&width=416&fit=bounds",
+  "lukas-walton": "https://imageio.forbes.com/specials-images/imageserve/5d89f3c36de3150009a4e5bd/0x0.jpg?format=jpg&crop=454,454,x122,y26,safe&height=416&width=416&fit=bounds",
+  "andrea-pignataro": "https://imageio.forbes.com/specials-images/imageserve/660c251294ad0b108cfcdf06/0x0.jpg?format=jpg&crop=1304,1304,x711,y56,safe&height=416&width=416&fit=bounds",
+  "liang-wenfeng": "https://imageio.forbes.com/specials-images/imageserve/67e5dca4efa69302e39783b9/0x0.jpg?format=jpg&crop=975,975,x1196,y293,safe&height=416&width=416&fit=bounds",
+  "lyndal-stephens-greth": "https://imageio.forbes.com/specials-images/imageserve/66fb2bd596806737569ab7ef/0x0.jpg?format=jpg&crop=2143,2143,x0,y180,safe&height=416&width=416&fit=bounds",
+  "colin-huang": "https://imageio.forbes.com/specials-images/imageserve/5dc0500b3195ed0007eab3f7/0x0.jpg?format=jpg&crop=2640,2638,x1059,y45,safe&height=416&width=416&fit=bounds",
+  "francois-pinault": "https://imageio.forbes.com/specials-images/imageserve/5f1eeca8e77f92a058fb1a81/0x0.jpg?format=jpg&crop=2095,2097,x1806,y36,safe&height=416&width=416&fit=bounds",
+  "chen-tianshi": "https://imageio.forbes.com/specials-images/imageserve/690240ad85f168b25a40e248/0x0.jpg?format=jpg&crop=704,704,x316,y54,safe&height=416&width=416&fit=bounds",
+  "huang-shilin": "https://imageio.forbes.com/specials-images/imageserve/6724f66a677dfa37e85e605f/0x0.jpg?format=jpg&crop=798,798,x2,y2,safe&height=416&width=416&fit=bounds",
+  "emmanuel-besnier": "https://imageio.forbes.com/specials-images/imageserve/5e759e31c7b02d000666c445/0x0.jpg?format=jpg&crop=1413,1412,x283,y1002,safe&height=416&width=416&fit=bounds",
+  "phil-knight": "https://imageio.forbes.com/specials-images/imageserve/6488d5874961598251b12f50/0x0.jpg?format=jpg&crop=2746,2747,x598,y0,safe&height=416&width=416&fit=bounds",
+  "prince-alwaleed-bin-talal-alsaud": "https://imageio.forbes.com/specials-images/imageserve/5e779508d8e1ae0007b72f3e/0x0.jpg?format=jpg&crop=3321,3320,x950,y14,safe&height=416&width=416&fit=bounds",
+  "suleiman-kerimov-family": "https://imageio.forbes.com/specials-images/imageserve/62471d5c3ff014e6ce2b15f6/0x0.jpg?format=jpg&crop=2639,2639,x146,y0,safe&height=416&width=416&fit=bounds",
+  "suleiman-kerimov": "https://imageio.forbes.com/specials-images/imageserve/62471d5c3ff014e6ce2b15f6/0x0.jpg?format=jpg&crop=2639,2639,x146,y0,safe&height=416&width=416&fit=bounds",
+  "gina-rinehart": "https://imageio.forbes.com/specials-images/imageserve/67aa659166c227f5f4d5062f/0x0.jpg?format=jpg&crop=1326,1328,x102,y416&height=416&width=416&fit=bounds",
+  "zheng-shuliang": "https://imageio.forbes.com/specials-images/imageserve/6724f9cdf203631b720a86fe/0x0.jpg?format=jpg&crop=798,798,x2,y1,safe&height=416&width=416&fit=bounds",
+  "vladimir-lisin": "https://imageio.forbes.com/specials-images/imageserve/5e77914ec7b02d000666d900/0x0.jpg?format=jpg&crop=2410,2409,x825,y50,safe&height=416&width=416&fit=bounds",
+  "susanne-klatten": "https://imageio.forbes.com/specials-images/imageserve/605e281e4f49584f571c9c42/0x0.jpg?format=jpg&crop=1080,1080,x0,y0,safe&height=416&width=416&fit=bounds",
+  "vinod-adani": "https://imageio.forbes.com/specials-images/imageserve/6397397b9ee9056d354b17e4/0x0.jpg?format=jpg&crop=1786,1787,x458,y225,safe&height=416&width=416&fit=bounds",
+
+  // Tech & Global Titans in INITIAL_50
+  "jack-ma": "https://imageio.forbes.com/specials-images/imageserve/69023fd7dbc29e6c2ee6b085/0x0.jpg?format=jpg&crop=1459,1458,x151,y279,safe&height=416&width=416&fit=bounds",
+  "william-ding": "https://imageio.forbes.com/specials-images/imageserve/65496210455fdb2807b461fc/0x0.jpg?format=jpg&crop=1337,1338,x376,y341,safe&height=416&width=416&fit=bounds",
+  "robin-zeng": "https://imageio.forbes.com/specials-images/imageserve/690239904c2185472de3db28/0x0.jpg?format=jpg&crop=1002,1002,x305,y145,safe&height=416&width=416&fit=bounds",
+  "wang-chuanfu": "https://imageio.forbes.com/specials-images/imageserve/6902404b2ffc12e03e0d702e/0x0.jpg?format=jpg&crop=1442,1442,x201,y58,safe&height=416&width=416&fit=bounds",
+  "masayoshi-son": "https://imageio.forbes.com/specials-images/imageserve/5e8b632801879f000703e485/0x0.jpg?format=jpg&crop=4500,4497,x0,y833,safe&height=416&width=416&fit=bounds",
+  "lee-jae-yong": "https://imageio.forbes.com/specials-images/imageserve/69d92071f818bcd1553283ed/0x0.jpg?format=jpg&crop=1299,1300,x141,y78,safe&height=416&width=416&fit=bounds",
+  "kim-beom-su": "https://imageio.forbes.com/specials-images/imageserve/69d9245f9f14fa2e40c70736/0x0.jpg?format=jpg&crop=719,719,x206,y151,safe&height=416&width=416&fit=bounds",
+  "shiv-nadar": "https://imageio.forbes.com/specials-images/imageserve/68e696c624e6cebf6aa2b00a/0x0.jpg?format=jpg&crop=940,939,x693,y144,safe&height=416&width=416&fit=bounds",
+  "azim-premji": "https://upload.wikimedia.org/wikipedia/commons/e/e6/Azim_H._Premji_World_Economic_Forum_2013.jpg",
+  "changpeng-zhao": "https://imageio.forbes.com/specials-images/imageserve/61115ac5b4c5d23845419c4e/0x0.jpg?format=jpg&crop=911,911,x0,y0,safe&height=416&width=416&fit=bounds",
+  "pavel-durov": "https://imageio.forbes.com/specials-images/imageserve/605e44a746821557fdbd3e15/0x0.jpg?format=jpg&crop=1080,1080,x0,y0,safe&height=416&width=416&fit=bounds",
+  "daniel-ek": "https://imageio.forbes.com/specials-images/imageserve/619e6309d734b7239959f54f/0x0.jpg?format=jpg&crop=1529,1530,x607,y186,safe&height=416&width=416&fit=bounds",
+  "tobi-lutke": "https://imageio.forbes.com/specials-images/imageserve/65e8c56a05c1e4c93a490920/0x0.jpg?format=jpg&crop=2234,2233,x451,y297,safe&height=416&width=416&fit=bounds",
+  "hasso-plattner": "https://imageio.forbes.com/specials-images/imageserve/5e762726d8e1ae0007b71a6b/0x0.jpg?format=jpg&crop=1826,1827,x1757,y0,safe&height=416&width=416&fit=bounds",
 };
 
 export function isValidPhoto(url?: string | null): boolean {
@@ -226,13 +269,13 @@ export default function BillionairesHomeClient({
       return {
         date: serverRtbData.date,
         total: serverRtbData.total,
-        count: 3391,
+        count: 100,
         topGainers: sortedByGain.slice(0, 5),
         topLosers: sortedByLoss.slice(0, 5),
       };
     }
     return {
-      count: 3391,
+      count: 100,
       topGainers: [],
       topLosers: [],
     };
@@ -321,7 +364,7 @@ export default function BillionairesHomeClient({
           netWorth: liveNetWorth,
           netWorthChangeDay: liveChangeDay,
           netWorthChangePercent: liveChangePct,
-          currentCountry: item.citizenship || "Global",
+          currentCountry: formatCountryName(item.citizenship) || "United States",
           currentCity: "",
           mainCompany: liveCompany,
           photoUrl: VERIFIED_PORTRAITS[item.uri] || item.image || undefined,
@@ -337,7 +380,15 @@ export default function BillionairesHomeClient({
       }
     }
 
-    return mapped.sort((a, b) => a.rank - b.rank).slice(0, 100);
+    // Strictly sort by wealth descending and assign clean 1-100 sequential rankings
+    const sorted = mapped
+      .sort((a, b) => b.netWorth - a.netWorth || a.rank - b.rank)
+      .slice(0, 100);
+
+    return sorted.map((p, idx) => ({
+      ...p,
+      rank: idx + 1,
+    }));
   }, [serverPeople, serverRtbData, rtbMap]);
 
   const [peopleList, setPeopleList] = useState<DisplayBillionaire[]>(initialMapped);
@@ -358,8 +409,8 @@ export default function BillionairesHomeClient({
             netWorth: item.net_worth_billion,
             netWorthChangeDay: item.change_day_billion,
             netWorthChangePercent: item.change_day_percent,
-            currentCountry: item.current_country || "United States",
-            currentCity: item.current_city || "Global",
+            currentCountry: formatCountryName(item.citizenship || item.current_country) || "United States",
+            currentCity: item.current_city?.toLowerCase() === "global" ? "" : (item.current_city || ""),
             mainCompany: item.primary_company || "Enterprise",
             photoUrl: VERIFIED_PORTRAITS[item.slug] || item.photo_url,
             grokipediaSummary: item.grokipedia_summary,
@@ -372,7 +423,16 @@ export default function BillionairesHomeClient({
             industry: item.industry || "Technology",
           }));
 
-          setPeopleList(updated.sort((a, b) => a.rank - b.rank).slice(0, 100));
+          const sorted = updated
+            .sort((a, b) => b.netWorth - a.netWorth || a.rank - b.rank)
+            .slice(0, 100);
+
+          setPeopleList(
+            sorted.map((p, idx) => ({
+              ...p,
+              rank: idx + 1,
+            }))
+          );
           setIsLiveActive(true);
           setLastSyncedTime(
             new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " EDT"
@@ -395,7 +455,7 @@ export default function BillionairesHomeClient({
           setRtbStats({
             date: rtbJson.data.date,
             total: rtbJson.data.total,
-            count: rtbJson.data.count || 3391,
+            count: 100,
             topGainers: sortedByGain.slice(0, 5),
             topLosers: sortedByLoss.slice(0, 5),
           });
@@ -473,11 +533,11 @@ export default function BillionairesHomeClient({
     });
   }, [peopleList, searchQuery, selectedCountry, selectedIndustry, selectedGender, selectedAge, sortBy]);
 
-  // Progressive loading for smooth DOM performance across 3,400+ global billionaires
+  // Keep all top 100 billionaires visible
   const [visibleLimit, setVisibleLimit] = useState(100);
 
   useEffect(() => {
-    setVisibleLimit(60);
+    setVisibleLimit(100);
   }, [searchQuery, selectedCountry, selectedIndustry, selectedGender, selectedAge, sortBy]);
 
   const visiblePeople = useMemo(() => {
@@ -498,7 +558,7 @@ export default function BillionairesHomeClient({
   return (
     <div className="space-y-10">
       {/* Top Real-Time Status Bar */}
-      <section className="flex flex-wrap items-center justify-between gap-4 py-2 border-b border-neutral-200/60 dark:border-neutral-800/60 text-xs">
+      <section className="flex items-center justify-between py-2 border-b border-neutral-200/60 dark:border-neutral-800/60 text-xs">
         <div className="flex items-center space-x-2.5">
           <span className="w-2.5 h-2.5 rounded-full bg-gain animate-pulse"></span>
           <span className="font-semibold text-neutral-900 dark:text-neutral-100 uppercase tracking-wider text-[11px]">
@@ -506,28 +566,8 @@ export default function BillionairesHomeClient({
           </span>
           <span className="text-neutral-400 dark:text-neutral-600">•</span>
           <span className="text-neutral-600 dark:text-neutral-400 font-mono text-[11px]">
-            {t("index.tracking", {
-              count: rtbStats?.count ? rtbStats.count.toLocaleString() : "3,391",
-            })}
+            {t("index.tracking", { count: "100" })}
           </span>
-        </div>
-
-        <div className="flex items-center space-x-3 text-neutral-500">
-          <span className="text-[11px] font-mono">
-            {isSyncing ? t("index.syncing") : t("index.updated", { time: lastSyncedTime })}
-          </span>
-          <button
-            onClick={triggerLiveSync}
-            disabled={isSyncing}
-            className="hover:text-black dark:hover:text-white transition-transform active:rotate-180 disabled:opacity-50 p-1"
-            title={t("index.refreshTitle")}
-          >
-            <RefreshCw
-              className={`w-3.5 h-3.5 text-neutral-500 hover:text-accent ${
-                isSyncing ? "animate-spin text-accent" : ""
-              }`}
-            />
-          </button>
         </div>
       </section>
 
@@ -670,9 +710,7 @@ export default function BillionairesHomeClient({
           <div>
             <h1 className="text-3xl sm:text-4xl font-serif font-bold tracking-tight text-neutral-900 dark:text-white flex items-baseline space-x-2">
               <span>Today&apos;s Top</span>
-              <span className="text-sky-500 dark:text-sky-400">
-                {rtbStats?.count ? rtbStats.count.toLocaleString() : "3,391"}
-              </span>
+              <span className="text-sky-500 dark:text-sky-400">100</span>
               <span>Billionaires</span>
             </h1>
 
@@ -832,17 +870,17 @@ export default function BillionairesHomeClient({
                   className="group relative bg-white dark:bg-[#18181b] border border-neutral-200/90 dark:border-neutral-800 rounded-2xl overflow-hidden hover:border-neutral-400 dark:hover:border-neutral-700 transition-all flex flex-col shadow-sm"
                 >
                   {/* Photo Container */}
-                  <div className="relative w-full aspect-[4/3.2] bg-neutral-100 dark:bg-neutral-900 overflow-hidden flex items-center justify-center">
+                  <div className="relative w-full aspect-square bg-neutral-100 dark:bg-neutral-900 overflow-hidden flex items-center justify-center">
                     {isValidPhoto(VERIFIED_PORTRAITS[person.slug] || person.photoUrl) ? (
                       <img
                         src={VERIFIED_PORTRAITS[person.slug] || person.photoUrl!}
                         alt={person.name}
                         loading="lazy"
-                        className="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-105"
+                        className="w-full h-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
                         onError={(e) => {
                           const img = e.currentTarget;
                           img.style.display = "none";
-                          const fallback = img.nextElementSibling as HTMLElement;
+                          const fallback = img.parentElement?.querySelector(".avatar-fallback") as HTMLElement;
                           if (fallback) fallback.style.display = "flex";
                         }}
                       />
@@ -856,8 +894,8 @@ export default function BillionairesHomeClient({
 
                     {/* Elegant Monogram Avatar Fallback (when no public photo exists) */}
                     <div
-                      className={`w-full h-full bg-gradient-to-br from-neutral-200 via-neutral-100 to-neutral-50 dark:from-[#24242a] dark:via-[#1a1a1e] dark:to-[#121214] flex flex-col items-center justify-center p-4 text-center select-none ${
-                        isValidPhoto(person.photoUrl) ? "hidden" : "flex"
+                      className={`avatar-fallback w-full h-full bg-gradient-to-br from-neutral-200 via-neutral-100 to-neutral-50 dark:from-[#24242a] dark:via-[#1a1a1e] dark:to-[#121214] flex flex-col items-center justify-center p-4 text-center select-none ${
+                        isValidPhoto(VERIFIED_PORTRAITS[person.slug] || person.photoUrl) ? "hidden" : "flex"
                       }`}
                     >
                       <div className="w-16 h-16 rounded-full bg-neutral-300/80 dark:bg-neutral-800/90 border border-neutral-300 dark:border-neutral-700/80 flex items-center justify-center mb-2 shadow-inner">
@@ -940,25 +978,24 @@ export default function BillionairesHomeClient({
                               <img
                                 src={VERIFIED_PORTRAITS[person.slug] || person.photoUrl!}
                                 alt={person.name}
-                                className="w-8 h-8 rounded-full object-cover border border-neutral-300 dark:border-neutral-700 shrink-0"
+                                className="w-8 h-8 rounded-full object-cover object-center border border-neutral-300 dark:border-neutral-700 shrink-0"
                                 onError={(e) => {
                                   const img = e.currentTarget;
                                   img.style.display = "none";
-                                  const fallback = img.nextElementSibling as HTMLElement;
+                                  const fallback = img.parentElement?.querySelector(".table-avatar-fallback") as HTMLElement;
                                   if (fallback) fallback.style.display = "flex";
                                 }}
                               />
                             ) : null}
                             <div
-                              className={`w-8 h-8 rounded-full bg-neutral-200 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 items-center justify-center text-xs font-semibold text-neutral-700 dark:text-neutral-300 shrink-0 select-none ${
-                                isValidPhoto(person.photoUrl) ? "hidden" : "flex"
+                              className={`table-avatar-fallback w-8 h-8 rounded-full bg-neutral-200 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 items-center justify-center text-xs font-semibold text-neutral-700 dark:text-neutral-300 shrink-0 select-none ${
+                                isValidPhoto(VERIFIED_PORTRAITS[person.slug] || person.photoUrl) ? "hidden" : "flex"
                               }`}
                             >
                               {getInitials(person.name)}
                             </div>
                             <div className="flex items-center space-x-1.5">
                               <span className="group-hover:underline">{person.name}</span>
-                              <ShieldCheck className="w-3.5 h-3.5 text-accent shrink-0 inline" />
                             </div>
                           </div>
                         </td>
@@ -1015,61 +1052,6 @@ export default function BillionairesHomeClient({
           </div>
         )}
 
-        {/* Load More Pagination Bar */}
-        {filteredPeople.length > visibleLimit && (
-          <div className="pt-6 pb-2 flex flex-col sm:flex-row items-center justify-center gap-3">
-            <button
-              onClick={() => setVisibleLimit((prev) => prev + 60)}
-              className="px-6 py-3 rounded-full text-xs font-semibold bg-white dark:bg-[#222226] hover:bg-neutral-100 dark:hover:bg-[#2c2c32] text-neutral-900 dark:text-white border border-neutral-200/90 dark:border-neutral-700 hover:border-neutral-400 dark:hover:border-neutral-600 transition-all shadow-sm flex items-center space-x-2"
-            >
-              <span>Load 60 More Billionaires</span>
-              <span className="text-neutral-500 dark:text-neutral-400 font-mono text-[11px]">
-                ({Math.min(visibleLimit + 60, filteredPeople.length).toLocaleString()} of{" "}
-                {filteredPeople.length.toLocaleString()})
-              </span>
-            </button>
-            <button
-              onClick={() => setVisibleLimit(filteredPeople.length)}
-              className="px-5 py-3 rounded-full text-xs font-semibold bg-transparent text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white border border-neutral-300 dark:border-neutral-800 hover:border-neutral-400 dark:hover:border-neutral-700 transition-colors"
-            >
-              Show All ({filteredPeople.length.toLocaleString()})
-            </button>
-          </div>
-        )}
-      </section>
-
-      {/* Developer API Callout Section */}
-      <section className="bg-white dark:bg-[#141416] border border-neutral-200/90 dark:border-neutral-800 rounded-2xl p-7 space-y-4 shadow-sm dark:shadow-none">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <div className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-accent/15 text-accent uppercase tracking-wider">
-              <Code className="w-3 h-3 mr-1 inline" />
-              <span>Free Developer API</span>
-            </div>
-            <h3 className="text-xl font-bold tracking-tight text-neutral-900 dark:text-white">
-              Query Live Supabase Billionaires API
-            </h3>
-            <p className="text-xs text-neutral-600 dark:text-neutral-400 max-w-xl">
-              Access programmatic rankings, Grokipedia summaries, and real-time net worth via our free public endpoints with zero API keys required.
-            </p>
-          </div>
-          <div className="flex items-center space-x-3">
-            <Link
-              href="/docs"
-              className="px-4 py-2 rounded-full text-xs font-semibold bg-black dark:bg-white text-white dark:text-black hover:opacity-90 transition-opacity shadow-sm"
-            >
-              Explore API Docs
-            </Link>
-            <Link
-              href="/api/v1/rankings?limit=10"
-              target="_blank"
-              className="px-4 py-2 rounded-full text-xs font-semibold bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-white border border-neutral-300 dark:border-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors flex items-center space-x-1"
-            >
-              <span>View JSON</span>
-              <ExternalLink className="w-3 h-3 ml-1" />
-            </Link>
-          </div>
-        </div>
       </section>
     </div>
   );

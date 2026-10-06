@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Cookie, ShieldCheck, Lock, SlidersHorizontal, Check, X, ChevronDown, ChevronUp } from "lucide-react";
+import { Cookie, Lock, SlidersHorizontal, Check, X, ChevronDown, ChevronUp } from "lucide-react";
 
 export interface CookiePreferences {
   necessary: boolean;
@@ -182,7 +182,7 @@ export function CookieConsent() {
             {/* Analytics */}
             <label className="flex items-start justify-between gap-3 p-2.5 rounded-xl bg-neutral-100/60 dark:bg-neutral-800/40 border border-neutral-200/40 dark:border-neutral-800/60 cursor-pointer hover:bg-neutral-200/40 dark:hover:bg-neutral-800/70 transition-colors">
               <div className="flex items-start gap-2.5">
-                <ShieldCheck className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
+                <SlidersHorizontal className="w-4 h-4 text-neutral-500 shrink-0 mt-0.5" />
                 <div>
                   <div className="font-semibold text-neutral-900 dark:text-white">
                     Analytics & Performance

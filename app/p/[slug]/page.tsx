@@ -4,6 +4,7 @@ import { getRTBFullProfile } from "@/lib/rtb";
 import { getGrokipediaPage } from "@/lib/grokipedia";
 import { getWikipediaSummary } from "@/lib/wikipedia";
 import { INITIAL_50_BILLIONAIRES } from "@/data/billionaires";
+import { formatCountryName } from "@/lib/countries";
 import BillionaireProfileClient from "@/components/BillionaireProfileClient";
 
 export const dynamic = "force-dynamic";
@@ -57,8 +58,27 @@ export default async function BillionaireProfilePage({
       : dbPerson?.netWorthChangeDay || 0,
     netWorthChangePercent: rtb?.latest?.change?.pct ?? dbPerson?.netWorthChangePercent ?? 0,
     bloombergValuation: null,
-    currentCountry: dbPerson?.currentCountry || staticPerson?.currentCountry || "Global",
-    currentCity: dbPerson?.currentCity || staticPerson?.currentCity || "Global",
+    citizenship:
+      formatCountryName(
+        staticPerson?.citizenship ||
+        dbPerson?.citizenship ||
+        rtb?.info?.citizenship ||
+        rtb?.latest?.citizenship ||
+        dbPerson?.currentCountry ||
+        staticPerson?.currentCountry
+      ) || "United States",
+    currentCountry:
+      formatCountryName(
+        dbPerson?.currentCountry ||
+        staticPerson?.currentCountry ||
+        rtb?.info?.residence?.country
+      ) || "United States",
+    currentCity:
+      (dbPerson?.currentCity && dbPerson.currentCity.toLowerCase() !== "global")
+        ? dbPerson.currentCity
+        : (staticPerson?.currentCity && staticPerson.currentCity.toLowerCase() !== "global")
+        ? staticPerson.currentCity
+        : rtb?.info?.residence?.city || "",
     mainCompany: dbPerson?.mainCompany || staticPerson?.mainCompany || rtb?.info?.source?.join(" & ") || "Enterprise",
     photoUrl: VERIFIED_PORTRAITS[slug] || wiki?.photoUrl || dbPerson?.photoUrl || staticPerson?.photoUrl,
     bio: wiki?.extract || dbPerson?.bio || staticPerson?.bio,

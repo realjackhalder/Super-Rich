@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getBillionairesFromDB } from "@/lib/db-people";
 import { getRTBLatestList } from "@/lib/rtb";
+import { formatCountryName } from "@/lib/countries";
 
 export const dynamic = "force-dynamic";
 
@@ -23,8 +24,9 @@ export async function GET(request: Request) {
         netWorth: Math.round((p.networth / 1000) * 100) / 100,
         netWorthChangeDay: p.change?.value ? Math.round((p.change.value / 1000) * 100) / 100 : 0,
         netWorthChangePercent: p.change?.pct || 0,
-        currentCountry: p.citizenship?.toUpperCase() || "Global",
-        currentCity: "Global",
+        currentCountry: formatCountryName(p.citizenship) || "United States",
+        currentCity: "",
+        citizenship: formatCountryName(p.citizenship) || "United States",
         mainCompany: p.source?.[0] || "Enterprise",
         isTechTitan: true,
         isLive: true,
@@ -38,16 +40,20 @@ export async function GET(request: Request) {
     );
   }
 
-  const sanitized = data.slice(0, limit).map((p) => ({
-    rank: p.rank,
+  // Sort by net worth descending and assign clean 1..N sequential ranks
+  const sorted = [...data].sort((a, b) => (b.netWorth || 0) - (a.netWorth || 0));
+
+  const sanitized = sorted.slice(0, limit).map((p, idx) => ({
+    rank: idx + 1,
     slug: p.slug,
     name: p.name,
     net_worth_billion: p.netWorth,
     bloomberg_net_worth_billion: p.bloombergNetWorth ?? null,
     change_day_billion: p.netWorthChangeDay,
     change_day_percent: p.netWorthChangePercent,
-    current_city: p.currentCity,
-    current_country: p.currentCountry,
+    current_city: p.currentCity?.toLowerCase() === "global" ? "" : p.currentCity,
+    current_country: formatCountryName(p.currentCountry) || "United States",
+    citizenship: formatCountryName(p.citizenship || p.currentCountry) || "United States",
     primary_company: p.mainCompany,
     photo_url: p.photoUrl,
     bio: p.bio,

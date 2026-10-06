@@ -18,6 +18,8 @@ import { getWikipediaSummary } from "@/lib/wikipedia";
 import { getBloombergForPerson, fetchBloombergIndex } from "@/lib/bloomberg";
 import { getLiveStockQuote } from "@/lib/stocks";
 import { INITIAL_50_BILLIONAIRES } from "@/data/billionaires";
+import { VERIFIED_PORTRAITS } from "@/components/BillionairesHomeClient";
+import { formatCountryName } from "@/lib/countries";
 
 const TECH_KEYWORDS = [
   "technology",
@@ -79,34 +81,6 @@ const KNOWN_TECH_SLUGS = new Set([
   "vitalik-buterin",
 ]);
 
-const COUNTRY_MAP: Record<string, string> = {
-  us: "United States",
-  cn: "China",
-  fr: "France",
-  in: "India",
-  de: "Germany",
-  jp: "Japan",
-  gb: "United Kingdom",
-  uk: "United Kingdom",
-  ca: "Canada",
-  mx: "Mexico",
-  br: "Brazil",
-  es: "Spain",
-  it: "Italy",
-  ch: "Switzerland",
-  ru: "Russia",
-  au: "Australia",
-  sg: "Singapore",
-  kr: "South Korea",
-  id: "Indonesia",
-  tw: "Taiwan",
-  hk: "Hong Kong",
-  se: "Sweden",
-  nl: "Netherlands",
-  il: "Israel",
-  za: "South Africa",
-};
-
 export interface SyncResult {
   status: "success" | "partial" | "error";
   totalLiveFeed: number;
@@ -167,16 +141,12 @@ export async function syncBillionairesToSupabase(limit = 150): Promise<SyncResul
       : 0;
     const changePct = item.change?.pct ? Math.round(item.change.pct * 100) / 100 : 0;
 
-    const countryCode = (item.citizenship || "").toLowerCase();
     const country =
       staticMatch?.currentCountry ||
-      COUNTRY_MAP[countryCode] ||
-      item.citizenship?.toUpperCase() ||
-      "Global";
+      formatCountryName(item.citizenship) ||
+      "United States";
 
-    const city =
-      staticMatch?.currentCity ||
-      (country !== "Global" ? `${country}` : "Global");
+    const city = staticMatch?.currentCity || "";
 
     const mainCompany =
       item.source && item.source.length > 0
@@ -190,15 +160,16 @@ export async function syncBillionairesToSupabase(limit = 150): Promise<SyncResul
 
     // Enrichment (Wikipedia & Grokipedia & Forbes Real Image)
     let photoUrl: string | null =
-      staticMatch?.photoUrl && !staticMatch.photoUrl.includes("unsplash")
+      VERIFIED_PORTRAITS[slug] ||
+      (staticMatch?.photoUrl && !staticMatch.photoUrl.includes("unsplash")
         ? staticMatch.photoUrl
-        : null;
+        : null);
 
     // 1. Try Forbes RTB image if not present
     if (!photoUrl && slug) {
       try {
         const rtbRes = await fetch(
-          `https://raw.githubusercontent.com/komed3/rtb-api/master/api/profile/${slug}/info`,
+          `https://raw.githubusercontent.com/komed3/rtb-api/main/api/profile/${slug}/info`,
           { signal: AbortSignal.timeout(4000) }
         );
         if (rtbRes.ok) {
@@ -274,7 +245,7 @@ export async function syncBillionairesToSupabase(limit = 150): Promise<SyncResul
           currentCity: city,
           residenceAsOf: "2026",
           residenceSource: "Forbes Real-Time Billionaires / SEC Filings",
-          citizenship: item.citizenship || "US",
+          citizenship: formatCountryName(item.citizenship) || country,
           photoUrl: photoUrl || null,
           bio,
           grokipediaSummary: grokSummary,
