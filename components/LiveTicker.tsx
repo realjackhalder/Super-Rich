@@ -141,7 +141,9 @@ export function LiveTicker() {
                   {person.name}
                 </span>
                 <span className="font-bold text-neutral-900 dark:text-white">
-                  ${person.netWorth.toFixed(1)}B
+                  {person.netWorth >= 1000
+                    ? `$${(person.netWorth / 1000).toFixed(2)}T`
+                    : `$${person.netWorth.toFixed(1)}B`}
                 </span>
                 <span
                   className={`inline-flex items-center font-semibold text-[11px] ${

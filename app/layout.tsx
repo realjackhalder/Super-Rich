@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { LanguageProvider } from "@/context/LanguageContext";
 import { Navbar } from "@/components/Navbar";
 import { LiveTicker } from "@/components/LiveTicker";
-import { GoogleTranslate } from "@/components/GoogleTranslate";
+import { CookieConsent, CookiePreferencesTrigger } from "@/components/CookieConsent";
 
 export const metadata: Metadata = {
   title: "SuperRich — Tech Billionaires Encyclopedia & Live Wealth Index",
@@ -20,13 +21,15 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="min-h-screen flex flex-col bg-apple-lightBg dark:bg-apple-darkBg text-black dark:text-white transition-colors duration-200">
-        <GoogleTranslate />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <LiveTicker />
-          <Navbar />
-          <main className="flex-1 w-full max-w-7xl mx-auto px-4 py-8">
-            {children}
-          </main>
+          <LanguageProvider>
+            <LiveTicker />
+            <Navbar />
+            <main className="flex-1 w-full max-w-7xl mx-auto px-4 py-8">
+              {children}
+            </main>
+            <CookieConsent />
+          </LanguageProvider>
           <footer className="w-full border-t border-neutral-200/60 dark:border-neutral-800/80 py-8 px-4 text-center text-xs text-neutral-500">
             <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
               <div>
@@ -48,6 +51,10 @@ export default function RootLayout({
                   <Link href="/legal/cookies" className="text-neutral-400 hover:underline text-[11px]">
                     Cookies
                   </Link>
+                  <span className="text-[10px]">•</span>
+                  <CookiePreferencesTrigger className="text-neutral-400 hover:text-black dark:hover:text-white hover:underline text-[11px] cursor-pointer">
+                    Cookie Settings
+                  </CookiePreferencesTrigger>
                 </div>
               </div>
             </div>

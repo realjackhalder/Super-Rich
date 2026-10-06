@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowLeft, Cookie, ShieldCheck } from "lucide-react";
+import { CookiePreferencesTrigger } from "@/components/CookieConsent";
 
 export const metadata = {
   title: "Cookie Policy — SuperRich Legal",
@@ -79,6 +80,16 @@ export default function CookiesPage() {
 
             <div className="py-3 flex items-start justify-between">
               <div>
+                <span className="font-mono font-semibold text-neutral-900 dark:text-white">superrich_cookie_consent</span>
+                <p className="text-[11px] text-neutral-500 mt-0.5">Cookie &amp; LocalStorage</p>
+              </div>
+              <div className="text-right text-neutral-500">
+                Stores your privacy consent decision (essential, analytics, personalization) for 1 year so you are not prompted repeatedly.
+              </div>
+            </div>
+
+            <div className="py-3 flex items-start justify-between">
+              <div>
                 <span className="font-mono font-semibold text-neutral-900 dark:text-white">superrich_admin_session</span>
                 <p className="text-[11px] text-neutral-500 mt-0.5">HTTP-Only Cookie</p>
               </div>
@@ -89,13 +100,19 @@ export default function CookiesPage() {
           </div>
         </section>
 
-        <section className="space-y-2">
+        <section className="space-y-3">
           <h2 className="text-sm font-bold uppercase tracking-wider text-neutral-900 dark:text-white">
             Managing Your Preferences
           </h2>
           <p>
-            You can configure your browser to block or delete local storage and cookies at any time. The public index and profile pages will continue to function seamlessly without interruption.
+            You can configure your browser to block or delete local storage and cookies at any time, or modify your preferences right here:
           </p>
+          <div className="pt-1">
+            <CookiePreferencesTrigger className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold bg-neutral-900 text-white dark:bg-white dark:text-black hover:opacity-90 transition-opacity shadow-sm cursor-pointer">
+              <Cookie className="w-4 h-4" />
+              <span>Change Cookie Preferences</span>
+            </CookiePreferencesTrigger>
+          </div>
         </section>
       </div>
     </div>

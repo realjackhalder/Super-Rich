@@ -25,6 +25,15 @@ export function middleware(request: NextRequest) {
   const url = request.nextUrl.clone();
   const { pathname } = url;
 
+  // Immediately pass through all Next.js internals, static files, and assets
+  if (
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/static") ||
+    pathname.includes(".")
+  ) {
+    return NextResponse.next();
+  }
+
   // Extract host from x-forwarded-host or host header
   const rawHost =
     request.headers.get("x-forwarded-host") ||
@@ -296,8 +305,8 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
-     * - static assets (.svg, .png, .jpg, .jpeg, .gif, .webp, .ico)
+     * - static assets (.svg, .png, .jpg, .jpeg, .gif, .webp, .ico, .css, .js, .woff, .woff2, .map)
      */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
+    "/((?!_next/static|_next/image|_next/webpack-hmr|favicon.ico|.*\\.(?:css|js|svg|png|jpg|jpeg|gif|webp|ico|woff|woff2|map)$).*)",
   ],
 };
