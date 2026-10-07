@@ -2,12 +2,13 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { X, Lock, SlidersHorizontal, Check } from "lucide-react";
+import { X } from "lucide-react";
 
 export interface CookiePreferences {
   necessary: boolean;
-  analytics: boolean;
+  marketing: boolean;
   personalization: boolean;
+  analytics: boolean;
   timestamp: number;
   choice: "all" | "essential" | "custom";
 }
@@ -20,19 +21,109 @@ export function openCookiePreferences() {
   }
 }
 
+/**
+ * Illustrated Blue Bitten Cookie Icon (matching provided visual specification)
+ */
+export function BittenCookieIcon({ className = "w-14 h-14" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 100 100"
+      className={className}
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      {/* Cookie body with bite on the upper right */}
+      <path
+        d="M 50 10 
+           A 40 40 0 0 0 10 50 
+           A 40 40 0 0 0 50 90 
+           A 40 40 0 0 0 90 50 
+           C 90 47.5 89.7 45 89.2 42.6 
+           C 85.5 44 81 44 77 42 
+           C 71.5 39.5 68 34 68 28 
+           C 68 23.5 70 19.5 73.5 16.8 
+           C 66.8 12.5 58.7 10 50 10 Z"
+        fill="#3b66d9"
+      />
+      {/* Big cyan chip with white highlight (top-left) */}
+      <circle cx="34" cy="33" r="6.5" fill="#38bdf8" />
+      <circle cx="36" cy="31" r="3.5" fill="#ffffff" />
+
+      {/* Big cyan chip with white highlight (bottom-left) */}
+      <circle cx="36" cy="66" r="6.5" fill="#38bdf8" />
+      <circle cx="38" cy="64" r="3.5" fill="#ffffff" />
+
+      {/* Medium cyan chip with white highlight (bottom-right) */}
+      <circle cx="62" cy="70" r="5.5" fill="#38bdf8" />
+      <circle cx="64" cy="68" r="3" fill="#ffffff" />
+
+      {/* Small cyan chips / white specks */}
+      <circle cx="53" cy="46" r="3" fill="#38bdf8" />
+      <circle cx="28" cy="49" r="2.5" fill="#ffffff" />
+      <circle cx="45" cy="24" r="2.5" fill="#ffffff" />
+      <circle cx="46" cy="79" r="2.5" fill="#ffffff" />
+      <circle cx="65" cy="54" r="2.5" fill="#ffffff" />
+      <circle cx="58" cy="35" r="2" fill="#ffffff" />
+      <circle cx="44" cy="56" r="2" fill="#ffffff" />
+
+      {/* Floating Crumbs outside bite */}
+      <rect x="74" y="24" width="7" height="6" rx="3" transform="rotate(-20 74 24)" fill="#38bdf8" />
+      <circle cx="94" cy="32" r="3" fill="#38bdf8" />
+      <circle cx="86" cy="46" r="4" fill="#38bdf8" />
+    </svg>
+  );
+}
+
+/**
+ * iOS-style Toggle Switch
+ */
+function ToggleSwitch({
+  checked,
+  onChange,
+  disabled = false,
+  id,
+}: {
+  checked: boolean;
+  onChange?: (val: boolean) => void;
+  disabled?: boolean;
+  id?: string;
+}) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      id={id}
+      disabled={disabled}
+      onClick={() => onChange && onChange(!checked)}
+      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full transition-colors duration-200 ease-in-out focus:outline-none ${
+        disabled ? "opacity-50 cursor-not-allowed" : ""
+      } ${checked ? "bg-[#3563e9]" : "bg-neutral-300 dark:bg-neutral-700"}`}
+    >
+      <span
+        aria-hidden="true"
+        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out translate-y-0.5 ${
+          checked ? "translate-x-5.5" : "translate-x-0.5"
+        }`}
+      />
+    </button>
+  );
+}
+
 export function CookieConsent() {
   const [mounted, setMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [showPreferences, setShowPreferences] = useState(false);
 
-  // Custom toggles
-  const [analytics, setAnalytics] = useState(true);
+  // Category toggles
+  const [marketing, setMarketing] = useState(true);
   const [personalization, setPersonalization] = useState(true);
+  const [analytics, setAnalytics] = useState(true);
 
   useEffect(() => {
     setMounted(true);
 
-    // Check if consent has already been recorded
     try {
       const localConsent = localStorage.getItem(COOKIE_STORAGE_KEY);
       const cookieMatch = document.cookie
@@ -43,11 +134,11 @@ export function CookieConsent() {
         const raw = localConsent || (cookieMatch ? decodeURIComponent(cookieMatch.split("=")[1]) : null);
         if (raw) {
           const parsed = JSON.parse(raw);
-          setAnalytics(Boolean(parsed.analytics));
-          setPersonalization(Boolean(parsed.personalization));
+          setMarketing(Boolean(parsed.marketing ?? true));
+          setPersonalization(Boolean(parsed.personalization ?? true));
+          setAnalytics(Boolean(parsed.analytics ?? true));
         }
       } else {
-        // Show after smooth delay for visitors without saved consent
         const timer = setTimeout(() => {
           setIsOpen(true);
         }, 500);
@@ -57,7 +148,6 @@ export function CookieConsent() {
       setIsOpen(true);
     }
 
-    // Listen for custom event to reopen preferences (from footer, settings, etc.)
     const handleOpenPreferences = () => {
       setIsOpen(true);
       setShowPreferences(true);
@@ -71,12 +161,16 @@ export function CookieConsent() {
 
   const saveConsent = (
     choice: "all" | "essential" | "custom",
-    customPrefs?: { analytics: boolean; personalization: boolean }
+    customPrefs?: { marketing: boolean; personalization: boolean; analytics: boolean }
   ) => {
+    const isAll = choice === "all";
+    const isEssential = choice === "essential";
+
     const consentData: CookiePreferences = {
       necessary: true,
-      analytics: choice === "all" ? true : choice === "essential" ? false : (customPrefs?.analytics ?? analytics),
-      personalization: choice === "all" ? true : choice === "essential" ? false : (customPrefs?.personalization ?? personalization),
+      marketing: isAll ? true : isEssential ? false : (customPrefs?.marketing ?? marketing),
+      personalization: isAll ? true : isEssential ? false : (customPrefs?.personalization ?? personalization),
+      analytics: isAll ? true : isEssential ? false : (customPrefs?.analytics ?? analytics),
       choice,
       timestamp: Date.now(),
     };
@@ -107,7 +201,7 @@ export function CookieConsent() {
 
   return (
     <>
-      {/* Main Cookie Banner Bar — Matches Requested Design */}
+      {/* Bottom Cookie Banner Bar */}
       <div
         role="region"
         aria-label="Cookie consent banner"
@@ -132,7 +226,7 @@ export function CookieConsent() {
             <button
               type="button"
               onClick={() => setShowPreferences(true)}
-              className="text-[#0088ff] dark:text-[#38bdf8] underline text-xs sm:text-[13px] font-medium hover:opacity-80 transition-opacity px-1 py-1"
+              className="text-[#0088ff] dark:text-[#38bdf8] underline text-xs sm:text-[13px] font-medium hover:opacity-80 transition-opacity px-1 py-1 cursor-pointer"
             >
               Preferences
             </button>
@@ -168,121 +262,153 @@ export function CookieConsent() {
         </div>
       </div>
 
-      {/* Preferences Modal Dialog */}
+      {/* Privacy Preference Center Modal (Full Detailed View matching screenshots) */}
       {showPreferences && (
         <div
           role="dialog"
           aria-modal="true"
-          aria-label="Cookie Preferences"
-          className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200"
+          aria-label="Privacy Preference Center"
+          className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 overflow-y-auto animate-in fade-in duration-200"
         >
-          <div className="bg-white dark:bg-[#121418] border border-neutral-200 dark:border-neutral-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl text-neutral-900 dark:text-neutral-100 flex flex-col gap-5 animate-in zoom-in-95 duration-200">
-            {/* Modal Header */}
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <h3 className="font-bold text-base text-neutral-900 dark:text-white">
-                  Cookie Preferences
-                </h3>
-                <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
-                  Customize the cookie technologies allowed on your device.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setShowPreferences(false)}
-                aria-label="Close preferences"
-                className="w-8 h-8 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 hover:text-black dark:hover:text-white flex items-center justify-center transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
+          <div className="bg-white dark:bg-[#14161f] text-neutral-900 dark:text-neutral-100 rounded-3xl max-w-2xl w-full p-6 sm:p-10 shadow-2xl relative my-8 max-h-[90vh] overflow-y-auto animate-in zoom-in-95 duration-200 border border-neutral-200/80 dark:border-neutral-800">
+            {/* Top close button */}
+            <button
+              type="button"
+              onClick={() => setShowPreferences(false)}
+              aria-label="Close preferences"
+              className="absolute top-6 right-6 w-9 h-9 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 hover:text-black dark:hover:text-white flex items-center justify-center transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            {/* Top line accent */}
+            <div className="border-t border-[#e5e7eb] dark:border-neutral-800 -mx-6 sm:-mx-10 -mt-6 sm:-mt-10 mb-6" />
+
+            {/* Blue Bitten Cookie Icon */}
+            <div className="mb-4">
+              <BittenCookieIcon className="w-14 h-14 sm:w-16 sm:h-16" />
             </div>
 
-            {/* Preference Categories */}
-            <div className="space-y-3 text-xs">
-              {/* Necessary */}
-              <div className="flex items-start justify-between gap-3 p-3.5 rounded-2xl bg-neutral-50 dark:bg-neutral-800/40 border border-neutral-200/60 dark:border-neutral-800/80">
-                <div className="flex items-start gap-2.5">
-                  <Lock className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                  <div>
-                    <div className="font-semibold text-neutral-900 dark:text-white">
-                      Strictly Necessary
-                    </div>
-                    <p className="text-[11px] text-neutral-500 mt-0.5">
-                      Essential for site navigation, security verification, and theme persistence.
-                    </p>
-                  </div>
-                </div>
-                <span className="shrink-0 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                  Always Active
-                </span>
-              </div>
+            {/* Title */}
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-neutral-950 dark:text-white mb-3">
+              Privacy Preference Center
+            </h2>
 
-              {/* Analytics */}
-              <label className="flex items-start justify-between gap-3 p-3.5 rounded-2xl bg-neutral-50 dark:bg-neutral-800/40 border border-neutral-200/60 dark:border-neutral-800/80 cursor-pointer hover:bg-neutral-100/60 dark:hover:bg-neutral-800/70 transition-colors">
-                <div className="flex items-start gap-2.5">
-                  <SlidersHorizontal className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
-                  <div>
-                    <div className="font-semibold text-neutral-900 dark:text-white">
-                      Analytics & Performance
-                    </div>
-                    <p className="text-[11px] text-neutral-500 mt-0.5">
-                      Helps us measure site traffic, view popularity, and latency metrics anonymously.
-                    </p>
-                  </div>
-                </div>
-                <input
-                  type="checkbox"
-                  checked={analytics}
-                  onChange={(e) => setAnalytics(e.target.checked)}
-                  className="w-4 h-4 mt-0.5 accent-black dark:accent-white rounded cursor-pointer"
-                />
-              </label>
+            {/* Primary Description in Vibrant Cyan/Blue */}
+            <p className="text-xs sm:text-[13px] leading-relaxed text-[#0284c7] dark:text-[#38bdf8] mb-6">
+              When you visit websites, they may store or retrieve data in your browser. This storage is often necessary for the basic functionality of the website. The storage may be used for marketing, analytics, and personalization of the site, such as storing your preferences. Privacy is important to us, so you have the option of disabling certain types of storage that may not be necessary for the basic functioning of the website. Blocking categories may impact your experience on the website.
+            </p>
 
-              {/* Personalization */}
-              <label className="flex items-start justify-between gap-3 p-3.5 rounded-2xl bg-neutral-50 dark:bg-neutral-800/40 border border-neutral-200/60 dark:border-neutral-800/80 cursor-pointer hover:bg-neutral-100/60 dark:hover:bg-neutral-800/70 transition-colors">
-                <div className="flex items-start gap-2.5">
-                  <SlidersHorizontal className="w-4 h-4 text-purple-500 shrink-0 mt-0.5" />
-                  <div>
-                    <div className="font-semibold text-neutral-900 dark:text-white">
-                      Marketing & Personalization
-                    </div>
-                    <p className="text-[11px] text-neutral-500 mt-0.5">
-                      Enables customized wealth index filters and display settings across sessions.
-                    </p>
-                  </div>
-                </div>
-                <input
-                  type="checkbox"
-                  checked={personalization}
-                  onChange={(e) => setPersonalization(e.target.checked)}
-                  className="w-4 h-4 mt-0.5 accent-black dark:accent-white rounded cursor-pointer"
-                />
-              </label>
-            </div>
-
-            {/* Modal Actions */}
-            <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-neutral-200/70 dark:border-neutral-800">
+            {/* Top Dual Action Pill Buttons */}
+            <div className="flex flex-wrap items-center gap-3 mb-8">
               <button
                 type="button"
                 onClick={() => saveConsent("essential")}
-                className="px-4 py-2 rounded-xl text-xs font-semibold text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition"
+                className="px-6 py-2 rounded-full border border-[#2d2d2d] dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white hover:bg-neutral-50 dark:hover:bg-neutral-700 text-xs sm:text-sm font-medium transition shadow-sm cursor-pointer"
               >
-                Reject Non-Essential
-              </button>
-              <button
-                type="button"
-                onClick={() => saveConsent("custom", { analytics, personalization })}
-                className="px-4 py-2 rounded-xl text-xs font-semibold bg-neutral-900 text-white dark:bg-white dark:text-black hover:opacity-90 transition flex items-center gap-1.5 shadow-sm"
-              >
-                <Check className="w-3.5 h-3.5" />
-                Save Preferences
+                Reject all cookies
               </button>
               <button
                 type="button"
                 onClick={() => saveConsent("all")}
-                className="px-5 py-2 rounded-xl text-xs font-semibold bg-black text-white dark:bg-white dark:text-black hover:opacity-90 transition shadow-sm"
+                className="px-6 py-2 rounded-full bg-[#3d3d3d] hover:bg-[#2c2c2c] dark:bg-neutral-200 dark:hover:bg-white text-white dark:text-neutral-900 text-xs sm:text-sm font-medium transition shadow-sm cursor-pointer"
               >
-                Accept All
+                Allow all cookies
+              </button>
+            </div>
+
+            {/* Category Section Header */}
+            <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-neutral-950 dark:text-white mb-6">
+              Manage Consent Preferences by Category
+            </h3>
+
+            {/* Category Rows */}
+            <div className="space-y-6">
+              {/* Essential */}
+              <div>
+                <div className="flex items-center justify-between gap-3 mb-1.5">
+                  <h4 className="text-base font-bold text-neutral-950 dark:text-white">
+                    Essential
+                  </h4>
+                  <span className="text-[#0284c7] dark:text-[#38bdf8] font-medium text-xs sm:text-sm">
+                    Always Active
+                  </span>
+                </div>
+                <p className="text-xs sm:text-[13px] leading-relaxed text-[#0284c7] dark:text-[#38bdf8]">
+                  These items are required to enable basic website functionality.
+                </p>
+                <div className="border-b border-neutral-200 dark:border-neutral-800 mt-5" />
+              </div>
+
+              {/* Marketing */}
+              <div>
+                <div className="flex items-center justify-between gap-3 mb-1.5">
+                  <h4 className="text-base font-bold text-neutral-950 dark:text-white">
+                    Marketing
+                  </h4>
+                  <ToggleSwitch
+                    checked={marketing}
+                    onChange={(val) => setMarketing(val)}
+                    id="toggle-marketing"
+                  />
+                </div>
+                <p className="text-xs sm:text-[13px] leading-relaxed text-[#0284c7] dark:text-[#38bdf8]">
+                  These items are used to deliver advertising that is more relevant to you and your interests. They may also be used to limit the number of times you see an advertisement and measure the effectiveness of advertising campaigns. Advertising networks usually place them with the website operator&apos;s permission.
+                </p>
+                <div className="border-b border-neutral-200 dark:border-neutral-800 mt-5" />
+              </div>
+
+              {/* Personalization */}
+              <div>
+                <div className="flex items-center justify-between gap-3 mb-1.5">
+                  <h4 className="text-base font-bold text-neutral-950 dark:text-white">
+                    Personalization
+                  </h4>
+                  <ToggleSwitch
+                    checked={personalization}
+                    onChange={(val) => setPersonalization(val)}
+                    id="toggle-personalization"
+                  />
+                </div>
+                <p className="text-xs sm:text-[13px] leading-relaxed text-[#0284c7] dark:text-[#38bdf8]">
+                  These items allow the website to remember choices you make (such as your user name, language, or the region you are in) and provide enhanced, more personal features. For example, a website may provide you with local weather reports or traffic news by storing data about your current location.
+                </p>
+                <div className="border-b border-neutral-200 dark:border-neutral-800 mt-5" />
+              </div>
+
+              {/* Analytics */}
+              <div>
+                <div className="flex items-center justify-between gap-3 mb-1.5">
+                  <h4 className="text-base font-bold text-neutral-950 dark:text-white">
+                    Analytics
+                  </h4>
+                  <ToggleSwitch
+                    checked={analytics}
+                    onChange={(val) => setAnalytics(val)}
+                    id="toggle-analytics"
+                  />
+                </div>
+                <p className="text-xs sm:text-[13px] leading-relaxed text-[#0284c7] dark:text-[#38bdf8]">
+                  These items help the website operator understand how its website performs, how visitors interact with the site, and whether there may be technical issues. This storage type usually doesn&apos;t collect information that identifies a visitor.
+                </p>
+                <div className="border-b border-neutral-200 dark:border-neutral-800 mt-5" />
+              </div>
+            </div>
+
+            {/* Bottom Confirm Button */}
+            <div className="flex justify-end pt-5">
+              <button
+                type="button"
+                onClick={() =>
+                  saveConsent("custom", {
+                    marketing,
+                    personalization,
+                    analytics,
+                  })
+                }
+                className="px-7 py-2.5 rounded-full bg-[#3d3d3d] hover:bg-[#2c2c2c] dark:bg-neutral-200 dark:hover:bg-white text-white dark:text-neutral-900 text-xs sm:text-sm font-medium transition shadow-sm cursor-pointer"
+              >
+                Confirm my preferences and close
               </button>
             </div>
           </div>
@@ -303,7 +429,7 @@ export function CookiePreferencesTrigger({
     <button
       type="button"
       onClick={openCookiePreferences}
-      className={className || "hover:underline text-[11px] text-neutral-400"}
+      className={className || "hover:underline text-[11px] text-neutral-400 cursor-pointer"}
     >
       {children || "Cookie Settings"}
     </button>
