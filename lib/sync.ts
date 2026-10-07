@@ -18,7 +18,7 @@ import { getWikipediaSummary } from "@/lib/wikipedia";
 import { getBloombergForPerson, fetchBloombergIndex } from "@/lib/bloomberg";
 import { getLiveStockQuote } from "@/lib/stocks";
 import { INITIAL_50_BILLIONAIRES } from "@/data/billionaires";
-import { VERIFIED_PORTRAITS } from "@/components/BillionairesHomeClient";
+import { VERIFIED_PORTRAITS } from "@/lib/portraits";
 import { formatCountryName } from "@/lib/countries";
 
 const TECH_KEYWORDS = [

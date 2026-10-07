@@ -19,7 +19,7 @@ import {
   Sparkles,
   BookOpen,
 } from "lucide-react";
-import { VERIFIED_PORTRAITS } from "@/components/BillionairesHomeClient";
+import { VERIFIED_PORTRAITS } from "@/lib/portraits";
 import { formatCountryName } from "@/lib/countries";
 
 interface Props {
@@ -151,6 +151,7 @@ export default function BillionaireProfileClient({
                 <img
                   src={photoUrl}
                   alt={displayName}
+                  referrerPolicy="no-referrer"
                   className="w-full h-full object-cover object-center"
                 />
               ) : (

@@ -4,11 +4,13 @@
  * Automatically initiates sync if database is empty or cold.
  */
 
-import { db } from "@/db";
+import { db, hasDatabaseConnection } from "@/db";
 import { people } from "@/db/schema";
 import { desc, asc, eq, sql } from "drizzle-orm";
 import { syncBillionairesToSupabase } from "@/lib/sync";
 import { formatCountryName } from "@/lib/countries";
+import { INITIAL_50_BILLIONAIRES } from "@/data/billionaires";
+import { VERIFIED_PORTRAITS } from "@/lib/portraits";
 
 export interface DBBillionaire {
   id: number;
@@ -39,113 +41,151 @@ export interface DBBillionaire {
 let memoryCachePeople: { data: DBBillionaire[]; expiry: number } | null = null;
 let isSyncInProgress = false;
 
+function getStaticFallbackPeople(limit = 100): DBBillionaire[] {
+  return INITIAL_50_BILLIONAIRES.slice(0, limit).map((p) => ({
+    id: p.id,
+    slug: p.slug,
+    name: p.name,
+    rank: p.rank,
+    netWorth: p.netWorth,
+    netWorthChangeDay: p.netWorthChangeDay,
+    netWorthChangePercent: p.netWorthChangePercent,
+    currentCountry: formatCountryName(p.currentCountry) || "United States",
+    currentCity: p.currentCity,
+    citizenship: p.citizenship,
+    mainCompany: p.mainCompany,
+    photoUrl: VERIFIED_PORTRAITS[p.slug] || p.photoUrl,
+    bio: p.bio,
+    isTechTitan: true,
+    isLive: true,
+  }));
+}
+
 /**
- * Fetch all billionaires from Supabase database
+ * Fetch all billionaires from Supabase database with instant fallback
  */
 export async function getBillionairesFromDB(limit = 100): Promise<DBBillionaire[]> {
   if (memoryCachePeople && memoryCachePeople.expiry > Date.now()) {
     return memoryCachePeople.data.slice(0, limit);
   }
 
-  try {
-    const rows = await db
-      .select()
-      .from(people)
-      .orderBy(asc(people.rank))
-      .limit(limit);
+  if (hasDatabaseConnection && db) {
+    try {
+      const rows = await db
+        .select()
+        .from(people)
+        .orderBy(asc(people.rank))
+        .limit(limit);
 
-    if (rows && rows.length > 0) {
-      const formatted: DBBillionaire[] = rows.map((r) => ({
-        id: r.id,
-        slug: r.slug,
-        name: r.name,
-        rank: r.rank,
-        netWorth: parseFloat(r.netWorth || "0"),
-        netWorthChangeDay: parseFloat(r.netWorthChangeDay || "0"),
-        netWorthChangePercent: parseFloat(r.netWorthChangePercent || "0"),
-        bloombergNetWorth: r.bloombergNetWorth ? parseFloat(r.bloombergNetWorth) : undefined,
-        bloombergRank: r.bloombergRank ?? undefined,
-        currentCountry: formatCountryName(r.currentCountry) || "United States",
-        currentCity: r.currentCity?.toLowerCase() === "global" ? "" : (r.currentCity || ""),
-        citizenship: r.citizenship ? formatCountryName(r.citizenship) : formatCountryName(r.currentCountry) || "United States",
-        mainCompany: r.mainCompany || "Enterprise",
-        industry: r.industry ?? undefined,
-        photoUrl: r.photoUrl ?? undefined,
-        bio: r.bio ?? undefined,
-        grokipediaSummary: r.grokipediaSummary ?? undefined,
-        wikipediaUrl: r.wikipediaUrl ?? undefined,
-        wikidataId: r.wikidataId ?? undefined,
-        isTechTitan: Boolean(r.isTechTitan),
-        isLive: true,
-        updatedAt: r.updatedAt ? r.updatedAt.toISOString() : undefined,
-      }));
+      if (rows && rows.length > 0) {
+        const formatted: DBBillionaire[] = (rows as any[]).map((r: any) => ({
+          id: r.id,
+          slug: r.slug,
+          name: r.name,
+          rank: r.rank,
+          netWorth: parseFloat(r.netWorth || "0"),
+          netWorthChangeDay: parseFloat(r.netWorthChangeDay || "0"),
+          netWorthChangePercent: parseFloat(r.netWorthChangePercent || "0"),
+          bloombergNetWorth: r.bloombergNetWorth ? parseFloat(r.bloombergNetWorth) : undefined,
+          bloombergRank: r.bloombergRank ?? undefined,
+          currentCountry: formatCountryName(r.currentCountry) || "United States",
+          currentCity: r.currentCity?.toLowerCase() === "global" ? "" : (r.currentCity || ""),
+          citizenship: r.citizenship ? formatCountryName(r.citizenship) : formatCountryName(r.currentCountry) || "United States",
+          mainCompany: r.mainCompany || "Enterprise",
+          industry: r.industry ?? undefined,
+          photoUrl: VERIFIED_PORTRAITS[r.slug] || r.photoUrl || undefined,
+          bio: r.bio ?? undefined,
+          grokipediaSummary: r.grokipediaSummary ?? undefined,
+          wikipediaUrl: r.wikipediaUrl ?? undefined,
+          wikidataId: r.wikidataId ?? undefined,
+          isTechTitan: Boolean(r.isTechTitan),
+          isLive: true,
+          updatedAt: r.updatedAt ? r.updatedAt.toISOString() : undefined,
+        }));
 
-      // Cache for 30 seconds
-      memoryCachePeople = {
-        data: formatted,
-        expiry: Date.now() + 30 * 1000,
-      };
+        // Cache for 30 seconds
+        memoryCachePeople = {
+          data: formatted,
+          expiry: Date.now() + 30 * 1000,
+        };
 
-      return formatted.slice(0, limit);
+        return formatted.slice(0, limit);
+      }
+    } catch (err: any) {
+      console.warn("[DB Repo] Failed to query people from database:", err.message);
     }
-  } catch (err: any) {
-    console.warn("[DB Repo] Failed to query people from database:", err.message);
   }
 
-  // If table is empty or query failed, trigger background sync and return fallback
-  if (!isSyncInProgress) {
-    isSyncInProgress = true;
-    syncBillionairesToSupabase(80)
-      .then(() => console.log("[DB Repo] Initial auto-sync complete"))
-      .catch((e) => console.error("[DB Repo] Auto-sync failed:", e))
-      .finally(() => {
-        isSyncInProgress = false;
-      });
-  }
-
-  return [];
+  // Fallback to rich curated billionaires with verified portraits
+  return getStaticFallbackPeople(limit);
 }
 
 /**
  * Fetch a single billionaire dossier by slug from Supabase
  */
 export async function getBillionaireBySlugFromDB(slug: string): Promise<DBBillionaire | null> {
-  try {
-    const rows = await db
-      .select()
-      .from(people)
-      .where(eq(people.slug, slug.toLowerCase().trim()))
-      .limit(1);
+  const normSlug = slug.toLowerCase().trim();
 
-    if (rows.length > 0) {
-      const r = rows[0];
-      return {
-        id: r.id,
-        slug: r.slug,
-        name: r.name,
-        rank: r.rank,
-        netWorth: parseFloat(r.netWorth || "0"),
-        netWorthChangeDay: parseFloat(r.netWorthChangeDay || "0"),
-        netWorthChangePercent: parseFloat(r.netWorthChangePercent || "0"),
-        bloombergNetWorth: r.bloombergNetWorth ? parseFloat(r.bloombergNetWorth) : undefined,
-        bloombergRank: r.bloombergRank ?? undefined,
-        currentCountry: formatCountryName(r.currentCountry) || "United States",
-        currentCity: r.currentCity?.toLowerCase() === "global" ? "" : (r.currentCity || ""),
-        citizenship: r.citizenship ? formatCountryName(r.citizenship) : formatCountryName(r.currentCountry) || "United States",
-        mainCompany: r.mainCompany || "Enterprise",
-        industry: r.industry ?? undefined,
-        photoUrl: r.photoUrl ?? undefined,
-        bio: r.bio ?? undefined,
-        grokipediaSummary: r.grokipediaSummary ?? undefined,
-        wikipediaUrl: r.wikipediaUrl ?? undefined,
-        wikidataId: r.wikidataId ?? undefined,
-        isTechTitan: Boolean(r.isTechTitan),
-        isLive: true,
-        updatedAt: r.updatedAt ? r.updatedAt.toISOString() : undefined,
-      };
+  if (hasDatabaseConnection && db) {
+    try {
+      const rows = await db
+        .select()
+        .from(people)
+        .where(eq(people.slug, normSlug))
+        .limit(1);
+
+      if (rows && rows.length > 0) {
+        const r: any = rows[0];
+        return {
+          id: r.id,
+          slug: r.slug,
+          name: r.name,
+          rank: r.rank,
+          netWorth: parseFloat(r.netWorth || "0"),
+          netWorthChangeDay: parseFloat(r.netWorthChangeDay || "0"),
+          netWorthChangePercent: parseFloat(r.netWorthChangePercent || "0"),
+          bloombergNetWorth: r.bloombergNetWorth ? parseFloat(r.bloombergNetWorth) : undefined,
+          bloombergRank: r.bloombergRank ?? undefined,
+          currentCountry: formatCountryName(r.currentCountry) || "United States",
+          currentCity: r.currentCity?.toLowerCase() === "global" ? "" : (r.currentCity || ""),
+          citizenship: r.citizenship ? formatCountryName(r.citizenship) : formatCountryName(r.currentCountry) || "United States",
+          mainCompany: r.mainCompany || "Enterprise",
+          industry: r.industry ?? undefined,
+          photoUrl: VERIFIED_PORTRAITS[r.slug] || r.photoUrl || undefined,
+          bio: r.bio ?? undefined,
+          grokipediaSummary: r.grokipediaSummary ?? undefined,
+          wikipediaUrl: r.wikipediaUrl ?? undefined,
+          wikidataId: r.wikidataId ?? undefined,
+          isTechTitan: Boolean(r.isTechTitan),
+          isLive: true,
+          updatedAt: r.updatedAt ? r.updatedAt.toISOString() : undefined,
+        };
+      }
+    } catch (err) {
+      console.warn(`[DB Repo] Lookup failed for slug ${slug}:`, err);
     }
-  } catch (err) {
-    console.warn(`[DB Repo] Lookup failed for slug ${slug}:`, err);
   }
+
+  const staticMatch = INITIAL_50_BILLIONAIRES.find((p) => p.slug === normSlug);
+  if (staticMatch) {
+    return {
+      id: staticMatch.id,
+      slug: staticMatch.slug,
+      name: staticMatch.name,
+      rank: staticMatch.rank,
+      netWorth: staticMatch.netWorth,
+      netWorthChangeDay: staticMatch.netWorthChangeDay,
+      netWorthChangePercent: staticMatch.netWorthChangePercent,
+      currentCountry: formatCountryName(staticMatch.currentCountry) || "United States",
+      currentCity: staticMatch.currentCity,
+      citizenship: staticMatch.citizenship,
+      mainCompany: staticMatch.mainCompany,
+      photoUrl: VERIFIED_PORTRAITS[staticMatch.slug] || staticMatch.photoUrl,
+      bio: staticMatch.bio,
+      isTechTitan: true,
+      isLive: true,
+    };
+  }
+
   return null;
 }

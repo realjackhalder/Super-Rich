@@ -87,7 +87,7 @@ export function Navbar() {
         >
           <div className="relative w-8 h-8 shrink-0 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
             <Image
-              src="/diamond-crystal-.jpeg"
+              src="/icon.png"
               alt="SuperRich Logo"
               width={32}
               height={32}

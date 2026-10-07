@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getBillionairesFromDB } from "@/lib/db-people";
 import { getRTBLatestList } from "@/lib/rtb";
 import { formatCountryName } from "@/lib/countries";
+import { VERIFIED_PORTRAITS } from "@/lib/portraits";
 
 export const dynamic = "force-dynamic";
 
@@ -28,6 +29,7 @@ export async function GET(request: Request) {
         currentCity: "",
         citizenship: formatCountryName(p.citizenship) || "United States",
         mainCompany: p.source?.[0] || "Enterprise",
+        photoUrl: VERIFIED_PORTRAITS[p.uri] || p.image || undefined,
         isTechTitan: true,
         isLive: true,
       }));
@@ -55,7 +57,7 @@ export async function GET(request: Request) {
     current_country: formatCountryName(p.currentCountry) || "United States",
     citizenship: formatCountryName(p.citizenship || p.currentCountry) || "United States",
     primary_company: p.mainCompany,
-    photo_url: p.photoUrl,
+    photo_url: VERIFIED_PORTRAITS[p.slug] || p.photoUrl || null,
     bio: p.bio,
     grokipedia_summary: p.grokipediaSummary,
     wikipedia_url: p.wikipediaUrl,

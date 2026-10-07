@@ -14,19 +14,17 @@ export const metadata: Metadata = {
     "Real-time wealth tracking, childhood-to-present timelines, verified assets, companies, public contact emails and court-released archives for the world's top tech titans.",
   icons: {
     icon: [
-      { url: "/diamond-crystal-.jpeg" },
       { url: "/favicon.ico", sizes: "any" },
-      { url: "/favicon-light.png", media: "(prefers-color-scheme: light)", sizes: "32x32", type: "image/png" },
-      { url: "/favicon-dark.png", media: "(prefers-color-scheme: dark)", sizes: "32x32", type: "image/png" },
       { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
-      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/icon.png", sizes: "512x512", type: "image/png" },
+      { url: "/favicon-light.png", media: "(prefers-color-scheme: light)", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-dark.png", media: "(prefers-color-scheme: dark)", sizes: "32x32", type: "image/png" },
     ],
     apple: [
-      { url: "/diamond-crystal-.jpeg" },
       { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
     ],
-    shortcut: "/diamond-crystal-.jpeg",
+    shortcut: "/favicon.ico",
   },
 };
 
@@ -107,7 +105,7 @@ export default function RootLayout({
               </div>
               <div className="flex items-center justify-center space-x-2 text-neutral-500">
                 <Image
-                  src="/diamond-crystal-.jpeg"
+                  src="/icon.png"
                   alt="SuperRich"
                   width={18}
                   height={18}

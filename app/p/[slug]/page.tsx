@@ -7,13 +7,9 @@ import { INITIAL_50_BILLIONAIRES } from "@/data/billionaires";
 import { formatCountryName } from "@/lib/countries";
 import BillionaireProfileClient from "@/components/BillionaireProfileClient";
 
-export const dynamic = "force-dynamic";
+import { VERIFIED_PORTRAITS } from "@/lib/portraits";
 
-const VERIFIED_PORTRAITS: Record<string, string> = {
-  "elon-musk": "/images/billionaires/elon-musk.jpg",
-  "larry-ellison": "/images/billionaires/larry-ellison.jpg",
-  "mark-zuckerberg": "/images/billionaires/mark-zuckerberg.jpg",
-};
+export const dynamic = "force-dynamic";
 
 export default async function BillionaireProfilePage({
   params,

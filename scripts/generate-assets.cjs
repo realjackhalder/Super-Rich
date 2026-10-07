@@ -113,7 +113,10 @@ async function main() {
     { width: 48, height: 48, buffer: fav48 }
   ]);
   fs.writeFileSync(path.join(PUBLIC_DIR, 'favicon.ico'), icoBuffer);
-  console.log('✓ Created public/favicon.ico (multi-resolution 16, 32, 48)');
+  fs.writeFileSync(path.join(APP_DIR, 'favicon.ico'), icoBuffer);
+  fs.writeFileSync(path.join(APP_DIR, 'icon.png'), logoTransparent512);
+  fs.writeFileSync(path.join(APP_DIR, 'apple-icon.png'), appleTouchIcon);
+  console.log('✓ Created public/favicon.ico and synced app/ icons');
 
   // 6. Responsive Scalable SVG Icon (public/icon.svg)
   const svgContent = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
