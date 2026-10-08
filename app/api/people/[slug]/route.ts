@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getBillionaireBySlugFromDB } from "@/lib/db-people";
 import { getRTBFullProfile } from "@/lib/rtb";
-import { getGrokipediaPage } from "@/lib/grokipedia";
+import { getGrokipediaPage, getGrokipediaUrl, normalizeGrokipediaSlug } from "@/lib/grokipedia";
 import { getWikipediaSummary } from "@/lib/wikipedia";
 import { getBloombergForPerson } from "@/lib/bloomberg";
 import { formatCountryName } from "@/lib/countries";
@@ -18,11 +18,16 @@ export async function GET(
   // 1. Try Supabase Postgres database
   const dbPerson = await getBillionaireBySlugFromDB(slug);
 
+  const fallbackName = slug
+    .replace(/-/g, " ")
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+  const searchName = dbPerson?.name || fallbackName;
+
   // 2. Fetch live enrichment
   const [rtbProfile, grokData, wikiData, bloombergData] = await Promise.allSettled([
     getRTBFullProfile(slug),
-    getGrokipediaPage(dbPerson?.name || slug),
-    getWikipediaSummary(dbPerson?.name || slug),
+    getGrokipediaPage(searchName),
+    getWikipediaSummary(searchName),
     getBloombergForPerson(slug),
   ]);
 
@@ -38,13 +43,15 @@ export async function GET(
   const wiki = wikiData.status === "fulfilled" ? wikiData.value : null;
   const bloomberg = bloombergData.status === "fulfilled" ? bloombergData.value : null;
 
+  const combinedName = dbPerson?.name || rtb?.info?.name || fallbackName;
+
   const netWorth = rtb?.latest?.networth
     ? Math.round((rtb.latest.networth / 1000) * 100) / 100
     : dbPerson?.netWorth || 0;
 
   const combinedData = {
     slug,
-    name: dbPerson?.name || rtb?.info?.name || slug,
+    name: combinedName,
     rank:
       dbPerson?.rank ||
       (rtb?.latest?.rank && rtb.latest.rank < 10000 ? rtb.latest.rank : (slug === "elon-musk" ? 1 : 999)),
@@ -79,22 +86,18 @@ export async function GET(
     mainCompany: dbPerson?.mainCompany || rtb?.info?.source?.join(" & ") || "Enterprise",
     photoUrl: wiki?.photoUrl || dbPerson?.photoUrl,
     bio: wiki?.extract || dbPerson?.bio,
-    grokipedia: grok
-      ? {
-        title: grok.title,
-        url: grok.url,
-        summary: grok.description,
-        referencesCount: grok.references_count,
-        references: grok.references,
-      }
-      : null,
-    wikipedia: wiki
-      ? {
-        url: wiki.pageUrl,
-        wikidataId: wiki.wikidataId,
-        description: wiki.description,
-      }
-      : null,
+    grokipedia: {
+      title: grok?.title || combinedName,
+      url: grok?.url || getGrokipediaUrl(combinedName),
+      summary: grok?.description || dbPerson?.grokipediaSummary || null,
+      referencesCount: grok?.references_count || (grok?.references?.length ?? 0),
+      references: grok?.references || [],
+    },
+    wikipedia: {
+      url: wiki?.pageUrl || `https://en.wikipedia.org/wiki/${encodeURIComponent(normalizeGrokipediaSlug(combinedName))}`,
+      wikidataId: wiki?.wikidataId || null,
+      description: wiki?.description || null,
+    },
     rtbLiveAssets: rtb?.assets || [],
     rtbAnnualHistory: rtb?.annual || null,
     socials: getBillionaireSocials(slug),

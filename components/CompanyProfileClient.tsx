@@ -30,6 +30,19 @@ export default function CompanyProfileClient({ company: initialCompany }: Props)
   const [company, setCompany] = useState<CompanyData>(initialCompany);
   const [activeTab, setActiveTab] = useState<"overview" | "billionaires" | "financials">("overview");
 
+  const companyGrokSlug = company.name
+    .replace(/\s*Inc\.?/gi, "")
+    .replace(/\s*Corp\.?/gi, "")
+    .replace(/\s*Ltd\.?/gi, "")
+    .replace(/\s*Co\.?/gi, "")
+    .replace(/\s*Plc\.?/gi, "")
+    .replace(/\s*N\.V\.?/gi, "")
+    .replace(/\s*S\.A\.?/gi, "")
+    .trim()
+    .replace(/\s+/g, "_");
+  const grokipediaUrl = `https://grokipedia.com/page/${encodeURIComponent(companyGrokSlug)}`;
+  const wikipediaUrl = `https://en.wikipedia.org/wiki/${encodeURIComponent(company.name.replace(/\s+/g, "_"))}`;
+
   // Real-time live update for this company
   useEffect(() => {
     async function syncCompany() {
@@ -90,6 +103,32 @@ export default function CompanyProfileClient({ company: initialCompany }: Props)
           <span className="px-3 py-1 rounded-full text-xs font-medium bg-neutral-100 dark:bg-neutral-800/80 text-neutral-700 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-700/80">
             {company.sector}
           </span>
+
+          {/* Read on Grokipedia Chip */}
+          <a
+            href={grokipediaUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="px-3 py-1 rounded-full text-xs font-semibold hover:bg-purple-500/15 dark:hover:bg-purple-900/40 flex items-center space-x-1.5 transition-all border border-purple-500/40 text-purple-600 dark:text-purple-300 shadow-sm group"
+            title="Read company intelligence on xAI Grokipedia"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-purple-500 group-hover:rotate-12 transition-transform" />
+            <span>Read on Grokipedia</span>
+            <ExternalLink className="w-3 h-3 opacity-60" />
+          </a>
+
+          {/* Wikipedia Chip */}
+          <a
+            href={wikipediaUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="px-3 py-1 rounded-full text-xs font-medium hover:bg-neutral-200/50 dark:hover:bg-neutral-800/50 flex items-center space-x-1.5 transition-colors border border-neutral-200/80 dark:border-neutral-700/80 text-blue-600 dark:text-blue-400"
+            title="Read article on Wikipedia"
+          >
+            <span className="font-serif font-bold text-xs">W</span>
+            <span>Wikipedia</span>
+            <ExternalLink className="w-3 h-3 opacity-60" />
+          </a>
 
           {/* Real-time sync badge */}
           <span className="ml-auto inline-flex items-center space-x-1.5 text-[11px] font-mono text-gain">
@@ -243,6 +282,29 @@ export default function CompanyProfileClient({ company: initialCompany }: Props)
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed text-sm sm:text-base font-sans">
               {company.description}
             </p>
+            <div className="pt-2 text-[11px] text-neutral-400 flex flex-wrap items-center gap-x-2.5 gap-y-1 border-t border-neutral-100 dark:border-neutral-800/80">
+              <span>Source: SEC Filings & Global Market Exchanges</span>
+              <span>•</span>
+              <a
+                href={wikipediaUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="text-blue-500 dark:text-blue-400 hover:underline inline-flex items-center space-x-1 font-sans"
+              >
+                <span>Read full article on Wikipedia</span>
+                <ExternalLink className="w-2.5 h-2.5 opacity-60" />
+              </a>
+              <span>•</span>
+              <a
+                href={grokipediaUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="text-purple-600 dark:text-purple-400 font-semibold hover:underline inline-flex items-center space-x-1 font-sans"
+              >
+                <span>Read on Grokipedia</span>
+                <ExternalLink className="w-2.5 h-2.5 opacity-60" />
+              </a>
+            </div>
           </div>
 
           {/* Key Divisions & Products */}

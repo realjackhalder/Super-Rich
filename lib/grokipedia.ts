@@ -36,15 +36,40 @@ const grokCache = new Map<string, { data: GrokipediaPage; expiry: number }>();
 
 /**
  * Normalizes a billionaire or company name to a Grokipedia slug
- * e.g. "Elon Musk" -> "Elon_Musk", "Larry Page" -> "Larry_Page"
+ * e.g. "elon-musk" -> "Elon_Musk", "Bernard Arnault & family" -> "Bernard_Arnault", "SpaceX" -> "SpaceX"
  */
 export function normalizeGrokipediaSlug(nameOrTopic: string): string {
   if (!nameOrTopic) return "";
-  return nameOrTopic
-    .trim()
+  const stripped = nameOrTopic
+    .replace(/\s*&\s*family/gi, "")
+    .replace(/\s*and\s*family/gi, "")
+    .replace(/\s*\(.*?\)/g, "")
+    .trim();
+
+  const cleaned = stripped
+    .replace(/[&]/g, "and")
     .replace(/[^\w\s-]/g, "")
-    .replace(/\s+/g, "_")
-    .replace(/&/g, "and");
+    .replace(/[-_]+/g, " ");
+
+  const titleCased = cleaned
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((word) => {
+      // Preserve acronyms like ASML, IBM, LVMH, TSMC, or title case
+      if (word.length >= 2 && word === word.toUpperCase()) return word;
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    })
+    .join("_");
+
+  return titleCased;
+}
+
+/**
+ * Returns the canonical public URL for an article on Grokipedia
+ */
+export function getGrokipediaUrl(nameOrTopic: string): string {
+  const slug = normalizeGrokipediaSlug(nameOrTopic);
+  return `${GROKIPEDIA_WEB_BASE}/${encodeURIComponent(slug)}`;
 }
 
 /**

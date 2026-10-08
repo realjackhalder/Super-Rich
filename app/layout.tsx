@@ -102,6 +102,14 @@ export default function RootLayout({
                 <Link href="/legal/cookies" className="hover:text-black dark:hover:text-white hover:underline transition-colors">
                   Cookies
                 </Link>
+                <a
+                  href="https://grokipedia.com"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hover:text-black dark:hover:text-white hover:underline transition-colors text-purple-600 dark:text-purple-400 font-medium"
+                >
+                  Grokipedia
+                </a>
               </div>
               {/* Official Social Media Channels */}
               <div className="flex items-center justify-center space-x-5 text-xs text-neutral-600 dark:text-neutral-400 pt-1">

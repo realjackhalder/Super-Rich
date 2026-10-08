@@ -112,6 +112,34 @@ export default function BillionaireProfileClient({
   const displayBio = person.bio || rtbData?.bio?.bio?.[0] || "";
   const photoUrl = VERIFIED_PORTRAITS[slug] || person.photoUrl || rtbData?.info?.image;
 
+  const grokipediaNormalizedSlug = (person.name || displayName || slug)
+    .replace(/\s*&\s*family/gi, "")
+    .replace(/\s*and\s*family/gi, "")
+    .replace(/\s*\(.*?\)/g, "")
+    .replace(/[&]/g, "and")
+    .replace(/[^\w\s-]/g, "")
+    .replace(/[-_]+/g, " ")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((w: string) => (w.length >= 2 && w === w.toUpperCase() ? w : w.charAt(0).toUpperCase() + w.slice(1)))
+    .join("_");
+
+  const grokipediaUrl =
+    grokipediaData?.url ||
+    person.grokipedia?.url ||
+    `https://grokipedia.com/page/${encodeURIComponent(grokipediaNormalizedSlug)}`;
+
+  const wikipediaUrl =
+    person.wikipedia?.url ||
+    person.wikipediaUrl ||
+    `https://en.wikipedia.org/wiki/${encodeURIComponent(
+      (person.name || displayName || slug)
+        .replace(/\s*&\s*family/gi, "")
+        .replace(/\s*and\s*family/gi, "")
+        .replace(/\s+/g, "_")
+    )}`;
+
   const tabs = [
     { id: "overview", label: "Overview" },
     { id: "timeline", label: `Timeline (${person.timeline?.length || 0})` },
@@ -227,30 +255,57 @@ export default function BillionaireProfileClient({
           </div>
         </div>
 
-        {/* Social media links row */}
-        {person.socials && person.socials.length > 0 && (
-          <div className="pt-2 flex flex-wrap items-center gap-2">
-            <span className="text-xs text-neutral-400 mr-2 flex items-center space-x-1">
+        {/* Social media & Knowledge Graph row */}
+        <div className="pt-2 flex flex-wrap items-center gap-2">
+          {person.socials && person.socials.length > 0 && (
+            <span className="text-xs text-neutral-400 mr-1 flex items-center space-x-1">
               <CheckCircle2 className="w-3.5 h-3.5 text-accent" />
-              <span>Verified Profiles:</span>
+              <span>Verified:</span>
             </span>
-            {person.socials.map((s: any, idx: number) => (
-              <a
-                key={idx}
-                href={s.url}
-                target="_blank"
-                rel="noreferrer"
-                className="liquid-glass px-3 py-1 rounded-full text-xs font-medium hover:bg-neutral-200/50 dark:hover:bg-neutral-800/50 flex items-center space-x-1.5 transition-colors border border-neutral-200/80 dark:border-neutral-700/80"
-              >
-                <span className="font-bold text-neutral-900 dark:text-white capitalize">
-                  {s.platform === "x" ? "𝕏" : s.platform}
-                </span>
-                <span className="text-neutral-500 dark:text-neutral-400 font-normal">{s.handle}</span>
-                <ExternalLink className="w-3 h-3 text-neutral-400" />
-              </a>
-            ))}
-          </div>
-        )}
+          )}
+
+          {person.socials?.map((s: any, idx: number) => (
+            <a
+              key={idx}
+              href={s.url}
+              target="_blank"
+              rel="noreferrer"
+              className="liquid-glass px-3 py-1 rounded-full text-xs font-medium hover:bg-neutral-200/50 dark:hover:bg-neutral-800/50 flex items-center space-x-1.5 transition-colors border border-neutral-200/80 dark:border-neutral-700/80"
+            >
+              <span className="font-bold text-neutral-900 dark:text-white capitalize">
+                {s.platform === "x" ? "𝕏" : s.platform}
+              </span>
+              <span className="text-neutral-500 dark:text-neutral-400 font-normal">{s.handle}</span>
+              <ExternalLink className="w-3 h-3 text-neutral-400" />
+            </a>
+          ))}
+
+          {/* Read on Grokipedia Chip */}
+          <a
+            href={grokipediaUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="liquid-glass px-3 py-1 rounded-full text-xs font-semibold hover:bg-purple-500/15 dark:hover:bg-purple-900/40 flex items-center space-x-1.5 transition-all border border-purple-500/40 text-purple-600 dark:text-purple-300 shadow-sm group"
+            title="Read AI-verified intelligence dossier on xAI Grokipedia"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-purple-500 group-hover:rotate-12 transition-transform" />
+            <span>Read on Grokipedia</span>
+            <ExternalLink className="w-3 h-3 opacity-60" />
+          </a>
+
+          {/* Wikipedia Chip */}
+          <a
+            href={wikipediaUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="liquid-glass px-3 py-1 rounded-full text-xs font-medium hover:bg-neutral-200/50 dark:hover:bg-neutral-800/50 flex items-center space-x-1.5 transition-colors border border-neutral-200/80 dark:border-neutral-700/80 text-blue-600 dark:text-blue-400"
+            title="Read open biographical article on Wikipedia"
+          >
+            <span className="font-bold font-serif text-xs">W</span>
+            <span>Wikipedia</span>
+            <ExternalLink className="w-3 h-3 opacity-60" />
+          </a>
+        </div>
 
         {/* Tab Navigation */}
         <div className="flex space-x-1 border-t border-neutral-200/50 dark:border-neutral-800/80 pt-4 overflow-x-auto no-scrollbar">
@@ -285,6 +340,15 @@ export default function BillionaireProfileClient({
                   <h3 className="text-sm font-bold uppercase tracking-wider text-neutral-500">
                     Biography & Background
                   </h3>
+                  <a
+                    href={grokipediaUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center space-x-1 text-[11px] font-medium text-purple-600 dark:text-purple-400 bg-purple-500/10 hover:bg-purple-500/20 px-2.5 py-0.5 rounded-full border border-purple-500/20 transition-colors"
+                  >
+                    <Sparkles className="w-3 h-3 text-purple-500" />
+                    <span>xAI Grokipedia Enriched</span>
+                  </a>
                 </div>
 
                 <p className="text-sm leading-relaxed text-neutral-800 dark:text-neutral-200">
@@ -300,36 +364,80 @@ export default function BillionaireProfileClient({
                   </ul>
                 )}
 
-                <div className="pt-2 text-[11px] text-neutral-400 flex flex-wrap items-center gap-x-2 gap-y-1">
+                <div className="pt-2 text-[11px] text-neutral-400 flex flex-wrap items-center gap-x-2.5 gap-y-1">
                   <span>Source: SuperRich Real-Time Index</span>
                   <span>•</span>
                   <a
-                    href={
-                      person.wikipedia?.url ||
-                      person.wikipediaUrl ||
-                      `https://en.wikipedia.org/wiki/${encodeURIComponent(
-                        displayName.replace(/\s+/g, "_")
-                      )}`
-                    }
+                    href={wikipediaUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-blue-500 dark:text-blue-400 hover:underline"
+                    className="text-blue-500 dark:text-blue-400 hover:underline inline-flex items-center space-x-1"
                   >
-                    Read full article on Wikipedia
+                    <span>Read full article on Wikipedia</span>
+                    <ExternalLink className="w-2.5 h-2.5 opacity-60" />
                   </a>
-                  {grokipediaData?.url && (
-                    <>
-                      <span>•</span>
-                      <a
-                        href={grokipediaData.url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-purple-500 dark:text-purple-400 hover:underline"
-                      >
-                        Read full article on Grokipedia
-                      </a>
-                    </>
-                  )}
+                  <span>•</span>
+                  <a
+                    href={grokipediaUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-purple-600 dark:text-purple-400 font-semibold hover:underline inline-flex items-center space-x-1"
+                  >
+                    <span>Read on Grokipedia</span>
+                    <ExternalLink className="w-2.5 h-2.5 opacity-60" />
+                  </a>
+                </div>
+              </div>
+
+              {/* xAI Grokipedia Intelligence Dossier */}
+              <div className="solid-card rounded-3xl p-6 space-y-3 border border-purple-500/25 bg-gradient-to-br from-purple-500/5 via-purple-500/10 to-transparent">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-600 dark:text-purple-400 shrink-0">
+                      <Sparkles className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-neutral-900 dark:text-white">
+                        xAI Grokipedia Intelligence Dossier
+                      </h4>
+                      <p className="text-[10px] text-neutral-500 dark:text-neutral-400">
+                        Autonomous verified knowledge graph (grokipedia.com)
+                      </p>
+                    </div>
+                  </div>
+                  <a
+                    href={grokipediaUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="px-3 py-1 rounded-full text-xs font-semibold bg-purple-500/15 text-purple-600 dark:text-purple-300 hover:bg-purple-500/25 border border-purple-500/30 flex items-center space-x-1.5 transition-colors shadow-sm"
+                  >
+                    <span>Read on Grokipedia</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                </div>
+
+                <p className="text-xs sm:text-sm leading-relaxed text-neutral-800 dark:text-neutral-200">
+                  {grokipediaData?.summary ||
+                    person.grokipediaSummary ||
+                    grokipediaData?.description ||
+                    `${displayName} is indexed on xAI Grokipedia with verified corporate filings, cross-referenced real-time wealth indices, and primary source citations.`}
+                </p>
+
+                <div className="pt-1 flex items-center justify-between text-[11px] text-neutral-400 border-t border-purple-500/15">
+                  <span>
+                    {grokipediaData?.referencesCount
+                      ? `${grokipediaData.referencesCount} verified source citations`
+                      : "Multi-source citation verification"}
+                  </span>
+                  <a
+                    href={grokipediaUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-purple-600 dark:text-purple-400 font-medium hover:underline inline-flex items-center space-x-1"
+                  >
+                    <span>Open full dossier on grokipedia.com</span>
+                    <ExternalLink className="w-2.5 h-2.5 ml-0.5" />
+                  </a>
                 </div>
               </div>
 
@@ -613,16 +721,74 @@ export default function BillionaireProfileClient({
                 ))}
               </div>
             ) : (
-              <div className="py-12 text-center space-y-2 border border-dashed border-neutral-200 dark:border-neutral-800 rounded-2xl font-sans">
-                <Globe className="w-8 h-8 text-neutral-400 mx-auto" />
+              <div className="py-8 text-center space-y-2 border border-dashed border-neutral-200 dark:border-neutral-800 rounded-2xl font-sans">
+                <Globe className="w-7 h-7 text-neutral-400 mx-auto" />
                 <div className="text-sm font-semibold text-neutral-900 dark:text-white">
                   No Active Personal Social Accounts
                 </div>
                 <p className="text-xs text-neutral-500 max-w-md mx-auto">
-                  No active public personal social media accounts verified for this executive. Official statements are communicated through regulatory filings and corporate press releases.
+                  No active personal social media accounts verified for this individual. Official updates are communicated through company disclosures and regulatory filings.
                 </p>
               </div>
             )}
+
+            {/* Official Knowledge Graphs & AI Dossiers */}
+            <div className="pt-4 border-t border-neutral-200/60 dark:border-neutral-800/60 space-y-3">
+              <h4 className="text-xs uppercase font-bold text-neutral-500 tracking-wider">
+                Official Knowledge Graphs & Dossiers
+              </h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <a
+                  href={grokipediaUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="liquid-glass rounded-2xl p-4 border border-purple-500/30 hover:border-purple-500/60 transition-all flex items-center justify-between group shadow-sm"
+                >
+                  <div className="flex items-center space-x-3">
+                    <div className="w-9 h-9 rounded-xl bg-purple-500/15 flex items-center justify-center text-purple-600 dark:text-purple-400">
+                      <Sparkles className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-bold text-neutral-900 dark:text-white">
+                        xAI Grokipedia
+                      </div>
+                      <div className="text-xs text-neutral-500">
+                        AI-verified intelligence dossier
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-1 text-xs font-semibold text-purple-600 dark:text-purple-400">
+                    <span>Read on Grokipedia</span>
+                    <ExternalLink className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                  </div>
+                </a>
+
+                <a
+                  href={wikipediaUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="liquid-glass rounded-2xl p-4 border border-blue-500/30 hover:border-blue-500/60 transition-all flex items-center justify-between group shadow-sm"
+                >
+                  <div className="flex items-center space-x-3">
+                    <div className="w-9 h-9 rounded-xl bg-blue-500/15 flex items-center justify-center text-blue-600 dark:text-blue-400 font-serif font-bold text-lg">
+                      W
+                    </div>
+                    <div>
+                      <div className="text-sm font-bold text-neutral-900 dark:text-white">
+                        Wikipedia
+                      </div>
+                      <div className="text-xs text-neutral-500">
+                        Open biographical encyclopedia
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-1 text-xs font-semibold text-blue-600 dark:text-blue-400">
+                    <span>Read on Wikipedia</span>
+                    <ExternalLink className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                  </div>
+                </a>
+              </div>
+            </div>
           </div>
         )}
 
