@@ -9,6 +9,8 @@ import { VERIFIED_PORTRAITS } from "@/lib/portraits";
 
 import { getBillionaireSocials } from "@/lib/billionaire-socials";
 import { getBillionaireTimeline } from "@/lib/billionaire-timelines";
+import { getBillionaireCourtEmails, getBillionaireContactEmails } from "@/lib/billionaire-emails";
+import { getBillionaireLegal } from "@/lib/billionaire-legal";
 
 export const dynamic = "force-dynamic";
 
@@ -94,9 +96,9 @@ export default async function BillionaireProfilePage({
     socials: getBillionaireSocials(slug),
     stocks: [],
     timeline: getBillionaireTimeline(slug, personName, dbPerson, rtb),
-    legal: [],
-    courtEmails: [],
-    contactEmails: [],
+    legal: getBillionaireLegal(slug),
+    courtEmails: getBillionaireCourtEmails(slug),
+    contactEmails: getBillionaireContactEmails(slug, dbPerson?.mainCompany || rtb?.info?.source?.join(" & ")),
   };
 
   return (

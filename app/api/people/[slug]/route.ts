@@ -7,6 +7,8 @@ import { getBloombergForPerson } from "@/lib/bloomberg";
 import { formatCountryName } from "@/lib/countries";
 import { getBillionaireSocials } from "@/lib/billionaire-socials";
 import { getBillionaireTimeline } from "@/lib/billionaire-timelines";
+import { getBillionaireCourtEmails, getBillionaireContactEmails } from "@/lib/billionaire-emails";
+import { getBillionaireLegal } from "@/lib/billionaire-legal";
 
 export const dynamic = "force-dynamic";
 
@@ -104,8 +106,9 @@ export async function GET(
     socials: getBillionaireSocials(slug),
     stocks: [],
     timeline: getBillionaireTimeline(slug, combinedName, dbPerson, rtb),
-    legal: [],
-    contactEmails: [],
+    legal: getBillionaireLegal(slug),
+    courtEmails: getBillionaireCourtEmails(slug),
+    contactEmails: getBillionaireContactEmails(slug, dbPerson?.mainCompany || rtb?.info?.source?.join(" & ")),
     source: "Supabase + Forbes RTB + Grokipedia + Wikipedia + Bloomberg",
     updatedAt: new Date().toISOString(),
   };

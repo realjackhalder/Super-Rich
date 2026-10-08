@@ -151,10 +151,10 @@ export default function BillionaireProfileClient({
     },
     { id: "assets", label: "Assets Breakdown" },
     { id: "social", label: `Social Media (${person.socials?.length || 0})` },
-    { id: "legal", label: `Legal & Charges (${person.legal?.length || 0})` },
+    { id: "legal", label: `Legal Cases (${person.legal?.length || 0})` },
     {
       id: "emails",
-      label: `Court Emails (${person.courtEmails?.length || 0})`,
+      label: `Court & Public Emails (${(person.courtEmails?.length || 0) + (person.contactEmails?.length || 0)})`,
     },
   ];
 
@@ -875,34 +875,129 @@ export default function BillionaireProfileClient({
 
         {/* TAB 7: EMAILS */}
         {activeTab === "emails" && (
-          <div className="solid-card rounded-3xl p-6 space-y-4">
-            <h3 className="text-lg font-bold">Court-Released Email Archives</h3>
-            {person.courtEmails?.length ? (
-              <div className="space-y-4">
-                {person.courtEmails.map((cEmail: any, idx: number) => (
-                  <div
-                    key={idx}
-                    className="liquid-glass rounded-2xl p-5 space-y-3 font-mono text-xs border border-surface-borderLight dark:border-surface-borderDark"
-                  >
-                    <div className="flex items-center justify-between text-neutral-500 border-b border-neutral-200/50 dark:border-neutral-800/80 pb-2">
-                      <span>{cEmail.caseName}</span>
-                      <span>{cEmail.date}</span>
-                    </div>
-                    <div>
-                      <span className="text-neutral-500">From:</span> {cEmail.sender}
-                    </div>
-                    <div>
-                      <span className="text-neutral-500">To:</span> {cEmail.recipients}
-                    </div>
-                    <div className="bg-neutral-100/50 dark:bg-neutral-900/50 p-3 rounded-xl whitespace-pre-line text-neutral-700 dark:text-neutral-300 font-sans">
-                      "{cEmail.snippet}"
-                    </div>
-                  </div>
-                ))}
+          <div className="space-y-6">
+            {/* Section A: Court-Released Trial Exhibits */}
+            <div className="solid-card rounded-3xl p-6 sm:p-8 space-y-6">
+              <div>
+                <h3 className="text-xl font-bold font-sans text-neutral-900 dark:text-white flex items-center space-x-2">
+                  <Mail className="w-5 h-5 text-accent" />
+                  <span>Court-Released Email Archives (Federal & State Dockets)</span>
+                </h3>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
+                  Public trial exhibits, discovery deposition filings, and subpoenaed communications unsealed by federal and Delaware Chancery courts.
+                </p>
               </div>
-            ) : (
-              <div className="text-xs text-neutral-500 py-4">
-                No public trial exhibit emails filed for this profile.
+
+              {person.courtEmails?.length ? (
+                <div className="space-y-4">
+                  {person.courtEmails.map((cEmail: any, idx: number) => (
+                    <div
+                      key={idx}
+                      className="liquid-glass rounded-2xl p-5 sm:p-6 space-y-3.5 border border-surface-borderLight dark:border-surface-borderDark shadow-sm"
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-neutral-200/60 dark:border-neutral-800/80 pb-2.5">
+                        <div className="flex items-center space-x-2">
+                          <span className="text-[11px] font-bold font-mono px-2 py-0.5 rounded bg-accent/15 text-accent border border-accent/20">
+                            {cEmail.exhibitNumber || "Trial Exhibit"}
+                          </span>
+                          <span className="text-xs font-semibold text-neutral-800 dark:text-neutral-200">
+                            {cEmail.caseName}
+                          </span>
+                        </div>
+                        <span className="text-xs font-mono text-neutral-400">
+                          {cEmail.date}
+                        </span>
+                      </div>
+
+                      <div className="space-y-1 text-xs font-mono">
+                        <div className="flex items-baseline space-x-2">
+                          <span className="text-neutral-400 min-w-[48px]">From:</span>
+                          <span className="font-semibold text-neutral-900 dark:text-white select-all">{cEmail.sender}</span>
+                        </div>
+                        <div className="flex items-baseline space-x-2">
+                          <span className="text-neutral-400 min-w-[48px]">To:</span>
+                          <span className="text-neutral-700 dark:text-neutral-300 select-all">{cEmail.recipients}</span>
+                        </div>
+                        {cEmail.subject && (
+                          <div className="flex items-baseline space-x-2 pt-0.5">
+                            <span className="text-neutral-400 min-w-[48px]">Subject:</span>
+                            <span className="font-bold text-neutral-900 dark:text-white font-sans">{cEmail.subject}</span>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="bg-neutral-100/70 dark:bg-[#1a1a1e] p-4 rounded-xl border border-neutral-200/60 dark:border-neutral-800 text-xs sm:text-sm font-sans leading-relaxed text-neutral-800 dark:text-neutral-200 whitespace-pre-line italic">
+                        "{cEmail.snippet}"
+                      </div>
+
+                      <div className="pt-1 flex items-center justify-between text-[11px]">
+                        <span className="text-neutral-400">Status: Public Judicial Record</span>
+                        <a
+                          href={cEmail.docUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-accent hover:underline inline-flex items-center space-x-1 font-medium"
+                        >
+                          <FileText className="w-3.5 h-3.5" />
+                          <span>View Official Court Docket</span>
+                          <ExternalLink className="w-3 h-3 ml-0.5 opacity-60" />
+                        </a>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="py-8 text-center space-y-2 border border-dashed border-neutral-200 dark:border-neutral-800 rounded-2xl font-sans">
+                  <Mail className="w-7 h-7 text-neutral-400 mx-auto" />
+                  <div className="text-sm font-semibold text-neutral-900 dark:text-white">
+                    No Public Trial Exhibit Emails Docketed
+                  </div>
+                  <p className="text-xs text-neutral-500 max-w-md mx-auto">
+                    No unsealed court trial exhibits or email depositions on record for this individual across federal or state dockets.
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Section B: Public Corporate & Investor Relations Emails */}
+            {person.contactEmails && person.contactEmails.length > 0 && (
+              <div className="solid-card rounded-3xl p-6 sm:p-8 space-y-4">
+                <div>
+                  <h3 className="text-xl font-bold font-sans text-neutral-900 dark:text-white flex items-center space-x-2">
+                    <Building className="w-5 h-5 text-accent" />
+                    <span>Public Corporate & Investor Relations Inboxes</span>
+                  </h3>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
+                    Verified public corporate media points of contact, investor relations inboxes, and executive foundation addresses.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 pt-1">
+                  {person.contactEmails.map((em: any, idx: number) => (
+                    <div
+                      key={idx}
+                      className="liquid-glass rounded-2xl p-4 space-y-2 border border-surface-borderLight dark:border-surface-borderDark flex flex-col justify-between shadow-sm"
+                    >
+                      <div className="space-y-1">
+                        <div className="text-[10px] uppercase font-bold text-accent tracking-wider font-mono">
+                          {em.department.replace("_", " ")}
+                        </div>
+                        <div className="font-mono text-xs font-semibold select-all text-neutral-900 dark:text-white break-all">
+                          {em.email}
+                        </div>
+                      </div>
+                      <div className="pt-2 border-t border-neutral-200/50 dark:border-neutral-800/80 flex items-center justify-between text-[11px] text-neutral-400">
+                        <span className="truncate mr-2">{em.source}</span>
+                        <a
+                          href={`mailto:${em.email}`}
+                          className="text-neutral-600 dark:text-neutral-300 hover:text-black dark:hover:text-white font-medium hover:underline shrink-0"
+                        >
+                          Email
+                        </a>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>
