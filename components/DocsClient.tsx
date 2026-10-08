@@ -224,12 +224,12 @@ export function DocsClient() {
               </p>
               <div className="relative group">
                 <div className="liquid-glass rounded-2xl p-4 font-mono text-xs overflow-x-auto text-neutral-800 dark:text-neutral-200">
-                  curl -H &quot;X-API-Key: sr_live_948f2c019a84b1e7c390a8f&quot; https://api.superrich.tech/v1/rankings
+                  curl -H &quot;X-API-Key: sr_live_948f2c019a84b1e7c390a8f&quot; https://api.superrich.tech/rankings
                 </div>
                 <button
                   onClick={() =>
                     copyToClipboard(
-                      'curl -H "X-API-Key: sr_live_948f2c019a84b1e7c390a8f" https://api.superrich.tech/v1/rankings'
+                      'curl -H "X-API-Key: sr_live_948f2c019a84b1e7c390a8f" https://api.superrich.tech/rankings'
                     )
                   }
                   className="absolute right-3 top-3 p-1.5 rounded-lg bg-neutral-200/80 dark:bg-neutral-800/80 hover:bg-neutral-300 dark:hover:bg-neutral-700 transition-colors text-xs flex items-center space-x-1"
@@ -278,7 +278,7 @@ export function DocsClient() {
                   : "liquid-glass text-neutral-600 dark:text-neutral-400"
               }`}
             >
-              GET /v1/rankings
+              GET /rankings
             </button>
             <button
               onClick={() => setSelectedEndpoint("person")}
@@ -288,7 +288,7 @@ export function DocsClient() {
                   : "liquid-glass text-neutral-600 dark:text-neutral-400"
               }`}
             >
-              GET /v1/people/:slug
+              GET /people/:slug
             </button>
           </div>
 
@@ -382,13 +382,13 @@ export function DocsClient() {
                 <span className="px-2 py-0.5 rounded-md bg-gain/10 text-gain text-xs font-bold font-mono">
                   GET
                 </span>
-                <span className="font-mono text-base font-bold">https://api.superrich.tech/v1/rankings</span>
+                <span className="font-mono text-base font-bold">https://api.superrich.tech/rankings</span>
               </div>
               <p className="text-xs text-neutral-600 dark:text-neutral-400">
                 Structured endpoint supporting query parameters <code className="font-mono text-accent">?country=United%20States</code> and <code className="font-mono text-accent">?limit=25</code>.
               </p>
               <div className="liquid-glass rounded-2xl p-4 font-mono text-xs overflow-x-auto text-neutral-800 dark:text-neutral-200">
-                curl &quot;https://api.superrich.tech/v1/rankings?country=United%20States&amp;limit=10&quot;
+                curl &quot;https://api.superrich.tech/rankings?country=United%20States&amp;limit=10&quot;
               </div>
             </div>
           )}
@@ -399,13 +399,13 @@ export function DocsClient() {
                 <span className="px-2 py-0.5 rounded-md bg-gain/10 text-gain text-xs font-bold font-mono">
                   GET
                 </span>
-                <span className="font-mono text-base font-bold">https://api.superrich.tech/v1/people/:slug</span>
+                <span className="font-mono text-base font-bold">https://api.superrich.tech/people/:slug</span>
               </div>
               <p className="text-xs text-neutral-600 dark:text-neutral-400">
                 Curated profile dossiers containing verified corporate email contacts, federal court docket citations, and childhood-to-present timeline milestones.
               </p>
               <div className="liquid-glass rounded-2xl p-4 font-mono text-xs overflow-x-auto text-neutral-800 dark:text-neutral-200">
-                curl https://api.superrich.tech/v1/people/elon-musk
+                curl https://api.superrich.tech/people/elon-musk
               </div>
             </div>
           )}
@@ -461,7 +461,7 @@ curl https://api.superrich.tech/rtb/profile/elon-musk
 
 # 3. Filter top US rankings with custom API key
 curl -H "X-API-Key: YOUR_API_KEY" \\
-     "https://api.superrich.tech/v1/rankings?country=United%20States"`}</pre>
+     "https://api.superrich.tech/rankings?country=United%20States"`}</pre>
             )}
 
             {codeLang === "javascript" && (

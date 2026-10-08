@@ -7,6 +7,7 @@ import { LanguageProvider } from "@/context/LanguageContext";
 import { Navbar } from "@/components/Navbar";
 import { LiveTicker } from "@/components/LiveTicker";
 import { CookieConsent } from "@/components/CookieConsent";
+import { FooterApiOverview } from "@/components/FooterApiOverview";
 
 export const metadata: Metadata = {
   title: "SuperRich — Tech Billionaires Encyclopedia & Live Wealth Index",
@@ -82,13 +83,14 @@ export default function RootLayout({
             <CookieConsent />
           </LanguageProvider>
           <footer className="w-full border-t border-neutral-200/60 dark:border-neutral-800/80 py-8 px-4 text-xs text-neutral-500">
-            <div className="max-w-7xl mx-auto flex flex-col items-center justify-center gap-3 text-center">
+            <div className="max-w-7xl mx-auto flex flex-col items-center justify-center gap-4 text-center">
+              <FooterApiOverview />
               <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-neutral-500">
                 <Link href="/about" className="hover:text-black dark:hover:text-white hover:underline transition-colors">
                   About
                 </Link>
                 <a href="/docs" className="hover:text-black dark:hover:text-white hover:underline transition-colors">
-                  Docs
+                  API Overview
                 </a>
                 <Link href="/faq" className="hover:text-black dark:hover:text-white hover:underline transition-colors">
                   FAQ

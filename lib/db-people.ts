@@ -45,7 +45,7 @@ let isSyncInProgress = false;
  * Fetch all billionaires from Supabase database with instant fallback
  */
 export async function getBillionairesFromDB(limit = 100): Promise<DBBillionaire[]> {
-  if (memoryCachePeople && memoryCachePeople.expiry > Date.now()) {
+  if (memoryCachePeople && memoryCachePeople.expiry > Date.now() && memoryCachePeople.data.length >= limit) {
     return memoryCachePeople.data.slice(0, limit);
   }
 

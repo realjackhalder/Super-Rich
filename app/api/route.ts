@@ -6,11 +6,25 @@ export async function GET() {
   return NextResponse.json(
     {
       name: "SuperRich Global Billionaires API",
-      version: "v1.0.0",
       status: "operational",
       domain: "https://api.superrich.tech",
       docs: "https://docs.superrich.tech",
       endpoints: {
+        rankings: {
+          url: "https://api.superrich.tech/rankings",
+          description: "Structured rankings with query filters (limit, country, sort)",
+          method: "GET",
+        },
+        people: {
+          url: "https://api.superrich.tech/people",
+          description: "Global billionaire directory with live net worth and verified profiles",
+          method: "GET",
+        },
+        person: {
+          url: "https://api.superrich.tech/people/{slug}",
+          description: "Comprehensive billionaire dossier, live valuations, and biographical data",
+          method: "GET",
+        },
         rtb_list: {
           url: "https://api.superrich.tech/rtb/list",
           description: "Real-time list of 3,400+ global billionaires with live daily changes",
@@ -18,22 +32,7 @@ export async function GET() {
         },
         rtb_profile: {
           url: "https://api.superrich.tech/rtb/profile/{slug}",
-          description: "Comprehensive profile, stock assets, career timeline & biographical data",
-          method: "GET",
-        },
-        v1_rankings: {
-          url: "https://api.superrich.tech/v1/rankings",
-          description: "Structured rankings with query filters (limit, country, sort)",
-          method: "GET",
-        },
-        v1_people: {
-          url: "https://api.superrich.tech/v1/people",
-          description: "Curated profiles for top tech titans with court archives & verified emails",
-          method: "GET",
-        },
-        v1_person: {
-          url: "https://api.superrich.tech/v1/people/{slug}",
-          description: "Single curated billionaire dossier",
+          description: "Deep wealth breakdown, asset holdings, career timeline & archives",
           method: "GET",
         },
       },

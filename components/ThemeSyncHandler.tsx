@@ -25,28 +25,43 @@ export function ThemeSyncHandler() {
       const urlParams = new URLSearchParams(window.location.search);
       const urlTheme = urlParams.get("theme");
       const cookieTheme = getThemeFromCookie();
-      const targetTheme = urlTheme || cookieTheme;
+      const localTheme = localStorage.getItem("theme");
 
       if (
-        targetTheme &&
-        (targetTheme === "dark" || targetTheme === "light" || targetTheme === "system")
+        urlTheme &&
+        (urlTheme === "dark" || urlTheme === "light" || urlTheme === "system")
       ) {
-        if (targetTheme !== theme) {
-          setTheme(targetTheme);
+        if (urlTheme !== theme) {
+          setTheme(urlTheme);
         }
-        saveSharedTheme(targetTheme);
-      } else if (theme) {
-        saveSharedTheme(theme);
-      } else if (typeof window !== "undefined" && window.location.hostname.includes("localhost")) {
+        saveSharedTheme(urlTheme);
+      } else if (
+        cookieTheme &&
+        (cookieTheme === "dark" || cookieTheme === "light" || cookieTheme === "system")
+      ) {
+        if (cookieTheme !== theme) {
+          setTheme(cookieTheme);
+        }
+        saveSharedTheme(cookieTheme);
+      } else if (
+        localTheme &&
+        (localTheme === "dark" || localTheme === "light" || localTheme === "system")
+      ) {
+        if (localTheme !== theme) {
+          setTheme(localTheme);
+        }
+        saveSharedTheme(localTheme);
+      } else if (typeof window !== "undefined" && (window.location.hostname.includes("localhost") || window.location.hostname.includes("127.0.0.1"))) {
         fetch("/api/theme", { cache: "no-store" })
           .then((res) => res.json())
           .then((data) => {
             if (
-              data.theme &&
+              data?.theme &&
               data.theme !== theme &&
               (data.theme === "dark" || data.theme === "light" || data.theme === "system")
             ) {
               setTheme(data.theme);
+              saveSharedTheme(data.theme);
             }
           })
           .catch(() => {});

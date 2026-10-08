@@ -52,8 +52,14 @@ export function getDomainUrl(
   let url = `${base}${path}`;
 
   // Attach theme parameter to preserve theme across subdomains during navigation
+  const domTheme =
+    typeof document !== "undefined"
+      ? (document.documentElement.classList.contains("dark") ? "dark" : "light")
+      : undefined;
+
   const effectiveTheme =
     theme ||
+    domTheme ||
     (typeof window !== "undefined"
       ? localStorage.getItem("theme") || undefined
       : undefined);

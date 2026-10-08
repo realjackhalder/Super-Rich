@@ -135,11 +135,13 @@ export function middleware(request: NextRequest) {
       );
     }
 
-    let rewritePath = pathname;
-    if (pathname === "/") {
+    // Normalize legacy /v1 prefix if present
+    const normalizedPath = pathname.replace(/^\/v1(\/|$)/, "/");
+    let rewritePath = normalizedPath;
+    if (normalizedPath === "/" || normalizedPath === "") {
       rewritePath = "/api";
-    } else if (!pathname.startsWith("/api")) {
-      rewritePath = `/api${pathname}`;
+    } else if (!normalizedPath.startsWith("/api")) {
+      rewritePath = `/api${normalizedPath}`;
     }
 
     url.pathname = rewritePath;
@@ -172,11 +174,20 @@ export function middleware(request: NextRequest) {
       return NextResponse.next();
     }
 
-    // If user accesses main site routes from docs subdomain, redirect to main site
+    // Allow informational & legal pages to render directly on docs subdomain without redirecting:
     if (
       pathname === "/about" ||
       pathname === "/faq" ||
-      pathname.startsWith("/legal") ||
+      pathname === "/cookies" ||
+      pathname === "/privacy" ||
+      pathname === "/terms" ||
+      pathname.startsWith("/legal")
+    ) {
+      return NextResponse.next();
+    }
+
+    // For interactive index routes (companies, profile pages), redirect to main portal with theme:
+    if (
       pathname.startsWith("/p/") ||
       pathname.startsWith("/c/") ||
       pathname.startsWith("/companies")
@@ -199,7 +210,13 @@ export function middleware(request: NextRequest) {
 
       const res = NextResponse.redirect(mainUrl, 307);
       if (themeVal) {
-        res.cookies.set("superrich-theme", themeVal, { path: "/", maxAge: 31536000, sameSite: "lax" });
+        const isProd = hostname.endsWith("superrich.tech");
+        res.cookies.set("superrich-theme", themeVal, {
+          path: "/",
+          maxAge: 31536000,
+          sameSite: "lax",
+          ...(isProd ? { domain: ".superrich.tech" } : {}),
+        });
       }
       return res;
     }
@@ -291,7 +308,13 @@ export function middleware(request: NextRequest) {
 
       const res = NextResponse.redirect(docsUrl, 307);
       if (themeVal) {
-        res.cookies.set("superrich-theme", themeVal, { path: "/", maxAge: 31536000, sameSite: "lax" });
+        const isProd = hostname.endsWith("superrich.tech");
+        res.cookies.set("superrich-theme", themeVal, {
+          path: "/",
+          maxAge: 31536000,
+          sameSite: "lax",
+          ...(isProd ? { domain: ".superrich.tech" } : {}),
+        });
       }
       return res;
     }
@@ -319,7 +342,17 @@ export function middleware(request: NextRequest) {
         adminUrl.searchParams.set("theme", themeVal);
       }
 
-      return NextResponse.redirect(adminUrl, 307);
+      const res = NextResponse.redirect(adminUrl, 307);
+      if (themeVal) {
+        const isProd = hostname.endsWith("superrich.tech");
+        res.cookies.set("superrich-theme", themeVal, {
+          path: "/",
+          maxAge: 31536000,
+          sameSite: "lax",
+          ...(isProd ? { domain: ".superrich.tech" } : {}),
+        });
+      }
+      return res;
     }
   }
 

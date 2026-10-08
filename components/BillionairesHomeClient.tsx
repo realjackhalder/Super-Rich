@@ -348,7 +348,7 @@ function formatLiveTimestamp(): string {
   const triggerLiveSync = useCallback(async () => {
     setIsSyncing(true);
     try {
-      const res = await fetch("/api/v1/rankings?limit=100", { cache: "no-store" });
+      const res = await fetch("/api/rankings?limit=100", { cache: "no-store" });
       if (res.ok) {
         const json = await res.json();
         if (json?.data && Array.isArray(json.data)) {

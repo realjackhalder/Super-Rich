@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { ArrowLeft, ShieldAlert, FileText, CheckCircle2 } from "lucide-react";
+import { ShieldAlert, FileText, CheckCircle2 } from "lucide-react";
+import { SmartBackButton } from "@/components/SmartBackButton";
 
 export const metadata = {
   title: "Legal Notice & Disclaimers — SuperRich",
@@ -10,13 +11,7 @@ export default function LegalPage() {
   return (
     <div className="max-w-4xl mx-auto space-y-10">
       <div>
-        <Link
-          href="/"
-          className="inline-flex items-center space-x-1.5 text-xs text-neutral-500 hover:text-black dark:hover:text-white transition-colors"
-        >
-          <ArrowLeft className="w-3.5 h-3.5" />
-          <span>Back to Global Index</span>
-        </Link>
+        <SmartBackButton fallbackLabel="Back to Global Index" />
       </div>
 
       <div className="space-y-3">

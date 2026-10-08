@@ -7,6 +7,7 @@ import { useTheme } from "next-themes";
 import { Sun, Moon, Globe } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { getDomainUrl } from "@/lib/domains";
+import { saveSharedTheme } from "@/lib/theme-sync";
 import { useLanguage, SUPPORTED_LANGUAGES, LanguageItem } from "@/context/LanguageContext";
 
 export function Navbar() {
@@ -57,24 +58,6 @@ export function Navbar() {
       label: t("nav.companies"),
       isActive: (pathname.startsWith("/companies") || pathname.startsWith("/c")) && !isDocs,
     },
-    {
-      id: "docs",
-      href: isDocs ? "/" : (docsBase || "/docs"),
-      label: t("nav.docs"),
-      isActive: isDocs,
-    },
-    {
-      id: "about",
-      href: isDocs ? `${mainBase}/about` : "/about",
-      label: t("nav.about"),
-      isActive: pathname === "/about",
-    },
-    {
-      id: "faq",
-      href: isDocs ? `${mainBase}/faq` : "/faq",
-      label: t("nav.faq"),
-      isActive: pathname === "/faq",
-    },
   ];
 
   return (
@@ -82,7 +65,7 @@ export function Navbar() {
       <div className="liquid-glass rounded-full px-5 py-3 flex items-center justify-between transition-all duration-200">
         {/* Brand Logo */}
         <Link
-          href={isDocs ? (mounted ? getDomainUrl("main", "/") : "https://superrich.tech") : "/"}
+          href="/"
           className="flex items-center space-x-2.5 group"
         >
           <div className="relative w-8 h-8 shrink-0 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
@@ -169,7 +152,9 @@ export function Navbar() {
                 (typeof document !== "undefined" && document.documentElement.classList.contains("dark")
                   ? "dark"
                   : "light");
-              setTheme(current === "dark" ? "light" : "dark");
+              const next = current === "dark" ? "light" : "dark";
+              setTheme(next);
+              saveSharedTheme(next);
             }}
             className="p-2 rounded-full hover:bg-neutral-200/50 dark:hover:bg-neutral-800/50 transition-colors text-neutral-600 dark:text-neutral-300 flex items-center justify-center w-8 h-8"
             aria-label="Toggle theme"

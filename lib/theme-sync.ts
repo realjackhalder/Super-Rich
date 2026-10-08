@@ -61,9 +61,17 @@ export function saveSharedTheme(theme: string) {
   // 2. Set host-level cookie as fallback / for localhost
   document.cookie = `${THEME_COOKIE_NAME}=${val}; path=/; max-age=${maxAge}; SameSite=Lax`;
 
-  // 3. Keep localStorage in sync for next-themes
+  // 3. Keep localStorage in sync for next-themes & update DOM class immediately
   try {
     localStorage.setItem(THEME_STORAGE_KEY, theme);
+  } catch {}
+
+  try {
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else if (theme === "light") {
+      document.documentElement.classList.remove("dark");
+    }
   } catch {}
 
   // 4. Broadcast across all open tabs on the same origin

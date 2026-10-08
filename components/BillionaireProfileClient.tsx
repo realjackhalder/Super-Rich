@@ -44,7 +44,7 @@ export default function BillionaireProfileClient({
 
   useEffect(() => {
     // Refresh live profile in the background
-    fetch(`/api/v1/people/${slug}`)
+    fetch(`/api/people/${slug}`)
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data?.data) {

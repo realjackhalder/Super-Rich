@@ -66,7 +66,3 @@ export interface BillionaireData {
     docUrl: string;
   }[];
 }
-
-export const 100_BILLIONAIRES: BillionaireData[] = [
-
-];

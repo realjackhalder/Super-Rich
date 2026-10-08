@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { ArrowLeft, HelpCircle } from "lucide-react";
+import { HelpCircle } from "lucide-react";
+import { SmartBackButton } from "@/components/SmartBackButton";
 
 export const metadata = {
   title: "Frequently Asked Questions (FAQ) — SuperRich",
@@ -25,7 +26,7 @@ const FAQS = [
   },
   {
     q: "Is the SuperRich API free to use?",
-    a: "Yes. Our v1.0 REST API is completely free for developers, educators, and research platforms with a generous daily rate limit of 1,000 requests per day. No credit card or paid subscription is required.",
+    a: "Yes. Our REST API is completely free for developers, educators, and research platforms with a generous daily rate limit of 1,000 requests per day. No credit card or paid subscription is required.",
   },
   {
     q: "How often is data refreshed?",
@@ -37,13 +38,7 @@ export default function FAQPage() {
   return (
     <div className="max-w-4xl mx-auto space-y-10">
       <div>
-        <Link
-          href="/"
-          className="inline-flex items-center space-x-1.5 text-xs text-neutral-500 hover:text-black dark:hover:text-white transition-colors"
-        >
-          <ArrowLeft className="w-3.5 h-3.5" />
-          <span>Back to Global Index</span>
-        </Link>
+        <SmartBackButton fallbackLabel="Back to Global Index" />
       </div>
 
       <div className="space-y-3">
