@@ -7,6 +7,8 @@ import { formatCountryName } from "@/lib/countries";
 import BillionaireProfileClient from "@/components/BillionaireProfileClient";
 import { VERIFIED_PORTRAITS } from "@/lib/portraits";
 
+import { getBillionaireSocials } from "@/lib/billionaire-socials";
+
 export const dynamic = "force-dynamic";
 
 export default async function BillionaireProfilePage({
@@ -85,7 +87,7 @@ export default async function BillionaireProfilePage({
           description: wiki.description,
         }
       : null,
-    socials: [],
+    socials: getBillionaireSocials(slug),
     stocks: [],
     timeline: [],
     legal: [],

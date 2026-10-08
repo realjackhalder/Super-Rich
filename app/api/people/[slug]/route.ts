@@ -5,6 +5,7 @@ import { getGrokipediaPage } from "@/lib/grokipedia";
 import { getWikipediaSummary } from "@/lib/wikipedia";
 import { getBloombergForPerson } from "@/lib/bloomberg";
 import { formatCountryName } from "@/lib/countries";
+import { getBillionaireSocials } from "@/lib/billionaire-socials";
 
 export const dynamic = "force-dynamic";
 
@@ -96,7 +97,7 @@ export async function GET(
       : null,
     rtbLiveAssets: rtb?.assets || [],
     rtbAnnualHistory: rtb?.annual || null,
-    socials: [],
+    socials: getBillionaireSocials(slug),
     stocks: [],
     timeline: [],
     legal: [],

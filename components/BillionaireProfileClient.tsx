@@ -18,6 +18,8 @@ import {
   Share2,
   Sparkles,
   BookOpen,
+  CheckCircle2,
+  Globe,
 } from "lucide-react";
 import { VERIFIED_PORTRAITS } from "@/lib/portraits";
 import { formatCountryName } from "@/lib/countries";
@@ -120,7 +122,7 @@ export default function BillionaireProfileClient({
       })`,
     },
     { id: "assets", label: "Assets Breakdown" },
-    { id: "social", label: "Social Media" },
+    { id: "social", label: `Social Media (${person.socials?.length || 0})` },
     { id: "legal", label: `Legal & Charges (${person.legal?.length || 0})` },
     {
       id: "emails",
@@ -226,27 +228,29 @@ export default function BillionaireProfileClient({
         </div>
 
         {/* Social media links row */}
-        {person.socials &&
-          person.socials.filter((s: any) => s.platform?.toLowerCase() !== "website").length > 0 && (
-            <div className="pt-2 flex flex-wrap items-center gap-2">
-              <span className="text-xs text-neutral-400 mr-2">Verified Profiles:</span>
-              {person.socials
-                .filter((s: any) => s.platform?.toLowerCase() !== "website")
-                .map((s: any, idx: number) => (
-                  <a
-                    key={idx}
-                    href={s.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="liquid-glass px-3 py-1 rounded-full text-xs font-medium hover:bg-neutral-200/50 dark:hover:bg-neutral-800/50 flex items-center space-x-1.5 transition-colors"
-                  >
-                    <span className="capitalize">{s.platform}</span>
-                    <span className="text-neutral-400 font-normal">{s.handle}</span>
-                    <ExternalLink className="w-3 h-3 text-neutral-400" />
-                  </a>
-                ))}
-            </div>
-          )}
+        {person.socials && person.socials.length > 0 && (
+          <div className="pt-2 flex flex-wrap items-center gap-2">
+            <span className="text-xs text-neutral-400 mr-2 flex items-center space-x-1">
+              <CheckCircle2 className="w-3.5 h-3.5 text-accent" />
+              <span>Verified Profiles:</span>
+            </span>
+            {person.socials.map((s: any, idx: number) => (
+              <a
+                key={idx}
+                href={s.url}
+                target="_blank"
+                rel="noreferrer"
+                className="liquid-glass px-3 py-1 rounded-full text-xs font-medium hover:bg-neutral-200/50 dark:hover:bg-neutral-800/50 flex items-center space-x-1.5 transition-colors border border-neutral-200/80 dark:border-neutral-700/80"
+              >
+                <span className="font-bold text-neutral-900 dark:text-white capitalize">
+                  {s.platform === "x" ? "𝕏" : s.platform}
+                </span>
+                <span className="text-neutral-500 dark:text-neutral-400 font-normal">{s.handle}</span>
+                <ExternalLink className="w-3 h-3 text-neutral-400" />
+              </a>
+            ))}
+          </div>
+        )}
 
         {/* Tab Navigation */}
         <div className="flex space-x-1 border-t border-neutral-200/50 dark:border-neutral-800/80 pt-4 overflow-x-auto no-scrollbar">
@@ -551,32 +555,72 @@ export default function BillionaireProfileClient({
 
         {/* TAB 5: SOCIAL */}
         {activeTab === "social" && (
-          <div className="solid-card rounded-3xl p-6 space-y-4">
-            <h3 className="text-lg font-bold">Verified Social Presence</h3>
-            {person.socials &&
-            person.socials.filter((s: any) => s.platform?.toLowerCase() !== "website").length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {person.socials
-                  .filter((s: any) => s.platform?.toLowerCase() !== "website")
-                  .map((soc: any, idx: number) => (
-                    <a
-                      key={idx}
-                      href={soc.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="liquid-glass rounded-2xl p-4 border border-surface-borderLight dark:border-surface-borderDark flex items-center justify-between hover:bg-neutral-200/50 dark:hover:bg-neutral-800/50 transition-colors"
-                    >
-                      <div>
-                        <div className="capitalize font-bold text-xs">{soc.platform}</div>
-                        <div className="text-xs text-neutral-400">{soc.handle}</div>
+          <div className="solid-card rounded-3xl p-6 sm:p-8 space-y-6">
+            <div>
+              <h3 className="text-xl font-bold font-sans text-neutral-900 dark:text-white flex items-center space-x-2">
+                <CheckCircle2 className="w-5 h-5 text-accent" />
+                <span>Verified Public Social Presence & Official Channels</span>
+              </h3>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
+                Official authenticated social handles, verified personal newsletters, and executive communication platforms.
+              </p>
+            </div>
+
+            {person.socials && person.socials.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {person.socials.map((soc: any, idx: number) => (
+                  <a
+                    key={idx}
+                    href={soc.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="liquid-glass rounded-2xl p-5 border border-surface-borderLight dark:border-surface-borderDark flex flex-col justify-between space-y-3 hover:border-neutral-400 dark:hover:border-neutral-600 transition-all group shadow-sm"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="space-y-1">
+                        <div className="flex items-center space-x-1.5">
+                          <span className="capitalize font-bold text-sm text-neutral-900 dark:text-white">
+                            {soc.platform === "x" ? "𝕏 (Twitter)" : soc.platform}
+                          </span>
+                          {soc.verified && (
+                            <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-accent/15 text-accent">
+                              Verified
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-xs font-mono font-medium text-neutral-600 dark:text-neutral-300">
+                          {soc.handle}
+                        </div>
                       </div>
-                      <ExternalLink className="w-4 h-4 text-neutral-400" />
-                    </a>
-                  ))}
+                      <ExternalLink className="w-4 h-4 text-neutral-400 group-hover:text-black dark:group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                    </div>
+
+                    {(soc.followerCount || soc.note) && (
+                      <div className="pt-2 border-t border-neutral-200/50 dark:border-neutral-800/80 space-y-1">
+                        {soc.followerCount && (
+                          <div className="text-[11px] font-mono font-bold text-gain">
+                            {soc.followerCount} Followers
+                          </div>
+                        )}
+                        {soc.note && (
+                          <div className="text-[11px] text-neutral-500 dark:text-neutral-400 line-clamp-2">
+                            {soc.note}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </a>
+                ))}
               </div>
             ) : (
-              <div className="text-xs text-neutral-500 py-4">
-                No active public social media accounts verified for this executive. Official statements are communicated through regulatory filings and corporate press releases.
+              <div className="py-12 text-center space-y-2 border border-dashed border-neutral-200 dark:border-neutral-800 rounded-2xl font-sans">
+                <Globe className="w-8 h-8 text-neutral-400 mx-auto" />
+                <div className="text-sm font-semibold text-neutral-900 dark:text-white">
+                  No Active Personal Social Accounts
+                </div>
+                <p className="text-xs text-neutral-500 max-w-md mx-auto">
+                  No active public personal social media accounts verified for this executive. Official statements are communicated through regulatory filings and corporate press releases.
+                </p>
               </div>
             )}
           </div>
