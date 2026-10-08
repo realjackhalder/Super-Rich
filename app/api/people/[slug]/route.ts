@@ -6,6 +6,7 @@ import { getWikipediaSummary } from "@/lib/wikipedia";
 import { getBloombergForPerson } from "@/lib/bloomberg";
 import { formatCountryName } from "@/lib/countries";
 import { getBillionaireSocials } from "@/lib/billionaire-socials";
+import { getBillionaireTimeline } from "@/lib/billionaire-timelines";
 
 export const dynamic = "force-dynamic";
 
@@ -102,7 +103,7 @@ export async function GET(
     rtbAnnualHistory: rtb?.annual || null,
     socials: getBillionaireSocials(slug),
     stocks: [],
-    timeline: [],
+    timeline: getBillionaireTimeline(slug, combinedName, dbPerson, rtb),
     legal: [],
     contactEmails: [],
     source: "Supabase + Forbes RTB + Grokipedia + Wikipedia + Bloomberg",

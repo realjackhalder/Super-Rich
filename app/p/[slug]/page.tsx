@@ -8,6 +8,7 @@ import BillionaireProfileClient from "@/components/BillionaireProfileClient";
 import { VERIFIED_PORTRAITS } from "@/lib/portraits";
 
 import { getBillionaireSocials } from "@/lib/billionaire-socials";
+import { getBillionaireTimeline } from "@/lib/billionaire-timelines";
 
 export const dynamic = "force-dynamic";
 
@@ -92,7 +93,7 @@ export default async function BillionaireProfilePage({
     },
     socials: getBillionaireSocials(slug),
     stocks: [],
-    timeline: [],
+    timeline: getBillionaireTimeline(slug, personName, dbPerson, rtb),
     legal: [],
     courtEmails: [],
     contactEmails: [],

@@ -572,22 +572,61 @@ export default function BillionaireProfileClient({
 
         {/* TAB 2: TIMELINE */}
         {activeTab === "timeline" && (
-          <div className="solid-card rounded-3xl p-6 space-y-6">
-            <h3 className="text-lg font-bold">Biographical Career Timeline</h3>
-            <div className="space-y-6 relative border-l-2 border-neutral-200 dark:border-neutral-800 ml-4 pl-6">
+          <div className="solid-card rounded-3xl p-6 sm:p-8 space-y-6">
+            <div>
+              <h3 className="text-xl font-bold font-sans text-neutral-900 dark:text-white flex items-center space-x-2">
+                <Clock className="w-5 h-5 text-accent" />
+                <span>Biographical Career Timeline & Major Milestones</span>
+              </h3>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
+                Verified childhood milestones, company foundings, initial public offerings (IPOs), and executive leadership transitions.
+              </p>
+            </div>
+
+            <div className="space-y-8 relative border-l-2 border-neutral-200 dark:border-neutral-800 ml-4 pl-6 pt-2">
               {person.timeline?.length ? (
                 person.timeline.map((event: any, idx: number) => (
-                  <div key={idx} className="relative space-y-1">
-                    <div className="absolute -left-[31px] top-1.5 w-3 h-3 rounded-full bg-neutral-900 dark:bg-white border-2 border-white dark:border-black"></div>
-                    <div className="text-xs font-bold text-accent font-mono">
-                      {event.year}
+                  <div key={idx} className="relative space-y-1.5 group">
+                    <div className="absolute -left-[31px] top-1.5 w-3.5 h-3.5 rounded-full bg-accent border-2 border-white dark:border-black group-hover:scale-125 transition-transform"></div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-xs font-bold text-accent font-mono px-2.5 py-0.5 rounded-full bg-accent/10 border border-accent/20">
+                        {event.year}
+                      </span>
+                      {event.category && (
+                        <span className="text-[10px] font-semibold uppercase tracking-wider text-neutral-600 dark:text-neutral-400 bg-neutral-100 dark:bg-neutral-800/80 px-2 py-0.5 rounded-full border border-neutral-200 dark:border-neutral-700/80">
+                          {event.category}
+                        </span>
+                      )}
+                      {event.status && (
+                        <span className="text-[10px] font-semibold text-gain flex items-center space-x-0.5">
+                          <CheckCircle2 className="w-3 h-3 inline mr-0.5" />
+                          <span>{event.status}</span>
+                        </span>
+                      )}
                     </div>
-                    <h4 className="text-sm font-bold text-neutral-900 dark:text-white">
+                    <h4 className="text-sm sm:text-base font-bold text-neutral-900 dark:text-white">
                       {event.title}
                     </h4>
-                    <p className="text-xs text-neutral-600 dark:text-neutral-400">
+                    <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed max-w-3xl">
                       {event.description}
                     </p>
+                    {event.sources && event.sources.length > 0 && (
+                      <div className="pt-1 flex flex-wrap items-center gap-x-2 text-[11px] text-neutral-400">
+                        <span>Source:</span>
+                        {event.sources.map((s: any, sIdx: number) => (
+                          <a
+                            key={sIdx}
+                            href={s.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-neutral-500 hover:text-black dark:hover:text-white underline inline-flex items-center space-x-0.5"
+                          >
+                            <span>{s.publisher || "Documentation"}</span>
+                            <ExternalLink className="w-2.5 h-2.5 ml-0.5 opacity-60" />
+                          </a>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 ))
               ) : (
