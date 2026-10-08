@@ -49,7 +49,7 @@ export async function GET(
     rank:
       dbPerson?.rank ||
       staticPerson?.rank ||
-      (rtb?.latest?.rank && rtb.latest.rank < 10000 ? rtb.latest.rank : (slug === "elon-musk" ? 1 : 999)),
+      (rtb?.latest?.rank && rtb.latest.rank < 10000 ? rtb.latest.rank : ( ? 1 : 999)),
     netWorthBillion: netWorth,
     netWorthChangeDayBillion: rtb?.latest?.change?.value
       ? Math.round((rtb.latest.change.value / 1000) * 100) / 100
@@ -57,10 +57,10 @@ export async function GET(
     netWorthChangePercent: rtb?.latest?.change?.pct ?? dbPerson?.netWorthChangePercent ?? 0,
     bloombergValuation: bloomberg
       ? {
-          netWorthBillion: bloomberg.netWorth,
-          rank: bloomberg.rank,
-          changeDayBillion: bloomberg.changeDay,
-        }
+        netWorthBillion: bloomberg.netWorth,
+        rank: bloomberg.rank,
+        changeDayBillion: bloomberg.changeDay,
+      }
       : null,
     citizenship:
       formatCountryName(
@@ -81,26 +81,26 @@ export async function GET(
       (dbPerson?.currentCity && dbPerson.currentCity.toLowerCase() !== "global")
         ? dbPerson.currentCity
         : (staticPerson?.currentCity && staticPerson.currentCity.toLowerCase() !== "global")
-        ? staticPerson.currentCity
-        : rtb?.info?.residence?.city || "",
+          ? staticPerson.currentCity
+          : rtb?.info?.residence?.city || "",
     mainCompany: dbPerson?.mainCompany || staticPerson?.mainCompany || rtb?.info?.source?.join(" & ") || "Enterprise",
     photoUrl: wiki?.photoUrl || dbPerson?.photoUrl || staticPerson?.photoUrl,
     bio: wiki?.extract || dbPerson?.bio || staticPerson?.bio,
     grokipedia: grok
       ? {
-          title: grok.title,
-          url: grok.url,
-          summary: grok.description,
-          referencesCount: grok.references_count,
-          references: grok.references,
-        }
+        title: grok.title,
+        url: grok.url,
+        summary: grok.description,
+        referencesCount: grok.references_count,
+        references: grok.references,
+      }
       : null,
     wikipedia: wiki
       ? {
-          url: wiki.pageUrl,
-          wikidataId: wiki.wikidataId,
-          description: wiki.description,
-        }
+        url: wiki.pageUrl,
+        wikidataId: wiki.wikidataId,
+        description: wiki.description,
+      }
       : null,
     rtbLiveAssets: rtb?.assets || [],
     rtbAnnualHistory: rtb?.annual || null,

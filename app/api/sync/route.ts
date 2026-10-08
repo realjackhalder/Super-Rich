@@ -5,13 +5,7 @@ import { eq, like } from "drizzle-orm";
 import { syncBillionairesToSupabase } from "@/lib/sync";
 import { getBillionairesFromDB } from "@/lib/db-people";
 
-const FORBES_HERO_PHOTOS: Record<string, string> = {
-  "elon-musk": "https://imageio.forbes.com/specials-images/imageserve/62d700cd6094d2c180f269b9/0x0.jpg?format=jpg&crop=959,959,x0,y0,safe&height=416&width=416&fit=bounds",
-  "jeff-bezos": "https://imageio.forbes.com/specials-images/imageserve/67531eb2b5f7c9e191f632d7/0x0.jpg?format=jpg&crop=711,713,x316,y125,safe&height=416&width=416&fit=bounds",
-  "mark-zuckerberg": "https://imageio.forbes.com/specials-images/imageserve/5c76b7d331358e35dd2773a9/0x0.jpg?format=jpg&crop=4401,4401,x0,y0,safe&height=416&width=416&fit=bounds",
-  "jensen-huang": "https://imageio.forbes.com/specials-images/imageserve/68750a2d250de42ce7c5301b/0x0.jpg?format=jpg&crop=1800,1799,x832,y152,safe&height=416&width=416&fit=bounds",
-  "larry-ellison": "https://imageio.forbes.com/specials-images/imageserve/5e8b62cfc095010007bffea0/0x0.jpg?format=jpg&crop=4529,4532,x0,y652,safe&height=416&width=416&fit=bounds",
-};
+
 
 export const dynamic = "force-dynamic";
 

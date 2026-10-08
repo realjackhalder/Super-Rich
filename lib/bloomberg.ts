@@ -17,23 +17,6 @@ export interface BloombergBillionaire {
 }
 
 // Cached top Bloomberg valuations snapshot
-const BLOOMBERG_SNAPSHOT: Record<string, { rank: number; worth: number; change: number }> = {
-  "elon-musk": { rank: 1, worth: 976.9, change: 62.6 },
-  "larry-page": { rank: 2, worth: 294.0, change: 3.8 },
-  "jeff-bezos": { rank: 3, worth: 276.6, change: 2.1 },
-  "sergey-brin": { rank: 4, worth: 273.4, change: 3.5 },
-  "michael-dell": { rank: 5, worth: 259.9, change: 1.2 },
-  "mark-zuckerberg": { rank: 6, worth: 257.4, change: 4.1 },
-  "jensen-huang": { rank: 7, worth: 193.6, change: 5.4 },
-  "larry-ellison": { rank: 8, worth: 192.2, change: -1.1 },
-  "steve-ballmer": { rank: 9, worth: 180.2, change: 0.8 },
-  "warren-buffett": { rank: 10, worth: 143.2, change: -0.4 },
-  "bill-gates": { rank: 11, worth: 138.5, change: 0.2 },
-  "bernard-arnault": { rank: 12, worth: 135.0, change: -0.9 },
-  "amancio-ortega": { rank: 13, worth: 132.8, change: 0.6 },
-  "mukesh-ambani": { rank: 14, worth: 112.4, change: 0.5 },
-  "gautam-adani": { rank: 15, worth: 104.2, change: 1.1 },
-};
 
 let bloombergCache: BloombergBillionaire[] | null = null;
 let lastBloombergFetch = 0;
@@ -124,7 +107,7 @@ export async function getBloombergForPerson(
   nameOrSlug: string
 ): Promise<BloombergBillionaire | null> {
   const norm = nameOrSlug.toLowerCase().trim().replace(/[^\w\s-]/g, "").replace(/\s+/g, "-");
-  
+
   if (BLOOMBERG_SNAPSHOT[norm]) {
     const s = BLOOMBERG_SNAPSHOT[norm];
     return {
