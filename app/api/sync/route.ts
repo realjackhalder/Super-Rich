@@ -4,8 +4,7 @@ import { people as peopleTable } from "@/db/schema";
 import { eq, like } from "drizzle-orm";
 import { syncBillionairesToSupabase } from "@/lib/sync";
 import { getBillionairesFromDB } from "@/lib/db-people";
-
-
+import { VERIFIED_PORTRAITS } from "@/lib/portraits";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +15,7 @@ export async function GET(request: Request) {
 
   if (trigger === "fix-photos") {
     try {
-      for (const [slug, url] of Object.entries(FORBES_HERO_PHOTOS)) {
+      for (const [slug, url] of Object.entries(VERIFIED_PORTRAITS)) {
         await db.update(peopleTable).set({ photoUrl: url }).where(eq(peopleTable.slug, slug));
       }
       await db.update(peopleTable).set({ photoUrl: null }).where(like(peopleTable.photoUrl, "%unsplash%"));

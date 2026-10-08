@@ -17,7 +17,6 @@ import { getGrokipediaSummary } from "@/lib/grokipedia";
 import { getWikipediaSummary } from "@/lib/wikipedia";
 import { getBloombergForPerson, fetchBloombergIndex } from "@/lib/bloomberg";
 import { getLiveStockQuote } from "@/lib/stocks";
-import { INITIAL_50_BILLIONAIRES } from "@/data/billionaires";
 import { VERIFIED_PORTRAITS } from "@/lib/portraits";
 import { formatCountryName } from "@/lib/countries";
 
@@ -107,9 +106,6 @@ export async function syncBillionairesToSupabase(limit = 150): Promise<SyncResul
   const liveList = rtbResponse.list;
   console.log(`[Sync Engine] Retrieved ${liveList.length} global billionaires from RTB feed (dated ${rtbResponse.date}).`);
 
-  // Map known rich static data for city/company fallback
-  const staticMap = new Map(INITIAL_50_BILLIONAIRES.map((p) => [p.slug.toLowerCase(), p]));
-
   // Slice target list to sync (focusing on top billionaires to preserve rate limits)
   const targetList = liveList.slice(0, limit);
   let syncedCount = 0;
@@ -125,11 +121,9 @@ export async function syncBillionairesToSupabase(limit = 150): Promise<SyncResul
   for (let i = 0; i < targetList.length; i++) {
     const item: RTBListItem = targetList[i];
     const slug = (item.uri || item.name.toLowerCase().replace(/[^\w\s-]/g, "").replace(/\s+/g, "-")).trim();
-    const staticMatch = staticMap.get(slug) || staticMap.get(item.name.toLowerCase());
 
     const isTech =
       KNOWN_TECH_SLUGS.has(slug) ||
-      Boolean(staticMatch) ||
       (item.industry && item.industry.some((ind) => TECH_KEYWORDS.some((kw) => ind.toLowerCase().includes(kw)))) ||
       (item.source && item.source.some((src) => TECH_KEYWORDS.some((kw) => src.toLowerCase().includes(kw))));
 
@@ -142,16 +136,15 @@ export async function syncBillionairesToSupabase(limit = 150): Promise<SyncResul
     const changePct = item.change?.pct ? Math.round(item.change.pct * 100) / 100 : 0;
 
     const country =
-      staticMatch?.currentCountry ||
       formatCountryName(item.citizenship) ||
       "United States";
 
-    const city = staticMatch?.currentCity || "";
+    const city = "";
 
     const mainCompany =
       item.source && item.source.length > 0
         ? item.source.join(" & ")
-        : staticMatch?.mainCompany || (item.industry && item.industry[0]) || "Enterprise";
+        : (item.industry && item.industry[0]) || "Enterprise";
 
     // Bloomberg lookup from pre-fetched map
     const bMatch = bloombergMap.get(slug) || bloombergMap.get(item.name.toLowerCase().replace(/[^\w\s-]/g, "").replace(/\s+/g, "-"));
@@ -160,10 +153,7 @@ export async function syncBillionairesToSupabase(limit = 150): Promise<SyncResul
 
     // Enrichment (Wikipedia & Grokipedia & Forbes Real Image)
     let photoUrl: string | null =
-      VERIFIED_PORTRAITS[slug] ||
-      (staticMatch?.photoUrl && !staticMatch.photoUrl.includes("unsplash")
-        ? staticMatch.photoUrl
-        : null);
+      VERIFIED_PORTRAITS[slug] || null;
 
     // 1. Try Forbes RTB image if not present
     if (!photoUrl && slug) {
@@ -203,7 +193,7 @@ export async function syncBillionairesToSupabase(limit = 150): Promise<SyncResul
       } catch {}
     }
 
-    let bio = staticMatch?.bio || `${item.name} is a global billionaire ranked #${item.rank}.`;
+    let bio = `${item.name} is a global billionaire ranked #${item.rank}.`;
     let grokSummary: string | null = null;
     let wikiUrl: string | undefined = undefined;
     let wikidataId: string | undefined = undefined;

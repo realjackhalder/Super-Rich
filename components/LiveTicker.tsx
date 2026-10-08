@@ -3,7 +3,6 @@
 import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { ArrowUpRight, ArrowDownRight } from "lucide-react";
-import { INITIAL_50_BILLIONAIRES } from "@/data/billionaires";
 
 interface TickerItem {
   id: string | number;
@@ -16,43 +15,13 @@ interface TickerItem {
 }
 
 export function LiveTicker() {
-  const [tickerItems, setTickerItems] = useState<TickerItem[]>(() => {
-    const gainers = INITIAL_50_BILLIONAIRES.filter((p) => p.netWorthChangeDay > 0).slice(0, 8);
-    const losers = INITIAL_50_BILLIONAIRES.filter((p) => p.netWorthChangeDay < 0).slice(0, 8);
-    const initial: TickerItem[] = [];
-    const max = Math.max(gainers.length, losers.length);
-    for (let i = 0; i < max; i++) {
-      if (gainers[i]) {
-        initial.push({
-          id: `init-g-${gainers[i].id}`,
-          slug: gainers[i].slug,
-          name: gainers[i].name,
-          rank: gainers[i].rank,
-          netWorth: gainers[i].netWorth,
-          changeDay: gainers[i].netWorthChangeDay,
-          changePercent: gainers[i].netWorthChangePercent,
-        });
-      }
-      if (losers[i]) {
-        initial.push({
-          id: `init-l-${losers[i].id}`,
-          slug: losers[i].slug,
-          name: losers[i].name,
-          rank: losers[i].rank,
-          netWorth: losers[i].netWorth,
-          changeDay: losers[i].netWorthChangeDay,
-          changePercent: losers[i].netWorthChangePercent,
-        });
-      }
-    }
-    return initial;
-  });
+  const [tickerItems, setTickerItems] = useState<TickerItem[]>([]);
 
   useEffect(() => {
     let isMounted = true;
 
     const fetchLiveTicker = () => {
-      fetch("/api/rtb/list")
+      fetch("/api/rtb/list", { cache: "no-store" })
         .then((res) => (res.ok ? res.json() : null))
         .then((json) => {
           if (!isMounted) return;
@@ -116,13 +85,30 @@ export function LiveTicker() {
     };
 
     fetchLiveTicker();
-    const interval = setInterval(fetchLiveTicker, 60000); // 60s background sync
+
+    const handleWindowActive = () => {
+      if (document.visibilityState === "visible") {
+        fetchLiveTicker();
+      }
+    };
+
+    window.addEventListener("focus", handleWindowActive);
+    document.addEventListener("visibilitychange", handleWindowActive);
+
+    const interval = setInterval(fetchLiveTicker, 30000); // 30s background sync
 
     return () => {
       isMounted = false;
+      window.removeEventListener("focus", handleWindowActive);
+      document.removeEventListener("visibilitychange", handleWindowActive);
       clearInterval(interval);
     };
   }, []);
+
+  // Return empty container if no items yet to prevent layout shift
+  if (tickerItems.length === 0) {
+    return null;
+  }
 
   // Double the list to create a seamless infinite marquee loop
   const marqueeList = useMemo(() => [...tickerItems, ...tickerItems], [tickerItems]);

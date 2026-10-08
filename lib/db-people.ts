@@ -9,8 +9,8 @@ import { people } from "@/db/schema";
 import { desc, asc, eq, sql } from "drizzle-orm";
 import { syncBillionairesToSupabase } from "@/lib/sync";
 import { formatCountryName } from "@/lib/countries";
-import { INITIAL_50_BILLIONAIRES } from "@/data/billionaires";
 import { VERIFIED_PORTRAITS } from "@/lib/portraits";
+
 
 export interface DBBillionaire {
   id: number;
@@ -40,26 +40,6 @@ export interface DBBillionaire {
 // In-memory request cache for 30s to keep SSR rendering sub-millisecond
 let memoryCachePeople: { data: DBBillionaire[]; expiry: number } | null = null;
 let isSyncInProgress = false;
-
-function getStaticFallbackPeople(limit = 100): DBBillionaire[] {
-  return INITIAL_50_BILLIONAIRES.slice(0, limit).map((p) => ({
-    id: p.id,
-    slug: p.slug,
-    name: p.name,
-    rank: p.rank,
-    netWorth: p.netWorth,
-    netWorthChangeDay: p.netWorthChangeDay,
-    netWorthChangePercent: p.netWorthChangePercent,
-    currentCountry: formatCountryName(p.currentCountry) || "United States",
-    currentCity: p.currentCity,
-    citizenship: p.citizenship,
-    mainCompany: p.mainCompany,
-    photoUrl: VERIFIED_PORTRAITS[p.slug] || p.photoUrl,
-    bio: p.bio,
-    isTechTitan: true,
-    isLive: true,
-  }));
-}
 
 /**
  * Fetch all billionaires from Supabase database with instant fallback
@@ -116,8 +96,7 @@ export async function getBillionairesFromDB(limit = 100): Promise<DBBillionaire[
     }
   }
 
-  // Fallback to rich curated billionaires with verified portraits
-  return getStaticFallbackPeople(limit);
+  return [];
 }
 
 /**
@@ -164,27 +143,6 @@ export async function getBillionaireBySlugFromDB(slug: string): Promise<DBBillio
     } catch (err) {
       console.warn(`[DB Repo] Lookup failed for slug ${slug}:`, err);
     }
-  }
-
-  const staticMatch = INITIAL_50_BILLIONAIRES.find((p) => p.slug === normSlug);
-  if (staticMatch) {
-    return {
-      id: staticMatch.id,
-      slug: staticMatch.slug,
-      name: staticMatch.name,
-      rank: staticMatch.rank,
-      netWorth: staticMatch.netWorth,
-      netWorthChangeDay: staticMatch.netWorthChangeDay,
-      netWorthChangePercent: staticMatch.netWorthChangePercent,
-      currentCountry: formatCountryName(staticMatch.currentCountry) || "United States",
-      currentCity: staticMatch.currentCity,
-      citizenship: staticMatch.citizenship,
-      mainCompany: staticMatch.mainCompany,
-      photoUrl: VERIFIED_PORTRAITS[staticMatch.slug] || staticMatch.photoUrl,
-      bio: staticMatch.bio,
-      isTechTitan: true,
-      isLive: true,
-    };
   }
 
   return null;

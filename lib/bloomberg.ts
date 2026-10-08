@@ -81,23 +81,10 @@ export async function fetchBloombergIndex(): Promise<BloombergBillionaire[]> {
       }
     }
   } catch (err) {
-    console.warn("[Bloomberg] Live scraper timed out or blocked, using snapshot cache:", err);
+    console.warn("[Bloomberg] Live scraper error:", err);
   }
 
-  // Return formatted snapshot
-  return Object.entries(BLOOMBERG_SNAPSHOT).map(([slug, data]) => ({
-    rank: data.rank,
-    slug,
-    name: slug
-      .split("-")
-      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-      .join(" "),
-    country: "United States",
-    industry: "Technology",
-    netWorth: data.worth,
-    changeDay: data.change,
-    changePercent: Math.round((data.change / (data.worth - data.change)) * 1000) / 10,
-  }));
+  return bloombergCache || [];
 }
 
 /**
@@ -107,21 +94,6 @@ export async function getBloombergForPerson(
   nameOrSlug: string
 ): Promise<BloombergBillionaire | null> {
   const norm = nameOrSlug.toLowerCase().trim().replace(/[^\w\s-]/g, "").replace(/\s+/g, "-");
-
-  if (BLOOMBERG_SNAPSHOT[norm]) {
-    const s = BLOOMBERG_SNAPSHOT[norm];
-    return {
-      rank: s.rank,
-      slug: norm,
-      name: nameOrSlug,
-      country: "United States",
-      industry: "Technology",
-      netWorth: s.worth,
-      changeDay: s.change,
-      changePercent: 0,
-    };
-  }
-
   const list = await fetchBloombergIndex();
   return (
     list.find(

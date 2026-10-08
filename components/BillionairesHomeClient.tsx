@@ -174,7 +174,7 @@ export default function BillionairesHomeClient({
     "rank" | "worthDesc" | "worthAsc" | "gainers" | "losers" | "ageAsc" | "ageDesc"
   >("rank");
   const [isSyncing, setIsSyncing] = useState(false);
-  const [lastSyncedTime, setLastSyncedTime] = useState<string>("Oct 06, 2026, 12:45am EDT");
+  const [lastSyncedTime, setLastSyncedTime] = useState<string>("");
   const [isLiveActive, setIsLiveActive] = useState(true);
 
   // RTB lookup map for realtime net worth, source and movers
@@ -334,11 +334,21 @@ export default function BillionairesHomeClient({
 
   const [peopleList, setPeopleList] = useState<DisplayBillionaire[]>(initialMapped);
 
+function formatLiveTimestamp(): string {
+  const d = new Date();
+  return (
+    d.toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }) +
+    ", " +
+    d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) +
+    " EDT"
+  );
+}
+
   // Trigger background sync
   const triggerLiveSync = useCallback(async () => {
     setIsSyncing(true);
     try {
-      const res = await fetch("/api/v1/rankings?limit=100");
+      const res = await fetch("/api/v1/rankings?limit=100", { cache: "no-store" });
       if (res.ok) {
         const json = await res.json();
         if (json?.data && Array.isArray(json.data)) {
@@ -375,13 +385,11 @@ export default function BillionairesHomeClient({
             }))
           );
           setIsLiveActive(true);
-          setLastSyncedTime(
-            new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " EDT"
-          );
+          setLastSyncedTime(formatLiveTimestamp());
         }
       }
 
-      const rtbRes = await fetch("/api/rtb/list");
+      const rtbRes = await fetch("/api/rtb/list", { cache: "no-store" });
       if (rtbRes.ok) {
         const rtbJson = await rtbRes.json();
         if (rtbJson?.data?.list) {
@@ -402,6 +410,7 @@ export default function BillionairesHomeClient({
             topGainers: sortedByGain.slice(0, 5),
             topLosers: sortedByLoss.slice(0, 5),
           });
+          setLastSyncedTime(formatLiveTimestamp());
         }
       }
     } catch (err) {
@@ -412,8 +421,28 @@ export default function BillionairesHomeClient({
   }, []);
 
   useEffect(() => {
-    const interval = setInterval(triggerLiveSync, 60000);
-    return () => clearInterval(interval);
+    // Immediate live sync on mount
+    setLastSyncedTime(formatLiveTimestamp());
+    triggerLiveSync();
+
+    // Re-fetch immediately when window is reopened or focused
+    const handleActive = () => {
+      if (document.visibilityState === "visible") {
+        setLastSyncedTime(formatLiveTimestamp());
+        triggerLiveSync();
+      }
+    };
+
+    window.addEventListener("focus", handleActive);
+    document.addEventListener("visibilitychange", handleActive);
+
+    const interval = setInterval(triggerLiveSync, 30000);
+
+    return () => {
+      window.removeEventListener("focus", handleActive);
+      document.removeEventListener("visibilitychange", handleActive);
+      clearInterval(interval);
+    };
   }, [triggerLiveSync]);
 
   // Extract unique countries
@@ -659,7 +688,7 @@ export default function BillionairesHomeClient({
 
             <div className="flex items-center space-x-2 text-xs text-neutral-500 dark:text-neutral-400 mt-1.5">
               <span className="font-semibold text-neutral-700 dark:text-neutral-300">Last Updated</span>
-              <span>{lastSyncedTime}</span>
+              <span>{lastSyncedTime || "Real-Time (Live Feed)"}</span>
             </div>
           </div>
         </div>

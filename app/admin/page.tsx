@@ -1,7 +1,9 @@
 import { redirect } from "next/navigation";
 import { verifyAdminSession } from "@/lib/auth";
-import { INITIAL_50_BILLIONAIRES } from "@/data/billionaires";
+import { getBillionairesFromDB } from "@/lib/db-people";
 import { AdminManager } from "@/components/AdminManager";
+
+export const dynamic = "force-dynamic";
 
 export default async function AdminDashboardPage() {
   const session = await verifyAdminSession();
@@ -10,10 +12,12 @@ export default async function AdminDashboardPage() {
     redirect("/admin/login");
   }
 
+  const liveBillionaires = await getBillionairesFromDB(100);
+
   return (
     <AdminManager
       username={(session.username as string) || "Administrator"}
-      initialBillionaires={INITIAL_50_BILLIONAIRES}
+      initialBillionaires={liveBillionaires as any}
     />
   );
 }

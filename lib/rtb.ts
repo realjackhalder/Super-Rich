@@ -4,7 +4,9 @@
  * Provides monthly-updated CDN endpoints for global lists, full bios, assets, daily movers, and historical analytics.
  */
 
-import { INITIAL_50_BILLIONAIRES } from "@/data/billionaires";
+import { db, hasDatabaseConnection } from "@/db";
+import { people } from "@/db/schema";
+import { asc } from "drizzle-orm";
 
 export interface RTBListItem {
   rank: number;
@@ -261,7 +263,7 @@ async function fetchLiveListFromWebsite(): Promise<RTBListResponse | null> {
 
     memoryCache.set("live_website_list", {
       data: result,
-      expiry: Date.now() + 5 * 60 * 1000,
+      expiry: Date.now() + 60 * 1000,
     });
 
     return result;
@@ -347,10 +349,9 @@ async function fetchLiveProfileFromWebsite(slug: string) {
       }
     }
 
-    const staticMatch = INITIAL_50_BILLIONAIRES.find((p) => p.slug === normSlug);
     const cachedList = memoryCache.get("live_website_list")?.data?.list;
     const foundItem = cachedList?.find((item: any) => item.uri === normSlug);
-    const trueRank = foundItem?.rank || staticMatch?.rank || (normSlug === "elon-musk" ? 1 : 999);
+    const trueRank = foundItem?.rank || (normSlug === "elon-musk" ? 1 : 999);
 
     const result = {
       latest: {
@@ -382,77 +383,50 @@ async function fetchLiveProfileFromWebsite(slug: string) {
  * Fetch the latest real-time billionaires global list
  */
 export async function getRTBLatestList(): Promise<RTBListResponse | null> {
-  // 1. Fetch full universe of all 3,400+ billionaires from CDN, plus live scraped movers
-  const [remoteRes, liveRes] = await Promise.allSettled([
-    fetchFromRTB<RTBListResponse>("list/rtb/latest"),
-    fetchLiveListFromWebsite(),
-  ]);
+  // 1. Fetch live scraped list of 100 billionaires directly from realtimebillionaires.de
+  const liveRes = await fetchLiveListFromWebsite();
+  if (liveRes && liveRes.list && liveRes.list.length > 0) {
+    return liveRes;
+  }
 
-  const fullListResponse = remoteRes.status === "fulfilled" ? remoteRes.value : null;
-  const scrapedList = liveRes.status === "fulfilled" && liveRes.value?.list ? liveRes.value.list : [];
-
-  if (fullListResponse && fullListResponse.list && fullListResponse.list.length > 0) {
-    if (scrapedList.length > 0) {
-      const scrapedMap = new Map<string, RTBListItem>();
-      for (const item of scrapedList) {
-        if (item.uri) scrapedMap.set(item.uri, item);
+  // 2. Fallback to Supabase database if live website scraper is temporarily blocked
+  if (hasDatabaseConnection && db) {
+    try {
+      const rows = await db.select().from(people).orderBy(asc(people.rank)).limit(100);
+      if (rows && rows.length > 0) {
+        const list: RTBListItem[] = rows.map((r: any) => ({
+          rank: r.rank,
+          uri: r.slug,
+          name: r.name,
+          gender: "m",
+          age: 55,
+          networth: parseFloat(r.netWorth || "0") * 1000,
+          change: {
+            value: parseFloat(r.netWorthChangeDay || "0") * 1000,
+            pct: parseFloat(r.netWorthChangePercent || "0"),
+            date: new Date().toISOString().split("T")[0],
+          },
+          diff: 0,
+          flag: parseFloat(r.netWorthChangeDay || "0") >= 0 ? "up" : "down",
+          citizenship: r.citizenship || r.currentCountry || "United States",
+          industry: r.industry ? [r.industry] : ["Technology"],
+          source: r.mainCompany ? [r.mainCompany] : ["Enterprise"],
+          image: r.photoUrl || undefined,
+        }));
+        return {
+          date: new Date().toISOString().split("T")[0],
+          count: list.length,
+          woman: 3,
+          total: list.reduce((acc, curr) => acc + curr.networth, 0),
+          list,
+        };
       }
-
-      const mergedList = fullListResponse.list.map((item) => {
-        const live = scrapedMap.get(item.uri);
-        if (live) {
-          return {
-            ...item,
-            rank: live.rank || item.rank,
-            networth: live.networth || item.networth,
-            change: live.change || item.change,
-            diff: live.diff ?? item.diff,
-            flag: live.flag || item.flag,
-          };
-        }
-        return item;
-      });
-
-      return {
-        ...fullListResponse,
-        list: mergedList,
-      };
+    } catch (e) {
+      console.warn("[RTB] DB fallback query failed:", e);
     }
-
-    return fullListResponse;
   }
 
-  // 2. Fallback to live scraped list if remote CDN is unavailable
-  if (liveRes.status === "fulfilled" && liveRes.value && liveRes.value.list.length > 0) {
-    return liveRes.value;
-  }
-
-  // 3. Fallback to local 50 billionaires data if offline/sandboxed
-  return {
-    date: new Date().toISOString().split("T")[0],
-    count: INITIAL_50_BILLIONAIRES.length,
-    woman: 3,
-    total: INITIAL_50_BILLIONAIRES.reduce((acc, curr) => acc + curr.netWorth * 1000, 0),
-    list: INITIAL_50_BILLIONAIRES.map((p) => ({
-      rank: p.rank,
-      uri: p.slug,
-      name: p.name,
-      gender: "m",
-      age: 50,
-      networth: p.netWorth * 1000,
-      change: {
-        value: p.netWorthChangeDay * 1000,
-        pct: p.netWorthChangePercent,
-        date: new Date().toISOString().split("T")[0],
-      },
-      diff: 0,
-      flag: "unchanged",
-      citizenship: p.citizenship,
-      industry: ["technology"],
-      source: [p.mainCompany],
-      image: p.photoUrl,
-    })),
-  };
+  return null;
 }
 
 /**

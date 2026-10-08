@@ -11,29 +11,49 @@ export async function GET(request: Request) {
   const country = searchParams.get("country");
   const limit = Math.min(parseInt(searchParams.get("limit") || "50", 10), 100);
 
-  let data = await getBillionairesFromDB(limit);
+  const [dbData, rtb] = await Promise.all([
+    getBillionairesFromDB(limit),
+    getRTBLatestList(),
+  ]);
 
-  // Fallback to RTB live feed if DB is warming up
-  if (!data || data.length === 0) {
-    const rtb = await getRTBLatestList();
-    if (rtb?.list) {
-      data = rtb.list.slice(0, limit).map((p, idx) => ({
-        id: idx + 1,
-        slug: p.uri,
-        name: p.name,
-        rank: p.rank,
-        netWorth: Math.round((p.networth / 1000) * 100) / 100,
-        netWorthChangeDay: p.change?.value ? Math.round((p.change.value / 1000) * 100) / 100 : 0,
-        netWorthChangePercent: p.change?.pct || 0,
-        currentCountry: formatCountryName(p.citizenship) || "United States",
-        currentCity: "",
-        citizenship: formatCountryName(p.citizenship) || "United States",
-        mainCompany: p.source?.[0] || "Enterprise",
-        photoUrl: VERIFIED_PORTRAITS[p.uri] || p.image || undefined,
-        isTechTitan: true,
-        isLive: true,
-      }));
+  const rtbMap = new Map();
+  if (rtb?.list) {
+    for (const item of rtb.list) {
+      if (item.uri) rtbMap.set(item.uri.toLowerCase().trim(), item);
+      if (item.name) rtbMap.set(item.name.toLowerCase().trim(), item);
     }
+  }
+
+  let data = dbData && dbData.length > 0
+    ? dbData.map((p) => {
+        const live = rtbMap.get(p.slug.toLowerCase().trim()) || rtbMap.get(p.name.toLowerCase().trim());
+        return {
+          ...p,
+          netWorth: live ? Math.round((live.networth / 1000) * 100) / 100 : p.netWorth,
+          netWorthChangeDay: live?.change ? Math.round((live.change.value / 1000) * 100) / 100 : p.netWorthChangeDay,
+          netWorthChangePercent: live?.change ? Math.round(live.change.pct * 100) / 100 : p.netWorthChangePercent,
+        };
+      })
+    : [];
+
+  // Fallback to RTB live feed if DB is empty
+  if (data.length === 0 && rtb?.list) {
+    data = rtb.list.slice(0, limit).map((p, idx) => ({
+      id: idx + 1,
+      slug: p.uri,
+      name: p.name,
+      rank: p.rank,
+      netWorth: Math.round((p.networth / 1000) * 100) / 100,
+      netWorthChangeDay: p.change?.value ? Math.round((p.change.value / 1000) * 100) / 100 : 0,
+      netWorthChangePercent: p.change?.pct || 0,
+      currentCountry: formatCountryName(p.citizenship) || "United States",
+      currentCity: "",
+      citizenship: formatCountryName(p.citizenship) || "United States",
+      mainCompany: p.source?.[0] || "Enterprise",
+      photoUrl: VERIFIED_PORTRAITS[p.uri] || p.image || undefined,
+      isTechTitan: true,
+      isLive: true,
+    }));
   }
 
   if (country && country !== "all") {
@@ -61,22 +81,22 @@ export async function GET(request: Request) {
     bio: p.bio,
     grokipedia_summary: p.grokipediaSummary,
     wikipedia_url: p.wikipediaUrl,
-    source: "Supabase Live Database (Forbes RTB, Grokipedia & Bloomberg)",
-    updated_at: p.updatedAt || new Date().toISOString(),
+    source: "Supabase Live Database + Real-Time Billionaires Feed",
+    updated_at: new Date().toISOString(),
   }));
 
   return NextResponse.json(
     {
       status: "success",
       total: sanitized.length,
-      source: "SuperRich Live Database (Supabase + Forbes RTB + Grokipedia + Bloomberg)",
+      source: "SuperRich Live Real-Time Index",
       license: "Free public access with attribution to superrich.tech",
       data: sanitized,
     },
     {
       headers: {
         "Access-Control-Allow-Origin": "*",
-        "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
+        "Cache-Control": "no-cache, no-store, max-age=0, must-revalidate",
       },
     }
   );
