@@ -7,7 +7,6 @@ import {
   Search,
   LayoutGrid,
   List,
-  Building2,
   TrendingUp,
   ArrowUpRight,
   ArrowDownRight,
@@ -555,32 +554,6 @@ export default function CompaniesListClient({ initialCompanies }: Props) {
             </div>
           </div>
         )}
-      </section>
-
-      {/* Corporate Intelligence Footnote */}
-      <section className="bg-white dark:bg-[#141416] border border-neutral-200/90 dark:border-neutral-800 rounded-2xl p-7 space-y-4 shadow-sm dark:shadow-none">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <div className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-accent/15 text-accent uppercase tracking-wider">
-              <Building2 className="w-3 h-3 mr-1 inline" />
-              <span>Real-Time Corporate Valuation Engine</span>
-            </div>
-            <h3 className="text-xl font-bold tracking-tight text-neutral-900 dark:text-white">
-              Cross-Linked Global Wealth & Equity Graph
-            </h3>
-            <p className="text-xs text-neutral-600 dark:text-neutral-400 max-w-xl">
-              SuperRich indexes equity ownership from regulatory SEC Form 4 and 13F filings, cross-linking public enterprise valuations directly with global billionaire net worth portfolios.
-            </p>
-          </div>
-          <div className="flex items-center space-x-3">
-            <Link
-              href="/"
-              className="px-4 py-2 rounded-full text-xs font-semibold bg-black dark:bg-white text-white dark:text-black hover:opacity-90 transition-opacity shadow-sm"
-            >
-              View Billionaires Index
-            </Link>
-          </div>
-        </div>
       </section>
     </div>
   );
