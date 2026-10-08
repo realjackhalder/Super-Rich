@@ -105,13 +105,13 @@ export function LiveTicker() {
     };
   }, []);
 
+  // Double the list to create a seamless infinite marquee loop (called unconditionally)
+  const marqueeList = useMemo(() => [...tickerItems, ...tickerItems], [tickerItems]);
+
   // Return empty container if no items yet to prevent layout shift
   if (tickerItems.length === 0) {
     return null;
   }
-
-  // Double the list to create a seamless infinite marquee loop
-  const marqueeList = useMemo(() => [...tickerItems, ...tickerItems], [tickerItems]);
 
   return (
     <div className="w-full bg-neutral-100/90 dark:bg-black/90 backdrop-blur-md border-b border-neutral-200/50 dark:border-neutral-800/80 py-1.5 text-xs overflow-hidden select-none">
