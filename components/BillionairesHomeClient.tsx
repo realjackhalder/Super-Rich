@@ -551,7 +551,7 @@ function formatLiveTimestamp(): string {
           <div className="absolute right-0 top-1/2 -translate-y-1/2 w-56 h-56 bg-gain/10 rounded-full blur-3xl pointer-events-none" />
 
           <div className="relative z-10">
-            <h2 className="text-2xl sm:text-3xl font-serif font-bold text-neutral-900 dark:text-white tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-sans font-bold text-neutral-900 dark:text-white tracking-tight">
               {t("gainers.title")}
             </h2>
             <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
@@ -573,7 +573,7 @@ function formatLiveTimestamp(): string {
                         href={`/p/${mover.uri}`}
                         className="font-medium text-neutral-900 dark:text-white hover:text-accent flex items-center space-x-2 truncate max-w-[170px] sm:max-w-[200px] group"
                       >
-                        <span className="text-neutral-400 dark:text-neutral-500 font-serif text-sm w-4">
+                        <span className="text-neutral-400 dark:text-neutral-500 font-sans text-sm w-4">
                           {idx + 1}.
                         </span>
                         <span className="truncate group-hover:underline">
@@ -613,7 +613,7 @@ function formatLiveTimestamp(): string {
           <div className="absolute right-0 top-1/2 -translate-y-1/2 w-56 h-56 bg-loss/10 rounded-full blur-3xl pointer-events-none" />
 
           <div className="relative z-10">
-            <h2 className="text-2xl sm:text-3xl font-serif font-bold text-neutral-900 dark:text-white tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-sans font-bold text-neutral-900 dark:text-white tracking-tight">
               {t("losers.title")}
             </h2>
             <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
@@ -640,7 +640,7 @@ function formatLiveTimestamp(): string {
                         href={`/p/${mover.uri}`}
                         className="font-medium text-neutral-900 dark:text-white hover:text-accent flex items-center space-x-2 truncate max-w-[170px] sm:max-w-[200px] group"
                       >
-                        <span className="text-neutral-400 dark:text-neutral-500 font-serif text-sm w-4">
+                        <span className="text-neutral-400 dark:text-neutral-500 font-sans text-sm w-4">
                           {idx + 1}.
                         </span>
                         <span className="truncate group-hover:underline">
@@ -680,7 +680,7 @@ function formatLiveTimestamp(): string {
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-baseline justify-between gap-3">
           <div>
-            <h1 className="text-3xl sm:text-4xl font-serif font-bold tracking-tight text-neutral-900 dark:text-white flex items-baseline space-x-2">
+            <h1 className="text-3xl sm:text-4xl font-sans font-extrabold tracking-tight text-neutral-900 dark:text-white flex items-baseline space-x-2">
               <span>Today&apos;s Top</span>
               <span className="text-sky-500 dark:text-sky-400">100</span>
               <span>Billionaires</span>
@@ -872,7 +872,7 @@ function formatLiveTimestamp(): string {
                       }`}
                     >
                       <div className="w-16 h-16 rounded-full bg-neutral-300/80 dark:bg-neutral-800/90 border border-neutral-300 dark:border-neutral-700/80 flex items-center justify-center mb-2 shadow-inner">
-                        <span className="font-serif font-bold text-2xl text-neutral-700 dark:text-neutral-300 tracking-wider">
+                        <span className="font-sans font-bold text-2xl text-neutral-700 dark:text-neutral-300 tracking-wider">
                           {getInitials(person.name)}
                         </span>
                       </div>
@@ -886,7 +886,7 @@ function formatLiveTimestamp(): string {
                   <div className="p-4 sm:p-5 flex flex-col flex-1 gap-3">
                     <div>
                       {/* Rank & Name */}
-                      <h3 className="font-serif font-bold text-lg text-neutral-900 dark:text-white group-hover:text-accent transition-colors flex items-baseline space-x-1.5 truncate">
+                      <h3 className="font-sans font-bold text-lg text-neutral-900 dark:text-white group-hover:text-accent transition-colors flex items-baseline space-x-1.5 truncate">
                         <span>{person.rank}.</span>
                         <span className="truncate">{person.name}</span>
                       </h3>
@@ -899,7 +899,7 @@ function formatLiveTimestamp(): string {
 
                     {/* Net Worth & 24h Change Row */}
                     <div className="mt-auto pt-3 border-t border-neutral-100 dark:border-neutral-800/80 flex items-baseline justify-between">
-                      <span className="text-base sm:text-lg font-bold text-neutral-900 dark:text-white tracking-tight font-serif">
+                      <span className="text-base sm:text-lg font-bold text-neutral-900 dark:text-white tracking-tight font-sans">
                         {formatWealth(person.netWorth)}
                       </span>
                       <span

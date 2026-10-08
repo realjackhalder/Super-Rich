@@ -1452,9 +1452,44 @@ export const TOP_100_COMPANIES: CompanyData[] = [
     majorBillionaires: [],
   },
   {
+    id: "bytedance",
+    slug: "bytedance",
+    rank: 44,
+    name: "ByteDance Ltd.",
+    shortName: "ByteDance",
+    ticker: "BYTEDANCE",
+    exchange: "PRIVATE",
+    marketCapBillion: 225.0,
+    sharePrice: 180.0,
+    changeDayBillion: 0.0,
+    changeDayPercent: 0.0,
+    sector: "Technology",
+    country: "China",
+    countryCode: "CN",
+    headquarters: "Beijing, China",
+    ceo: "Liang Rubo",
+    foundedYear: 2012,
+    employees: "110,000+",
+    peRatio: 28.5,
+    fiftyTwoWeekHigh: 230.0,
+    fiftyTwoWeekLow: 160.0,
+    annualRevenueBillion: 120.0,
+    description: "ByteDance is the world's most valuable private technology unicorn and parent company of TikTok, Douyin, and CapCut. It revolutionized machine-learning recommendation algorithms across global short-form video and digital entertainment.",
+    keyProducts: ["TikTok Global Video Platform", "Douyin & Toutiao", "CapCut Video Editing Suite", "Lark Enterprise Collaboration"],
+    majorBillionaires: [
+      {
+        slug: "zhang-yiming",
+        name: "Zhang Yiming",
+        role: "Founder (~21% Stake)",
+        stakePercent: 21.0,
+        stakeValueBillion: 47.25,
+      },
+    ],
+  },
+  {
     id: "wells-fargo",
     slug: "wells-fargo",
-    rank: 44,
+    rank: 45,
     name: "Wells Fargo & Company",
     shortName: "Wells Fargo",
     ticker: "WFC",
@@ -1481,7 +1516,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "mcdonalds",
     slug: "mcdonalds",
-    rank: 45,
+    rank: 46,
     name: "McDonald's Corporation",
     shortName: "McDonald's",
     ticker: "MCD",
@@ -1508,7 +1543,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "reliance",
     slug: "reliance",
-    rank: 46,
+    rank: 47,
     name: "Reliance Industries Limited",
     shortName: "Reliance Industries",
     ticker: "RELIANCE.NS",
@@ -1543,7 +1578,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "abbott",
     slug: "abbott",
-    rank: 47,
+    rank: 48,
     name: "Abbott Laboratories",
     shortName: "Abbott",
     ticker: "ABT",
@@ -1570,7 +1605,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "ibm",
     slug: "ibm",
-    rank: 48,
+    rank: 49,
     name: "International Business Machines Corp.",
     shortName: "IBM",
     ticker: "IBM",
@@ -1595,9 +1630,44 @@ export const TOP_100_COMPANIES: CompanyData[] = [
     majorBillionaires: [],
   },
   {
+    id: "spacex",
+    slug: "spacex",
+    rank: 50,
+    name: "Space Exploration Technologies Corp.",
+    shortName: "SpaceX",
+    ticker: "SPACEX",
+    exchange: "PRIVATE",
+    marketCapBillion: 210.0,
+    sharePrice: 112.0,
+    changeDayBillion: 0.0,
+    changeDayPercent: 0.0,
+    sector: "Technology",
+    country: "United States",
+    countryCode: "US",
+    headquarters: "Hawthorne, California / Starbase, Texas, USA",
+    ceo: "Elon Musk",
+    foundedYear: 2002,
+    employees: "13,000+",
+    peRatio: 55.0,
+    fiftyTwoWeekHigh: 115.0,
+    fiftyTwoWeekLow: 85.0,
+    annualRevenueBillion: 13.5,
+    description: "Space Exploration Technologies Corp. (SpaceX) designs, manufactures, and launches reusable orbital rockets and spacecraft. It operates Starlink, the world's largest satellite internet mega-constellation, and develops Starship, humanity's first fully reusable Mars transportation system.",
+    keyProducts: ["Starlink Satellite Broadband Network", "Falcon 9 & Falcon Heavy Reusable Rockets", "Starship & Super Heavy Launch System", "Dragon Spacecraft & NASA Commercial Crew Missions"],
+    majorBillionaires: [
+      {
+        slug: "elon-musk",
+        name: "Elon Musk",
+        role: "Founder, CEO & Chief Engineer (~42% Stake, 79% Voting Control)",
+        stakePercent: 42.0,
+        stakeValueBillion: 88.2,
+      },
+    ],
+  },
+  {
     id: "servicenow",
     slug: "servicenow",
-    rank: 49,
+    rank: 51,
     name: "ServiceNow Inc.",
     shortName: "ServiceNow",
     ticker: "NOW",
@@ -1624,7 +1694,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "walt-disney",
     slug: "walt-disney",
-    rank: 50,
+    rank: 52,
     name: "The Walt Disney Company",
     shortName: "Disney",
     ticker: "DIS",
@@ -1651,7 +1721,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "morgan-stanley",
     slug: "morgan-stanley",
-    rank: 51,
+    rank: 53,
     name: "Morgan Stanley",
     shortName: "Morgan Stanley",
     ticker: "MS",
@@ -1678,7 +1748,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "caterpillar",
     slug: "caterpillar",
-    rank: 52,
+    rank: 54,
     name: "Caterpillar Inc.",
     shortName: "Caterpillar",
     ticker: "CAT",
@@ -1705,7 +1775,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "general-electric",
     slug: "general-electric",
-    rank: 53,
+    rank: 55,
     name: "GE Aerospace",
     shortName: "GE Aerospace",
     ticker: "GE",
@@ -1732,7 +1802,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "intuit",
     slug: "intuit",
-    rank: 54,
+    rank: 56,
     name: "Intuit Inc.",
     shortName: "Intuit",
     ticker: "INTU",
@@ -1759,7 +1829,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "verizon",
     slug: "verizon",
-    rank: 55,
+    rank: 57,
     name: "Verizon Communications Inc.",
     shortName: "Verizon",
     ticker: "VZ",
@@ -1786,7 +1856,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "goldman-sachs",
     slug: "goldman-sachs",
-    rank: 56,
+    rank: 58,
     name: "The Goldman Sachs Group Inc.",
     shortName: "Goldman Sachs",
     ticker: "GS",
@@ -1813,7 +1883,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "intuitive-surgical",
     slug: "intuitive-surgical",
-    rank: 57,
+    rank: 59,
     name: "Intuitive Surgical Inc.",
     shortName: "Intuitive Surgical",
     ticker: "ISRG",
@@ -1840,7 +1910,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "applied-materials",
     slug: "applied-materials",
-    rank: 58,
+    rank: 60,
     name: "Applied Materials Inc.",
     shortName: "Applied Materials",
     ticker: "AMAT",
@@ -1867,7 +1937,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "pfizer",
     slug: "pfizer",
-    rank: 59,
+    rank: 61,
     name: "Pfizer Inc.",
     shortName: "Pfizer",
     ticker: "PFE",
@@ -1894,7 +1964,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "intel",
     slug: "intel",
-    rank: 60,
+    rank: 62,
     name: "Intel Corporation",
     shortName: "Intel",
     ticker: "INTC",
@@ -1921,7 +1991,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "texas-instruments",
     slug: "texas-instruments",
-    rank: 61,
+    rank: 63,
     name: "Texas Instruments Inc.",
     shortName: "Texas Instruments",
     ticker: "TXN",
@@ -1948,7 +2018,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "amgen",
     slug: "amgen",
-    rank: 62,
+    rank: 64,
     name: "Amgen Inc.",
     shortName: "Amgen",
     ticker: "AMGN",
@@ -1975,7 +2045,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "union-pacific",
     slug: "union-pacific",
-    rank: 63,
+    rank: 65,
     name: "Union Pacific Corporation",
     shortName: "Union Pacific",
     ticker: "UNP",
@@ -2002,7 +2072,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "uber",
     slug: "uber",
-    rank: 64,
+    rank: 66,
     name: "Uber Technologies Inc.",
     shortName: "Uber",
     ticker: "UBER",
@@ -2037,7 +2107,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "philip-morris",
     slug: "philip-morris",
-    rank: 65,
+    rank: 67,
     name: "Philip Morris International Inc.",
     shortName: "Philip Morris",
     ticker: "PM",
@@ -2064,7 +2134,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "honeywell",
     slug: "honeywell",
-    rank: 66,
+    rank: 68,
     name: "Honeywell International Inc.",
     shortName: "Honeywell",
     ticker: "HON",
@@ -2091,7 +2161,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "danaher",
     slug: "danaher",
-    rank: 67,
+    rank: 69,
     name: "Danaher Corporation",
     shortName: "Danaher",
     ticker: "DHR",
@@ -2131,9 +2201,39 @@ export const TOP_100_COMPANIES: CompanyData[] = [
     ],
   },
   {
+    id: "openai",
+    slug: "openai",
+    rank: 70,
+    name: "OpenAI Global LLC",
+    shortName: "OpenAI",
+    ticker: "OPENAI",
+    exchange: "PRIVATE",
+    marketCapBillion: 157.0,
+    sharePrice: 350.0,
+    changeDayBillion: 0.0,
+    changeDayPercent: 0.0,
+    sector: "Technology",
+    country: "United States",
+    countryCode: "US",
+    headquarters: "San Francisco, California, USA",
+    ceo: "Sam Altman",
+    foundedYear: 2015,
+    employees: "1,700+",
+    annualRevenueBillion: 4.0,
+    description: "OpenAI is the pioneer of generative artificial intelligence, creator of ChatGPT, GPT-4o, and the OpenAI o1 reasoning model series. Partnered with Microsoft, it powers transformative AI across global consumers, enterprises, and autonomous agents.",
+    keyProducts: ["ChatGPT & ChatGPT Plus/Enterprise", "GPT-4o & OpenAI o1 Reasoning Models", "Sora Generative Video", "OpenAI Developer API & Enterprise Infrastructure"],
+    majorBillionaires: [
+      {
+        slug: "sam-altman",
+        name: "Sam Altman",
+        role: "Co-Founder & CEO",
+      },
+    ],
+  },
+  {
     id: "american-express",
     slug: "american-express",
-    rank: 68,
+    rank: 71,
     name: "American Express Company",
     shortName: "American Express",
     ticker: "AXP",
@@ -2168,7 +2268,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "rtx",
     slug: "rtx",
-    rank: 69,
+    rank: 72,
     name: "RTX Corporation (Raytheon)",
     shortName: "RTX",
     ticker: "RTX",
@@ -2195,7 +2295,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "inditex",
     slug: "inditex",
-    rank: 70,
+    rank: 73,
     name: "Industria de Diseño Textil (Inditex / Zara)",
     shortName: "Inditex (Zara)",
     ticker: "ITX.MC",
@@ -2230,7 +2330,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "comcast",
     slug: "comcast",
-    rank: 71,
+    rank: 74,
     name: "Comcast Corporation",
     shortName: "Comcast",
     ticker: "CMCSA",
@@ -2265,7 +2365,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "att",
     slug: "att",
-    rank: 72,
+    rank: 75,
     name: "AT&T Inc.",
     shortName: "AT&T",
     ticker: "T",
@@ -2292,7 +2392,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "medtronic",
     slug: "medtronic",
-    rank: 73,
+    rank: 76,
     name: "Medtronic plc",
     shortName: "Medtronic",
     ticker: "MDT",
@@ -2319,7 +2419,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "lam-research",
     slug: "lam-research",
-    rank: 74,
+    rank: 77,
     name: "Lam Research Corporation",
     shortName: "Lam Research",
     ticker: "LRCX",
@@ -2346,7 +2446,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "booking-holdings",
     slug: "booking-holdings",
-    rank: 75,
+    rank: 78,
     name: "Booking Holdings Inc.",
     shortName: "Booking Holdings",
     ticker: "BKNG",
@@ -2373,7 +2473,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "dell",
     slug: "dell",
-    rank: 76,
+    rank: 79,
     name: "Dell Technologies Inc.",
     shortName: "Dell",
     ticker: "DELL",
@@ -2408,7 +2508,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "stryker",
     slug: "stryker",
-    rank: 77,
+    rank: 80,
     name: "Stryker Corporation",
     shortName: "Stryker",
     ticker: "SYK",
@@ -2443,7 +2543,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "blackrock",
     slug: "blackrock",
-    rank: 78,
+    rank: 81,
     name: "BlackRock Inc.",
     shortName: "BlackRock",
     ticker: "BLK",
@@ -2478,7 +2578,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "palo-alto-networks",
     slug: "palo-alto-networks",
-    rank: 79,
+    rank: 82,
     name: "Palo Alto Networks Inc.",
     shortName: "Palo Alto Networks",
     ticker: "PANW",
@@ -2513,7 +2613,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "boston-scientific",
     slug: "boston-scientific",
-    rank: 80,
+    rank: 83,
     name: "Boston Scientific Corporation",
     shortName: "Boston Scientific",
     ticker: "BSX",
@@ -2540,7 +2640,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "eaton",
     slug: "eaton",
-    rank: 81,
+    rank: 84,
     name: "Eaton Corporation plc",
     shortName: "Eaton",
     ticker: "ETN",
@@ -2567,7 +2667,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "micron",
     slug: "micron",
-    rank: 82,
+    rank: 85,
     name: "Micron Technology Inc.",
     shortName: "Micron",
     ticker: "MU",
@@ -2594,7 +2694,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "kla",
     slug: "kla",
-    rank: 83,
+    rank: 86,
     name: "KLA Corporation",
     shortName: "KLA",
     ticker: "KLAC",
@@ -2621,7 +2721,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "lockheed-martin",
     slug: "lockheed-martin",
-    rank: 84,
+    rank: 87,
     name: "Lockheed Martin Corporation",
     shortName: "Lockheed Martin",
     ticker: "LMT",
@@ -2648,7 +2748,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "synopsys",
     slug: "synopsys",
-    rank: 85,
+    rank: 88,
     name: "Synopsys Inc.",
     shortName: "Synopsys",
     ticker: "SNPS",
@@ -2675,7 +2775,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "analog-devices",
     slug: "analog-devices",
-    rank: 86,
+    rank: 89,
     name: "Analog Devices Inc.",
     shortName: "Analog Devices",
     ticker: "ADI",
@@ -2702,7 +2802,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "cadence",
     slug: "cadence",
-    rank: 87,
+    rank: 90,
     name: "Cadence Design Systems Inc.",
     shortName: "Cadence",
     ticker: "CDNS",
@@ -2729,7 +2829,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "target",
     slug: "target",
-    rank: 88,
+    rank: 91,
     name: "Target Corporation",
     shortName: "Target",
     ticker: "TGT",
@@ -2756,7 +2856,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "boeing",
     slug: "boeing",
-    rank: 89,
+    rank: 92,
     name: "The Boeing Company",
     shortName: "Boeing",
     ticker: "BA",
@@ -2783,7 +2883,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "tjx",
     slug: "tjx",
-    rank: 90,
+    rank: 93,
     name: "The TJX Companies Inc.",
     shortName: "TJX",
     ticker: "TJX",
@@ -2810,7 +2910,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "lowes",
     slug: "lowes",
-    rank: 91,
+    rank: 94,
     name: "Lowe's Companies Inc.",
     shortName: "Lowe's",
     ticker: "LOW",
@@ -2837,7 +2937,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "sony",
     slug: "sony",
-    rank: 92,
+    rank: 95,
     name: "Sony Group Corporation",
     shortName: "Sony",
     ticker: "6758.T",
@@ -2864,7 +2964,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "dior",
     slug: "dior",
-    rank: 93,
+    rank: 96,
     name: "Christian Dior SE",
     shortName: "Christian Dior",
     ticker: "CDI.PA",
@@ -2899,7 +2999,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "airbnb",
     slug: "airbnb",
-    rank: 94,
+    rank: 97,
     name: "Airbnb Inc.",
     shortName: "Airbnb",
     ticker: "ABNB",
@@ -2948,7 +3048,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "schneider-electric",
     slug: "schneider-electric",
-    rank: 95,
+    rank: 98,
     name: "Schneider Electric SE",
     shortName: "Schneider Electric",
     ticker: "SU.PA",
@@ -2975,7 +3075,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "siemens",
     slug: "siemens",
-    rank: 96,
+    rank: 99,
     name: "Siemens AG",
     shortName: "Siemens",
     ticker: "SIE.DE",
@@ -3002,7 +3102,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "shopify",
     slug: "shopify",
-    rank: 97,
+    rank: 100,
     name: "Shopify Inc.",
     shortName: "Shopify",
     ticker: "SHOP",
@@ -3037,7 +3137,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "mercadolibre",
     slug: "mercadolibre",
-    rank: 98,
+    rank: 101,
     name: "MercadoLibre Inc.",
     shortName: "MercadoLibre",
     ticker: "MELI",
@@ -3072,7 +3172,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "ferrari",
     slug: "ferrari",
-    rank: 99,
+    rank: 102,
     name: "Ferrari N.V.",
     shortName: "Ferrari",
     ticker: "RACE",
@@ -3114,7 +3214,7 @@ export const TOP_100_COMPANIES: CompanyData[] = [
   {
     id: "spotify",
     slug: "spotify",
-    rank: 100,
+    rank: 103,
     name: "Spotify Technology S.A.",
     shortName: "Spotify",
     ticker: "SPOT",

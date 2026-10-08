@@ -1,107 +1,27 @@
 // Real-time verified CDN logo mappings and dynamic domain resolver for companies
-// No local images required in repository; leverages official SVGs, clearbit/unavatar CDNs and Google high-res icons.
+// Prioritizes official SVGs and Google high-res 128px authenticated CDN icons with multi-tier fallback.
 
 export const VERIFIED_COMPANY_LOGOS: Record<string, string> = {
   apple: "https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg",
-  nvidia: "https://upload.wikimedia.org/wikipedia/commons/2/21/Nvidia_logo.svg",
+  nvidia: "https://cdn.simpleicons.org/nvidia",
   microsoft: "https://upload.wikimedia.org/wikipedia/commons/9/96/Microsoft_logo_%282012%29.svg",
   alphabet: "https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg",
   amazon: "https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg",
-  "saudi-aramco": "https://upload.wikimedia.org/wikipedia/en/9/95/Saudi_Aramco_logo.svg",
-  meta: "https://upload.wikimedia.org/wikipedia/commons/7/7b/Meta_Platforms_Inc._logo.svg",
-  "berkshire-hathaway": "https://upload.wikimedia.org/wikipedia/commons/e/e0/Berkshire_Hathaway_logo.svg",
-  tsmc: "https://upload.wikimedia.org/wikipedia/commons/e/ec/TSMC_logo.svg",
-  tesla: "https://upload.wikimedia.org/wikipedia/commons/b/bd/Tesla_Motors.svg",
-  broadcom: "https://upload.wikimedia.org/wikipedia/commons/0/07/Broadcom_Logo.svg",
-  "eli-lilly": "https://upload.wikimedia.org/wikipedia/commons/8/87/Eli_Lilly_and_Company.svg",
-  walmart: "https://upload.wikimedia.org/wikipedia/commons/c/ca/Walmart_logo.svg",
-  "jpmorgan-chase": "https://upload.wikimedia.org/wikipedia/commons/a/af/J_P_Morgan_Chase_Logo_2008_1.svg",
-  tencent: "https://upload.wikimedia.org/wikipedia/commons/2/22/Tencent_Logo.svg",
-  oracle: "https://upload.wikimedia.org/wikipedia/commons/5/50/Oracle_logo.svg",
-  visa: "https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg",
-  exxonmobil: "https://upload.wikimedia.org/wikipedia/commons/7/78/ExxonMobil_Logo.svg",
-  mastercard: "https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg",
-  costco: "https://upload.wikimedia.org/wikipedia/commons/5/59/Costco_Wholesale_logo_2010-10-26.svg",
-  "novo-nordisk": "https://upload.wikimedia.org/wikipedia/en/6/69/Novo_Nordisk_logo.svg",
-  lvmh: "https://upload.wikimedia.org/wikipedia/commons/2/24/LVMH_logo.svg",
-  "procter-gamble": "https://upload.wikimedia.org/wikipedia/commons/8/85/Procter_%26_Gamble_logo.svg",
-  asml: "https://upload.wikimedia.org/wikipedia/commons/1/1a/ASML_Holding_N.V._logo.svg",
-  "johnson-johnson": "https://upload.wikimedia.org/wikipedia/commons/b/be/JNJ_Logo_2023.svg",
-  "home-depot": "https://upload.wikimedia.org/wikipedia/commons/5/5f/TheHomeDepot.svg",
-  "bank-of-america": "https://upload.wikimedia.org/wikipedia/commons/2/20/Bank_of_America_logo.svg",
-  abbvie: "https://upload.wikimedia.org/wikipedia/commons/6/68/AbbVie_logo.svg",
-  netflix: "https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg",
-  chevron: "https://upload.wikimedia.org/wikipedia/commons/3/3d/Chevron_Logo.svg",
-  salesforce: "https://upload.wikimedia.org/wikipedia/commons/f/f9/Salesforce.com_logo.svg",
-  "coca-cola": "https://upload.wikimedia.org/wikipedia/commons/c/ce/Coca-Cola_logo.svg",
-  amd: "https://upload.wikimedia.org/wikipedia/commons/7/7c/AMD_Logo.svg",
-  qualcomm: "https://upload.wikimedia.org/wikipedia/commons/7/7a/Qualcomm-Logo.svg",
-  hermes: "https://upload.wikimedia.org/wikipedia/en/4/46/Herm%C3%A8s_%28logo%29.svg",
-  samsung: "https://upload.wikimedia.org/wikipedia/commons/2/24/Samsung_Logo.svg",
-  pepsico: "https://upload.wikimedia.org/wikipedia/commons/a/a6/PepsiCo_logo.svg",
-  cisco: "https://upload.wikimedia.org/wikipedia/commons/0/08/Cisco_logo_blue_2016.svg",
-  adobe: "https://upload.wikimedia.org/wikipedia/commons/5/51/Adobe_Inc._logo.svg",
-  linde: "https://upload.wikimedia.org/wikipedia/commons/d/d4/Linde_logo.svg",
-  sap: "https://upload.wikimedia.org/wikipedia/commons/5/59/SAP_2011_logo.svg",
-  "thermo-fisher": "https://upload.wikimedia.org/wikipedia/commons/9/90/Thermo_Fisher_Scientific_logo.svg",
-  accenture: "https://upload.wikimedia.org/wikipedia/commons/c/cd/Accenture.svg",
-  "wells-fargo": "https://upload.wikimedia.org/wikipedia/commons/b/b3/Wells_Fargo_Bank.svg",
-  mcdonalds: "https://upload.wikimedia.org/wikipedia/commons/3/36/McDonald%27s_Golden_Arches.svg",
-  reliance: "https://upload.wikimedia.org/wikipedia/en/9/99/Reliance_Industries_Logo.svg",
-  abbott: "https://upload.wikimedia.org/wikipedia/commons/2/23/Abbott_Laboratories_logo.svg",
-  ibm: "https://upload.wikimedia.org/wikipedia/commons/5/51/IBM_logo.svg",
-  servicenow: "https://upload.wikimedia.org/wikipedia/commons/7/74/ServiceNow_logo.svg",
-  "walt-disney": "https://upload.wikimedia.org/wikipedia/commons/a/a4/Disney_wordmark.svg",
-  "morgan-stanley": "https://upload.wikimedia.org/wikipedia/commons/3/34/Morgan_Stanley_Logo_1.svg",
-  caterpillar: "https://upload.wikimedia.org/wikipedia/commons/2/22/Caterpillar_logo.svg",
-  "general-electric": "https://upload.wikimedia.org/wikipedia/commons/f/ff/General_Electric_logo.svg",
-  intuit: "https://upload.wikimedia.org/wikipedia/commons/2/25/Intuit_Logo_2022.svg",
-  verizon: "https://upload.wikimedia.org/wikipedia/commons/8/83/Verizon_2024.svg",
-  "goldman-sachs": "https://upload.wikimedia.org/wikipedia/commons/6/61/Goldman_Sachs.svg",
-  "intuitive-surgical": "https://upload.wikimedia.org/wikipedia/commons/2/27/Intuitive_Surgical_Logo.svg",
-  "applied-materials": "https://upload.wikimedia.org/wikipedia/commons/4/4c/Applied_Materials_logo.svg",
-  pfizer: "https://upload.wikimedia.org/wikipedia/commons/5/57/Pfizer_%282021%29.svg",
-  intel: "https://upload.wikimedia.org/wikipedia/commons/7/7d/Intel_logo_%282020%29.svg",
-  "texas-instruments": "https://upload.wikimedia.org/wikipedia/commons/1/10/Texas_Instruments_Logo.svg",
-  amgen: "https://upload.wikimedia.org/wikipedia/commons/3/34/Amgen_logo.svg",
-  "union-pacific": "https://upload.wikimedia.org/wikipedia/commons/6/63/Union_Pacific_Logo.svg",
-  uber: "https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png",
-  "philip-morris": "https://upload.wikimedia.org/wikipedia/commons/d/d4/Philip_Morris_International_logo.svg",
-  honeywell: "https://upload.wikimedia.org/wikipedia/commons/0/07/Honeywell_logo.svg",
-  danaher: "https://upload.wikimedia.org/wikipedia/commons/e/e0/Danaher_Corporation_logo.svg",
-  "american-express": "https://upload.wikimedia.org/wikipedia/commons/f/fa/American_Express_logo_%282018%29.svg",
-  rtx: "https://upload.wikimedia.org/wikipedia/commons/a/ab/RTX_Corporation_logo.svg",
-  inditex: "https://upload.wikimedia.org/wikipedia/commons/8/89/Inditex_%28logo%29.svg",
-  comcast: "https://upload.wikimedia.org/wikipedia/commons/d/d2/Comcast_2024_logo.svg",
-  att: "https://upload.wikimedia.org/wikipedia/commons/3/31/AT%26T_logo_2016.svg",
-  medtronic: "https://upload.wikimedia.org/wikipedia/commons/1/19/Medtronic_Logo.svg",
-  "lam-research": "https://upload.wikimedia.org/wikipedia/commons/2/2f/Lam_Research_logo.svg",
-  "booking-holdings": "https://upload.wikimedia.org/wikipedia/commons/4/4b/Booking_Holdings_logo.svg",
-  dell: "https://upload.wikimedia.org/wikipedia/commons/4/48/Dell_Logo.svg",
-  stryker: "https://upload.wikimedia.org/wikipedia/commons/0/00/Stryker_Corporation_logo.svg",
-  blackrock: "https://upload.wikimedia.org/wikipedia/commons/c/ce/BlackRock_logo.svg",
-  "palo-alto-networks": "https://upload.wikimedia.org/wikipedia/commons/4/46/Palo_Alto_Networks_logo.svg",
-  "boston-scientific": "https://upload.wikimedia.org/wikipedia/commons/f/f6/Boston_Scientific_logo.svg",
-  eaton: "https://upload.wikimedia.org/wikipedia/commons/4/41/Eaton_Corporation_logo.svg",
-  micron: "https://upload.wikimedia.org/wikipedia/commons/4/4a/Micron_Technology_logo.svg",
-  kla: "https://upload.wikimedia.org/wikipedia/commons/4/45/KLA_Corporation_logo.svg",
-  "lockheed-martin": "https://upload.wikimedia.org/wikipedia/commons/9/99/Lockheed_Martin_logo.svg",
-  synopsys: "https://upload.wikimedia.org/wikipedia/commons/f/fe/Synopsys_Logo.svg",
-  "analog-devices": "https://upload.wikimedia.org/wikipedia/commons/4/44/Analog_Devices_Logo.svg",
-  cadence: "https://upload.wikimedia.org/wikipedia/commons/6/6f/Cadence_Design_Systems_Logo.svg",
-  target: "https://upload.wikimedia.org/wikipedia/commons/c/c5/Target_Corporation_logo_%28vector%29.svg",
-  boeing: "https://upload.wikimedia.org/wikipedia/commons/4/4f/Boeing_full_logo.svg",
-  tjx: "https://upload.wikimedia.org/wikipedia/commons/3/30/The_TJX_Companies_logo.svg",
-  lowes: "https://upload.wikimedia.org/wikipedia/commons/2/2c/Lowe%27s_Companies_Logo.svg",
-  sony: "https://upload.wikimedia.org/wikipedia/commons/c/ca/Sony_logo.svg",
-  dior: "https://upload.wikimedia.org/wikipedia/commons/a/a8/Dior_Logo.svg",
-  airbnb: "https://upload.wikimedia.org/wikipedia/commons/6/69/Airbnb_Logo_B%C3%A9lo.svg",
-  "schneider-electric": "https://upload.wikimedia.org/wikipedia/commons/9/95/Schneider_Electric_2007.svg",
-  siemens: "https://upload.wikimedia.org/wikipedia/commons/3/3c/Siemens_AG_logo.svg",
-  shopify: "https://upload.wikimedia.org/wikipedia/commons/0/0e/Shopify_logo_2018.svg",
-  mercadolibre: "https://upload.wikimedia.org/wikipedia/commons/e/eb/MercadoLibre_logo.svg",
-  ferrari: "https://upload.wikimedia.org/wikipedia/en/d/d1/Ferrari-Logo.svg",
-  spotify: "https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg",
+  meta: "https://cdn.simpleicons.org/meta",
+  tesla: "https://cdn.simpleicons.org/tesla",
+  visa: "https://cdn.simpleicons.org/visa",
+  spacex: "https://cdn.simpleicons.org/spacex",
+  bytedance: "https://cdn.simpleicons.org/bytedance",
+  stripe: "https://cdn.simpleicons.org/stripe",
+  netflix: "https://cdn.simpleicons.org/netflix",
+  spotify: "https://cdn.simpleicons.org/spotify",
+  shopify: "https://cdn.simpleicons.org/shopify",
+  intel: "https://cdn.simpleicons.org/intel",
+  amd: "https://cdn.simpleicons.org/amd",
+  uber: "https://cdn.simpleicons.org/uber",
+  airbnb: "https://cdn.simpleicons.org/airbnb",
+  asml: "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://asml.com&size=128",
+  openai: "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://openai.com&size=128",
 };
 
 export const COMPANY_DOMAINS: Record<string, string> = {
@@ -153,6 +73,10 @@ export const COMPANY_DOMAINS: Record<string, string> = {
   reliance: "ril.com",
   abbott: "abbott.com",
   ibm: "ibm.com",
+  spacex: "spacex.com",
+  openai: "openai.com",
+  bytedance: "bytedance.com",
+  stripe: "stripe.com",
   servicenow: "servicenow.com",
   "walt-disney": "thewaltdisneycompany.com",
   "morgan-stanley": "morganstanley.com",
@@ -209,7 +133,7 @@ export const COMPANY_DOMAINS: Record<string, string> = {
 
 /**
  * Returns a high-resolution CDN logo URL for a given company slug.
- * Prioritizes verified vector SVGs, followed by unavatar.io with Google Favicon 128px fallback.
+ * Uses verified SVG if known, otherwise official Google Favicon V2 128px high-res icon.
  */
 export function getCompanyLogoUrl(slug: string, _ticker?: string): string {
   if (VERIFIED_COMPANY_LOGOS[slug]) {
@@ -217,7 +141,15 @@ export function getCompanyLogoUrl(slug: string, _ticker?: string): string {
   }
   const domain = COMPANY_DOMAINS[slug];
   if (domain) {
-    return `https://unavatar.io/${domain}?fallback=https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+    return `https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://${domain}&size=128`;
   }
-  return `https://www.google.com/s2/favicons?domain=${slug}.com&sz=128`;
+  return `https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://${slug}.com&size=128`;
+}
+
+/**
+ * Returns a secondary fallback icon URL using DuckDuckGo CDN
+ */
+export function getCompanyFallbackLogoUrl(slug: string): string {
+  const domain = COMPANY_DOMAINS[slug] || `${slug}.com`;
+  return `https://icons.duckduckgo.com/ip3/${domain}.ico`;
 }

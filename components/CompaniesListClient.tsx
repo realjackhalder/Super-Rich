@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
 import {
@@ -12,13 +12,14 @@ import {
   ArrowDownRight,
   Sparkles,
   Globe2,
-  ExternalLink,
   DollarSign,
   UserCheck,
   ChevronDown,
+  RotateCw,
+  Radio,
 } from "lucide-react";
 import { CompanyData } from "@/data/companies";
-import { getCompanyLogoUrl } from "@/lib/company-logos";
+import { CompanyLogo } from "@/components/CompanyLogo";
 
 interface Props {
   initialCompanies: CompanyData[];
@@ -26,6 +27,10 @@ interface Props {
 
 export default function CompaniesListClient({ initialCompanies }: Props) {
   const { t } = useLanguage();
+  const [companies, setCompanies] = useState<CompanyData[]>(initialCompanies);
+  const [isLiveSyncing, setIsLiveSyncing] = useState<boolean>(false);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSector, setSelectedSector] = useState("all");
   const [sortBy, setSortBy] = useState<"marketCapDesc" | "marketCapAsc" | "gainers" | "losers" | "rank">(
@@ -33,16 +38,46 @@ export default function CompaniesListClient({ initialCompanies }: Props) {
   );
   const [layoutView, setLayoutView] = useState<"grid" | "table">("table");
 
-  // Summary statistics
+  // Real-time synchronization with /api/companies (Yahoo Finance live feed)
+  const syncLiveCompanies = useCallback(async (force = false) => {
+    try {
+      setIsLiveSyncing(true);
+      const res = await fetch(`/api/companies${force ? "?refresh=1" : ""}`, {
+        cache: "no-store",
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data?.companies && Array.isArray(data.companies) && data.companies.length > 0) {
+          setCompanies(data.companies);
+          setLastUpdated(new Date());
+        }
+      }
+    } catch (err) {
+      console.warn("[Real-time Companies] Sync failed:", err);
+    } finally {
+      setIsLiveSyncing(false);
+    }
+  }, []);
+
+  // Sync on initial mount and set recurring interval
+  useEffect(() => {
+    syncLiveCompanies(false);
+    const interval = setInterval(() => {
+      syncLiveCompanies(false);
+    }, 60000);
+    return () => clearInterval(interval);
+  }, [syncLiveCompanies]);
+
+  // Summary statistics calculated dynamically from current state
   const totalMarketCap = useMemo(() => {
-    return initialCompanies.reduce((acc, c) => acc + c.marketCapBillion, 0);
-  }, [initialCompanies]);
+    return companies.reduce((acc, c) => acc + c.marketCapBillion, 0);
+  }, [companies]);
 
   const topGainer = useMemo(() => {
-    return [...initialCompanies].sort((a, b) => b.changeDayPercent - a.changeDayPercent)[0];
-  }, [initialCompanies]);
+    return [...companies].sort((a, b) => b.changeDayPercent - a.changeDayPercent)[0] || companies[0];
+  }, [companies]);
 
-  const topCompany = initialCompanies[0];
+  const topCompany = companies[0] || initialCompanies[0];
 
   // Sector list
   const sectors = [
@@ -59,8 +94,8 @@ export default function CompaniesListClient({ initialCompanies }: Props) {
 
   // Filtering & Sorting
   const filteredCompanies = useMemo(() => {
-    let result = initialCompanies.filter((company) => {
-      const q = searchQuery.toLowerCase().trim();
+    const q = searchQuery.toLowerCase().trim();
+    const result = companies.filter((company) => {
       const matchesSearch =
         !q ||
         company.name.toLowerCase().includes(q) ||
@@ -83,7 +118,7 @@ export default function CompaniesListClient({ initialCompanies }: Props) {
       if (sortBy === "losers") return a.changeDayPercent - b.changeDayPercent;
       return a.rank - b.rank;
     });
-  }, [initialCompanies, searchQuery, selectedSector, sortBy]);
+  }, [companies, searchQuery, selectedSector, sortBy]);
 
   // Format valuation
   const formatValuation = (billions: number) => {
@@ -95,22 +130,41 @@ export default function CompaniesListClient({ initialCompanies }: Props) {
 
   return (
     <div className="space-y-10">
-      {/* Real-time Status Bar */}
+      {/* Real-time Status Bar with Live Sync Controls */}
       <section className="flex flex-wrap items-center justify-between gap-4 py-2 border-b border-neutral-200/40 dark:border-neutral-800/60 text-xs">
         <div className="flex items-center space-x-2.5">
-          <span className="w-2.5 h-2.5 rounded-full bg-gain animate-pulse"></span>
+          <span className="relative flex h-2.5 w-2.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gain opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-gain"></span>
+          </span>
           <span className="font-semibold text-neutral-900 dark:text-neutral-100 uppercase tracking-wider text-[11px]">
-            SuperRich Global Enterprise Valuation Index
+            SuperRich Real-Time Internet Index
           </span>
           <span className="text-neutral-400 dark:text-neutral-600">•</span>
-          <span className="text-neutral-500 font-mono text-[11px]">
-            Tracking Top 100 Most Valued Public Corporations
+          <span className="text-neutral-500 font-mono text-[11px] hidden sm:inline">
+            Live Global Exchanges • NASDAQ, NYSE, Euronext, Private
           </span>
         </div>
 
         <div className="flex items-center space-x-3 text-neutral-500">
-          <span className="text-[11px] font-mono">Live Market Capitalization Engine</span>
-          <span className="w-1.5 h-1.5 rounded-full bg-accent"></span>
+          <div className="flex items-center space-x-1.5 text-[11px] font-mono">
+            <Radio className="w-3.5 h-3.5 text-gain" />
+            <span>
+              {lastUpdated
+                ? `Synced ${lastUpdated.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}`
+                : "Real-time feed connected"}
+            </span>
+          </div>
+
+          <button
+            onClick={() => syncLiveCompanies(true)}
+            disabled={isLiveSyncing}
+            className="flex items-center space-x-1 px-2.5 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-800 dark:text-neutral-200 border border-neutral-200 dark:border-neutral-700 transition-colors text-[11px] font-medium"
+            title="Fetch latest quotes directly from global financial markets"
+          >
+            <RotateCw className={`w-3 h-3 ${isLiveSyncing ? "animate-spin text-accent" : ""}`} />
+            <span>{isLiveSyncing ? "Fetching..." : "Refresh"}</span>
+          </button>
         </div>
       </section>
 
@@ -122,11 +176,11 @@ export default function CompaniesListClient({ initialCompanies }: Props) {
             <span className="font-medium uppercase tracking-wider text-[11px]">Top 100 Combined Value</span>
             <DollarSign className="w-4 h-4 text-accent" />
           </div>
-          <div className="text-2xl font-serif font-bold text-neutral-900 dark:text-white tracking-tight">
+          <div className="text-2xl font-sans font-bold text-neutral-900 dark:text-white tracking-tight">
             ${(totalMarketCap / 1000).toFixed(1)} Trillion
           </div>
           <p className="text-[11px] text-neutral-500 dark:text-neutral-400">
-            Combined global market capitalization of all 100 index companies
+            Combined global market capitalization of all index companies
           </p>
         </div>
 
@@ -137,15 +191,12 @@ export default function CompaniesListClient({ initialCompanies }: Props) {
             <Sparkles className="w-4 h-4 text-accent" />
           </div>
           <div className="flex items-center space-x-2.5">
-            <div className="relative w-7 h-7 rounded-full overflow-hidden shrink-0 flex items-center justify-center bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-1 shadow-sm">
-              <img
-                src={getCompanyLogoUrl(topCompany.slug, topCompany.ticker)}
-                alt={topCompany.name}
-                className="w-full h-full object-contain"
-                loading="lazy"
-              />
-            </div>
-            <div className="text-xl sm:text-2xl font-serif font-bold text-neutral-900 dark:text-white tracking-tight truncate">
+            <CompanyLogo
+              slug={topCompany.slug}
+              ticker={topCompany.ticker}
+              name={topCompany.name}
+            />
+            <div className="text-xl sm:text-2xl font-sans font-bold text-neutral-900 dark:text-white tracking-tight truncate">
               {topCompany.name}
             </div>
           </div>
@@ -161,16 +212,13 @@ export default function CompaniesListClient({ initialCompanies }: Props) {
             <TrendingUp className="w-4 h-4 text-gain" />
           </div>
           <div className="flex items-center space-x-2.5">
-            <div className="relative w-7 h-7 rounded-full overflow-hidden shrink-0 flex items-center justify-center bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-1 shadow-sm">
-              <img
-                src={getCompanyLogoUrl(topGainer.slug, topGainer.ticker)}
-                alt={topGainer.name}
-                className="w-full h-full object-contain"
-                loading="lazy"
-              />
-            </div>
-            <div className="text-xl sm:text-2xl font-serif font-bold text-neutral-900 dark:text-white tracking-tight truncate">
-              {topGainer.shortName}
+            <CompanyLogo
+              slug={topGainer.slug}
+              ticker={topGainer.ticker}
+              name={topGainer.shortName || topGainer.name}
+            />
+            <div className="text-xl sm:text-2xl font-sans font-bold text-neutral-900 dark:text-white tracking-tight truncate">
+              {topGainer.shortName || topGainer.name}
             </div>
           </div>
           <p className="text-[11px] text-gain font-mono">
@@ -181,14 +229,14 @@ export default function CompaniesListClient({ initialCompanies }: Props) {
         {/* KPI 4: Index Universe */}
         <div className="bg-white dark:bg-[#141416] border border-neutral-200/90 dark:border-neutral-800 rounded-2xl p-5 shadow-sm dark:shadow-none space-y-2">
           <div className="flex items-center justify-between text-neutral-500 dark:text-neutral-400 text-xs">
-            <span className="font-medium uppercase tracking-wider text-[11px]">Global Exchanges</span>
+            <span className="font-medium uppercase tracking-wider text-[11px]">Global Coverage</span>
             <Globe2 className="w-4 h-4 text-neutral-400" />
           </div>
-          <div className="text-2xl font-serif font-bold text-neutral-900 dark:text-white tracking-tight">
-            100 Public Giants
+          <div className="text-2xl font-sans font-bold text-neutral-900 dark:text-white tracking-tight">
+            100+ Global Titans
           </div>
           <p className="text-[11px] text-neutral-500 dark:text-neutral-400">
-            NASDAQ, NYSE, EURONEXT, HKEX, TSE, KRX, BME
+            Public exchanges & verified private tech leaders (SpaceX, OpenAI)
           </p>
         </div>
       </section>
@@ -198,13 +246,13 @@ export default function CompaniesListClient({ initialCompanies }: Props) {
         {/* Title & Search / Controls Bar */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl sm:text-4xl font-serif font-bold tracking-tight text-neutral-900 dark:text-white flex items-baseline space-x-2">
+            <h1 className="text-3xl sm:text-4xl font-sans font-extrabold tracking-tight text-neutral-900 dark:text-white flex items-baseline space-x-2">
               <span>Top</span>
               <span className="text-sky-500 dark:text-sky-400 font-mono">100</span>
               <span>Most Valued Companies</span>
             </h1>
             <p className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 mt-1 font-sans">
-              Live enterprise market capitalizations, share prices, and cross-linked billionaire stakes
+              Real-time internet quotes, enterprise market capitalizations, and cross-linked billionaire stakes
             </p>
           </div>
 
@@ -292,7 +340,7 @@ export default function CompaniesListClient({ initialCompanies }: Props) {
         {layoutView === "grid" ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {filteredCompanies.map((company) => {
-              const isPositive = company.changeDayBillion >= 0;
+              const isPositive = company.changeDayPercent >= 0;
 
               return (
                 <Link
@@ -306,23 +354,11 @@ export default function CompaniesListClient({ initialCompanies }: Props) {
                       <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 border border-neutral-200 dark:border-neutral-700">
                         #{company.rank}
                       </span>
-                      <div className="relative w-7 h-7 rounded-full overflow-hidden shrink-0 flex items-center justify-center bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-1 shadow-sm">
-                        <img
-                          src={getCompanyLogoUrl(company.slug, company.ticker)}
-                          alt={company.name}
-                          className="w-full h-full object-contain shrink-0"
-                          loading="lazy"
-                          onError={(e) => {
-                            const img = e.currentTarget;
-                            img.style.display = "none";
-                            const fallback = img.parentElement?.querySelector(".company-card-avatar-fallback") as HTMLElement;
-                            if (fallback) fallback.style.display = "flex";
-                          }}
-                        />
-                        <div className="company-card-avatar-fallback hidden absolute inset-0 rounded-full bg-neutral-100 dark:bg-neutral-800 items-center justify-center text-[9px] font-bold font-mono text-neutral-800 dark:text-neutral-200 select-none">
-                          {company.ticker.slice(0, 3)}
-                        </div>
-                      </div>
+                      <CompanyLogo
+                        slug={company.slug}
+                        ticker={company.ticker}
+                        name={company.name}
+                      />
                     </div>
                     <span className="text-[11px] font-mono uppercase px-2 py-0.5 rounded bg-neutral-100 dark:bg-neutral-900 text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-800">
                       {company.ticker} • {company.exchange}
@@ -342,7 +378,7 @@ export default function CompaniesListClient({ initialCompanies }: Props) {
                   {/* Market Cap & 24h Change */}
                   <div className="pt-2 border-t border-neutral-200/80 dark:border-neutral-800/80">
                     <div className="flex items-baseline justify-between">
-                      <span className="text-xl font-serif font-bold text-neutral-900 dark:text-white tracking-tight">
+                      <span className="text-xl font-sans font-bold text-neutral-900 dark:text-white tracking-tight">
                         {formatValuation(company.marketCapBillion)}
                       </span>
                       <span
@@ -382,13 +418,11 @@ export default function CompaniesListClient({ initialCompanies }: Props) {
                           <span
                             key={stake.slug}
                             onClick={(e) => {
-                              // Allow opening billionaire profile without triggering card link
                               e.preventDefault();
                               e.stopPropagation();
                               window.location.href = `/p/${stake.slug}`;
                             }}
                             className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-neutral-100 dark:bg-neutral-800/90 text-neutral-800 dark:text-neutral-200 border border-neutral-200 dark:border-neutral-700 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors"
-                            title={`View `}
                           >
                             <span>{stake.name}</span>
                             {stake.stakePercent && (
@@ -429,7 +463,7 @@ export default function CompaniesListClient({ initialCompanies }: Props) {
                 </thead>
                 <tbody className="divide-y divide-neutral-200/40 dark:divide-neutral-800/60">
                   {filteredCompanies.map((company) => {
-                    const isPositive = company.changeDayBillion >= 0;
+                    const isPositive = company.changeDayPercent >= 0;
 
                     return (
                       <tr
@@ -448,25 +482,12 @@ export default function CompaniesListClient({ initialCompanies }: Props) {
                             href={`/c/${company.slug}`}
                             className="flex items-center space-x-3 hover:text-accent transition-colors group/link"
                           >
-                            <div className="relative w-8 h-8 rounded-full overflow-hidden shrink-0 flex items-center justify-center bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-1 shadow-sm group-hover/link:border-accent/40 transition-colors">
-                              <img
-                                src={getCompanyLogoUrl(company.slug, company.ticker)}
-                                alt={company.name}
-                                className="w-full h-full object-contain shrink-0"
-                                loading="lazy"
-                                onError={(e) => {
-                                  const img = e.currentTarget;
-                                  img.style.display = "none";
-                                  const fallback = img.parentElement?.querySelector(".company-avatar-fallback") as HTMLElement;
-                                  if (fallback) fallback.style.display = "flex";
-                                }}
-                              />
-                              <div
-                                className="company-avatar-fallback hidden absolute inset-0 rounded-full bg-neutral-100 dark:bg-neutral-800 items-center justify-center text-[10px] font-bold font-mono text-neutral-800 dark:text-neutral-200 select-none"
-                              >
-                                {company.ticker.slice(0, 3)}
-                              </div>
-                            </div>
+                            <CompanyLogo
+                              slug={company.slug}
+                              ticker={company.ticker}
+                              name={company.name}
+                              containerClassName="relative w-8 h-8 rounded-full overflow-hidden shrink-0 flex items-center justify-center bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-1 shadow-sm group-hover/link:border-accent/40 transition-colors"
+                            />
                             <div>
                               <div className="flex items-center space-x-1.5 font-semibold text-sm text-neutral-900 dark:text-neutral-100 tracking-tight group-hover/link:underline">
                                 <span>{company.name}</span>
