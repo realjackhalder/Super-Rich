@@ -42,19 +42,18 @@ export function Navbar() {
     (typeof window !== "undefined" && window.location.hostname.startsWith("docs.")) ||
     pathname.startsWith("/docs");
 
-  const mainBase = isDocs ? (mounted ? getDomainUrl("main", "/") : "https://superrich.tech") : "";
-  const docsBase = !isDocs ? (mounted ? getDomainUrl("docs", "/") : "https://docs.superrich.tech") : "";
+  const mainBase = isDocs ? (mounted ? getDomainUrl("main", "/") : "https://www.superrich.tech") : "";
 
   const navLinks = [
     {
       id: "leaderboard",
-      href: isDocs ? mainBase : "/",
+      href: isDocs ? (mounted ? getDomainUrl("main", "/") : "https://www.superrich.tech") : "/",
       label: t("nav.leaderboard"),
       isActive: pathname === "/" && !isDocs,
     },
     {
       id: "companies",
-      href: isDocs ? `${mainBase}/companies` : "/companies",
+      href: isDocs ? (mounted ? getDomainUrl("main", "/companies") : "https://www.superrich.tech/companies") : "/companies",
       label: t("nav.companies"),
       isActive: (pathname.startsWith("/companies") || pathname.startsWith("/c")) && !isDocs,
     },
@@ -65,7 +64,7 @@ export function Navbar() {
       <div className="liquid-glass rounded-full px-5 py-3 flex items-center justify-between transition-all duration-200">
         {/* Brand Logo */}
         <Link
-          href="/"
+          href={isDocs ? (mounted ? getDomainUrl("main", "/") : "https://www.superrich.tech") : "/"}
           className="flex items-center space-x-2.5 group"
         >
           <div className="relative w-8 h-8 shrink-0 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">

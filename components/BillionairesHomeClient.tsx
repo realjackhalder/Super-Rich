@@ -939,7 +939,7 @@ function formatLiveTimestamp(): string {
                         onClick={() => router.push(`/p/${person.slug}`)}
                         className="hover:bg-neutral-200/40 dark:hover:bg-neutral-800/50 transition-colors group cursor-pointer"
                       >
-                        <td className="py-3.5 px-4 text-center">
+                        <td className="py-3.5 px-4 w-16 text-center">
                           <span className="font-bold text-neutral-700 dark:text-neutral-300">
                             #{person.rank}
                           </span>
@@ -947,29 +947,35 @@ function formatLiveTimestamp(): string {
 
                         <td className="py-3.5 px-4 font-semibold text-neutral-900 dark:text-neutral-100">
                           <div className="flex items-center space-x-3 group-hover:text-accent transition-colors">
-                            {isValidPhoto(VERIFIED_PORTRAITS[person.slug] || person.photoUrl) ? (
-                              <img
-                                src={VERIFIED_PORTRAITS[person.slug] || person.photoUrl!}
-                                alt={person.name}
-                                referrerPolicy="no-referrer"
-                                className="w-8 h-8 rounded-full object-cover object-center border border-neutral-300 dark:border-neutral-700 shrink-0"
-                                onError={(e) => {
-                                  const img = e.currentTarget;
-                                  img.style.display = "none";
-                                  const fallback = img.parentElement?.querySelector(".table-avatar-fallback") as HTMLElement;
-                                  if (fallback) fallback.style.display = "flex";
-                                }}
-                              />
-                            ) : null}
-                            <div
-                              className={`table-avatar-fallback w-8 h-8 rounded-full bg-neutral-200 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 items-center justify-center text-xs font-semibold text-neutral-700 dark:text-neutral-300 shrink-0 select-none ${
-                                isValidPhoto(VERIFIED_PORTRAITS[person.slug] || person.photoUrl) ? "hidden" : "flex"
-                              }`}
-                            >
-                              {getInitials(person.name)}
+                            <div className="relative w-8 h-8 rounded-full shrink-0 overflow-hidden border border-neutral-300 dark:border-neutral-700 bg-neutral-200 dark:bg-neutral-800">
+                              {isValidPhoto(VERIFIED_PORTRAITS[person.slug] || person.photoUrl) ? (
+                                <img
+                                  src={VERIFIED_PORTRAITS[person.slug] || person.photoUrl!}
+                                  alt={person.name}
+                                  referrerPolicy="no-referrer"
+                                  className="w-full h-full object-cover object-center"
+                                  onError={(e) => {
+                                    const img = e.currentTarget;
+                                    img.style.display = "none";
+                                    const fallback = img.parentElement?.querySelector(".table-avatar-fallback") as HTMLElement;
+                                    if (fallback) {
+                                      fallback.classList.remove("hidden");
+                                      fallback.classList.add("flex");
+                                      fallback.style.display = "flex";
+                                    }
+                                  }}
+                                />
+                              ) : null}
+                              <div
+                                className={`table-avatar-fallback w-full h-full items-center justify-center text-xs font-semibold text-neutral-700 dark:text-neutral-300 select-none ${
+                                  isValidPhoto(VERIFIED_PORTRAITS[person.slug] || person.photoUrl) ? "hidden" : "flex"
+                                }`}
+                              >
+                                {getInitials(person.name)}
+                              </div>
                             </div>
-                            <div className="flex items-center space-x-1.5">
-                              <span className="group-hover:underline">{person.name}</span>
+                            <div className="flex items-center space-x-1.5 min-w-0">
+                              <span className="group-hover:underline truncate">{person.name}</span>
                             </div>
                           </div>
                         </td>

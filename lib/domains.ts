@@ -43,7 +43,7 @@ export function getDomainUrl(
   // Production URLs
   if (!base) {
     if (subdomain === "main") {
-      base = "https://superrich.tech";
+      base = "https://www.superrich.tech";
     } else {
       base = `https://${subdomain}.superrich.tech`;
     }

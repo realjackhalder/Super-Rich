@@ -196,7 +196,7 @@ export function middleware(request: NextRequest) {
       if (hostname.includes("localhost") || hostname.includes("127.0.0.1")) {
         mainUrl.host = `localhost:${mainUrl.port || 3000}`;
       } else {
-        mainUrl.host = "superrich.tech";
+        mainUrl.host = "www.superrich.tech";
         mainUrl.port = "";
         mainUrl.protocol = "https:";
       }
