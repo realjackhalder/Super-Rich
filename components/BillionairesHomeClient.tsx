@@ -258,7 +258,7 @@ export default function BillionairesHomeClient({
         currentCountry: p.currentCountry,
         currentCity: p.currentCity,
         mainCompany: liveCompany,
-        photoUrl: VERIFIED_PORTRAITS[p.slug] || p.photoUrl,
+        photoUrl: VERIFIED_PORTRAITS[p.slug] || (isValidPhoto(p.photoUrl) ? p.photoUrl : undefined),
         grokipediaSummary: p.grokipediaSummary,
         wikipediaUrl: p.wikipediaUrl,
         isTechTitan: p.isTechTitan,
@@ -308,7 +308,7 @@ export default function BillionairesHomeClient({
           currentCountry: formatCountryName(item.citizenship) || "United States",
           currentCity: "",
           mainCompany: liveCompany,
-          photoUrl: VERIFIED_PORTRAITS[item.uri] || item.image || undefined,
+          photoUrl: VERIFIED_PORTRAITS[item.uri] || (isValidPhoto(item.image) ? item.image : undefined),
           grokipediaSummary: "",
           wikipediaUrl: `https://en.wikipedia.org/wiki/${encodeURIComponent(item.name.replace(/ /g, "_"))}`,
           isTechTitan: ind.toLowerCase().includes("tech"),
@@ -363,7 +363,7 @@ function formatLiveTimestamp(): string {
             currentCountry: formatCountryName(item.citizenship || item.current_country) || "United States",
             currentCity: item.current_city?.toLowerCase() === "global" ? "" : (item.current_city || ""),
             mainCompany: item.primary_company || "Enterprise",
-            photoUrl: VERIFIED_PORTRAITS[item.slug] || item.photo_url,
+            photoUrl: VERIFIED_PORTRAITS[item.slug] || (isValidPhoto(item.photo_url) ? item.photo_url : undefined),
             grokipediaSummary: item.grokipedia_summary,
             wikipediaUrl: item.wikipedia_url,
             isTechTitan: true,
@@ -849,7 +849,7 @@ function formatLiveTimestamp(): string {
                         alt={person.name}
                         loading="lazy"
                         referrerPolicy="no-referrer"
-                        className="w-full h-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
+                        className="w-full h-full object-cover object-[50%_20%] transition-transform duration-300 group-hover:scale-105"
                         onError={(e) => {
                           const img = e.currentTarget;
                           img.style.display = "none";
@@ -953,7 +953,7 @@ function formatLiveTimestamp(): string {
                                   src={VERIFIED_PORTRAITS[person.slug] || person.photoUrl!}
                                   alt={person.name}
                                   referrerPolicy="no-referrer"
-                                  className="w-full h-full object-cover object-center"
+                                  className="w-full h-full object-cover object-[50%_20%]"
                                   onError={(e) => {
                                     const img = e.currentTarget;
                                     img.style.display = "none";

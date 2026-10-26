@@ -9,7 +9,7 @@ import { people } from "@/db/schema";
 import { desc, asc, eq, sql } from "drizzle-orm";
 import { syncBillionairesToSupabase } from "@/lib/sync";
 import { formatCountryName } from "@/lib/countries";
-import { VERIFIED_PORTRAITS } from "@/lib/portraits";
+import { VERIFIED_PORTRAITS, isValidPhoto } from "@/lib/portraits";
 
 
 export interface DBBillionaire {
@@ -73,7 +73,7 @@ export async function getBillionairesFromDB(limit = 100): Promise<DBBillionaire[
           citizenship: r.citizenship ? formatCountryName(r.citizenship) : formatCountryName(r.currentCountry) || "United States",
           mainCompany: r.mainCompany || "Enterprise",
           industry: r.industry ?? undefined,
-          photoUrl: VERIFIED_PORTRAITS[r.slug] || r.photoUrl || undefined,
+          photoUrl: VERIFIED_PORTRAITS[r.slug] || (isValidPhoto(r.photoUrl) ? r.photoUrl : undefined),
           bio: r.bio ?? undefined,
           grokipediaSummary: r.grokipediaSummary ?? undefined,
           wikipediaUrl: r.wikipediaUrl ?? undefined,
@@ -130,7 +130,7 @@ export async function getBillionaireBySlugFromDB(slug: string): Promise<DBBillio
           citizenship: r.citizenship ? formatCountryName(r.citizenship) : formatCountryName(r.currentCountry) || "United States",
           mainCompany: r.mainCompany || "Enterprise",
           industry: r.industry ?? undefined,
-          photoUrl: VERIFIED_PORTRAITS[r.slug] || r.photoUrl || undefined,
+          photoUrl: VERIFIED_PORTRAITS[r.slug] || (isValidPhoto(r.photoUrl) ? r.photoUrl : undefined),
           bio: r.bio ?? undefined,
           grokipediaSummary: r.grokipediaSummary ?? undefined,
           wikipediaUrl: r.wikipediaUrl ?? undefined,

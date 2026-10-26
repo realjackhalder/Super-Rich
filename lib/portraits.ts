@@ -6,7 +6,7 @@
 
 export const VERIFIED_PORTRAITS: Record<string, string> = {
   "abigail-johnson": "https://specials-images.forbesimg.com/imageserve/6333a5b13de1fff2da377afb/416x416.jpg?background=000000&cropX1=0&cropX2=1077&cropY1=3&cropY2=1080",
-  "alain-wertheimer": "https://specials-images.forbesimg.com/imageserve/645d0add2a0a83a54a9aa149/416x416.jpg?background=000000&cropX1=0&cropX2=2730&cropY1=100&cropY2=2831",
+  "alain-wertheimer": "https://specials-images.forbesimg.com/imageserve/645d0add2a0a83a54a9aa149/416x416.jpg?background=000000&cropX1=0&cropX2=3000&cropY1=0&cropY2=3000",
   "alexandr-wang": "https://upload.wikimedia.org/wikipedia/commons/c/cb/Alexandr_Wang_in_2023.jpg",
   "alexey-mordashov": "https://specials-images.forbesimg.com/imageserve/5e87b07fbf94c200067fcf57/416x416.jpg?background=000000&cropX1=1002&cropX2=4157&cropY1=163&cropY2=3318",
   "alice-walton": "https://specials-images.forbesimg.com/imageserve/5c7ef270a7ea434b351bca52/416x416.jpg?background=000000&cropX1=232&cropX2=998&cropY1=222&cropY2=988",
@@ -19,21 +19,18 @@ export const VERIFIED_PORTRAITS: Record<string, string> = {
   "bill-gates": "https://specials-images.forbesimg.com/imageserve/62d599ede3ff49f348f9b9b4/416x416.jpg?background=000000&cropX1=155&cropX2=976&cropY1=340&cropY2=1161",
   "brian-armstrong": "https://upload.wikimedia.org/wikipedia/commons/a/ae/Brian_Armstrong_in_2021.jpg",
   "brian-chesky": "https://imageio.forbes.com/specials-images/imageserve/5e763137d8e1ae0007b71bb3/0x0.jpg?format=jpg&crop=1481,1482,x439,y178,safe&height=416&width=416&fit=bounds",
-  "carlos-slim-helu": "https://specials-images.forbesimg.com/imageserve/5c76ba144bbe6f24ad99c613/416x416.jpg?background=000000&cropX1=0&cropX2=3005&cropY1=389&cropY2=3395",
+  "carlos-slim-helu": "https://specials-images.forbesimg.com/imageserve/5c76ba144bbe6f24ad99c613/416x416.jpg?background=000000&cropX1=0&cropX2=3500&cropY1=0&cropY2=3500",
   "changpeng-zhao": "https://imageio.forbes.com/specials-images/imageserve/61115ac5b4c5d23845419c4e/0x0.jpg?format=jpg&crop=911,911,x0,y0,safe&height=416&width=416&fit=bounds",
   "charles-koch": "https://specials-images.forbesimg.com/imageserve/615c94bd2aac2936a52682d1/416x416.jpg?background=000000&cropX1=286&cropX2=848&cropY1=110&cropY2=672",
-  "chen-jianhua": "https://specials-images.forbesimg.com/imageserve/6050f48ca1ab099ed6e290cc/416x416.jpg?background=000000&cropX1=0&cropX2=800&cropY1=0&cropY2=800",
   "chen-tianshi": "https://imageio.forbes.com/specials-images/imageserve/690240ad85f168b25a40e248/0x0.jpg?format=jpg&crop=704,704,x316,y54,safe&height=416&width=416&fit=bounds",
   "colin-huang": "https://imageio.forbes.com/specials-images/imageserve/5dc0500b3195ed0007eab3f7/0x0.jpg?format=jpg&crop=2640,2638,x1059,y45,safe&height=416&width=416&fit=bounds",
   "cyrus-poonawalla": "https://specials-images.forbesimg.com/imageserve/6345b0f307bca24e9e6bc226/416x416.jpg?background=000000&cropX1=303&cropX2=2284&cropY1=451&cropY2=2434",
   "daniel-ek": "https://imageio.forbes.com/specials-images/imageserve/619e6309d734b7239959f54f/0x0.jpg?format=jpg&crop=1529,1530,x607,y186,safe&height=416&width=416&fit=bounds",
   "david-sun": "https://specials-images.forbesimg.com/imageserve/56dbf33ff9a34972aa0637c95ea9c36b/416x416.jpg?background=000000&cropX1=0&cropX2=744&cropY1=85&cropY2=829",
   "david-tepper": "https://specials-images.forbesimg.com/imageserve/5f4e9ddf5539e4341ae861af/416x416.jpg?background=000000&cropX1=1423&cropX2=4003&cropY1=121&cropY2=2699",
-  "dieter-schwarz": "https://imageio.forbes.com/specials-images/imageserve/6050f48ca1ab099ed6e290cc/0x0.jpg?format=jpg&crop=800,800,x0,y0,safe&height=416&width=416&fit=bounds",
   "dilip-shanghvi": "https://specials-images.forbesimg.com/imageserve/68e6977871d3d968e2192572/416x416.jpg?background=000000&cropX1=441&cropX2=1576&cropY1=630&cropY2=1766",
   "eduardo-saverin": "https://specials-images.forbesimg.com/imageserve/61114d7c57eb065321419c4e/416x416.jpg?background=000000&cropX1=0&cropX2=2236&cropY1=0&cropY2=2235",
-  "elaine-marshall": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/88/Elaine_Marshall_IACA_2018.jpg/500px-Elaine_Marshall_IACA_2018.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
-  "elon-musk": "https://upload.wikimedia.org/wikipedia/commons/9/95/Elon_Musk_%2854816836217%29_%28cropped_5%29.jpg",
+  "elon-musk": "https://imageio.forbes.com/specials-images/imageserve/62d700cd6094d2c180f269b9/0x0.jpg?format=jpg&crop=959,959,x0,y0,safe&height=416&width=416&fit=bounds",
   "emmanuel-besnier": "https://imageio.forbes.com/specials-images/imageserve/5e759e31c7b02d000666c445/0x0.jpg?format=jpg&crop=1413,1412,x283,y1002,safe&height=416&width=416&fit=bounds",
   "eric-schmidt": "https://specials-images.forbesimg.com/imageserve/5f4526a6f048a75b8e14e6b2/416x416.jpg?background=000000&cropX1=0&cropX2=3235&cropY1=381&cropY2=3615",
   "eyal-ofer": "https://specials-images.forbesimg.com/imageserve/660c1a1c7931863e499fb8c4/416x416.jpg?background=000000&cropX1=137&cropX2=1211&cropY1=52&cropY2=1127",
@@ -42,7 +39,7 @@ export const VERIFIED_PORTRAITS: Record<string, string> = {
   "gautam-adani-1": "https://upload.wikimedia.org/wikipedia/commons/f/ff/Gautam_Adani.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
   "gerard-wertheimer-1": "https://specials-images.forbesimg.com/imageserve/645d02e2c7d39022642796dd/416x416.jpg?background=000000&cropX1=1150&cropX2=4216&cropY1=0&cropY2=3068",
   "german-larrea-mota-velasco": "https://imageio.forbes.com/specials-images/imageserve/597a47174bbe6f3eb800b6b8/0x0.jpg?format=jpg&crop=1702,1701,x1901,y368,safe&height=416&width=416&fit=bounds",
-  "gianluigi-aponte": "https://upload.wikimedia.org/wikipedia/commons/2/21/Diego_Aponte%2C_Louis_Sola_and_Capt_Gianluigi_Aponte_cropped.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+  "gianluigi-aponte": "https://imageio.forbes.com/specials-images/imageserve/5e77ceeac7b02d000666de20/0x0.jpg?format=jpg&crop=4206,4203,x1096,y46,safe&height=416&width=416&fit=bounds",
   "gina-rinehart": "https://imageio.forbes.com/specials-images/imageserve/67aa659166c227f5f4d5062f/0x0.jpg?format=jpg&crop=1326,1328,x102,y416&height=416&width=416&fit=bounds",
   "giovanni-ferrero": "https://imageio.forbes.com/specials-images/imageserve/5b11bc5ca7ea436b547f29cb/0x0.jpg?format=jpg&crop=1222,1221,x622,y361,safe&height=416&width=416&fit=bounds",
   "hasso-plattner": "https://imageio.forbes.com/specials-images/imageserve/5e762726d8e1ae0007b71a6b/0x0.jpg?format=jpg&crop=1826,1827,x1757,y0,safe&height=416&width=416&fit=bounds",
@@ -58,16 +55,16 @@ export const VERIFIED_PORTRAITS: Record<string, string> = {
   "jeff-bezos": "https://imageio.forbes.com/specials-images/imageserve/67531eb2b5f7c9e191f632d7/0x0.jpg?format=jpg&crop=711,713,x316,y125,safe&height=416&width=416&fit=bounds",
   "jeff-yass": "https://imageio.forbes.com/specials-images/imageserve/60649a21472ae5b09dad20b1/0x0.jpg?format=jpg&crop=816,816,x3,y0,safe&height=416&width=416&fit=bounds",
   "jensen-huang": "https://imageio.forbes.com/specials-images/imageserve/68750a2d250de42ce7c5301b/0x0.jpg?format=jpg&crop=1800,1799,x832,y152,safe&height=416&width=416&fit=bounds",
-  "jim-walton": "https://specials-images.forbesimg.com/imageserve/5c7ef2fea7ea434b351bca5a/416x416.jpg?background=000000&cropX1=49&cropX2=934&cropY1=65&cropY2=951",
-  "john-collison": "https://imageio.forbes.com/specials-images/imageserve/642b2ae09caa113a6ce1c15e/0x0.jpg?format=jpg&crop=2478,2475,x898,y239,safe&height=416&width=416&fit=bounds",
+  "jim-walton": "https://specials-images.forbesimg.com/imageserve/5c7ef2fea7ea434b351bca5a/416x416.jpg?background=000000&cropX1=120&cropX2=850&cropY1=80&cropY2=810",
+  "john-collison": "https://imageio.forbes.com/specials-images/imageserve/5e76c91ed8e1ae0007b725d7/0x0.jpg?format=jpg&crop=778,778,x389,y132,safe&height=416&width=416&fit=bounds",
   "john-mars": "https://imageio.forbes.com/specials-images/imageserve/5ba41e08a7ea434e4c6948eb/0x0.jpg?format=jpg&crop=1348,1348,x53,y9,safe&height=416&width=416&fit=bounds",
   "john-tu": "https://specials-images.forbesimg.com/imageserve/a8e97df48d0b22d58aa783577ec6c714/416x416.jpg?background=000000&cropX1=3&cropX2=744&cropY1=63&cropY2=804",
   "julia-koch": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7c/Julia_Koch.jpg/500px-Julia_Koch.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
   "ken-griffin": "https://specials-images.forbesimg.com/imageserve/6247575a5af6af682d503f2f/416x416.jpg?background=000000&cropX1=0&cropX2=1966&cropY1=0&cropY2=1966",
   "kim-beom-su": "https://imageio.forbes.com/specials-images/imageserve/69d9245f9f14fa2e40c70736/0x0.jpg?format=jpg&crop=719,719,x206,y151,safe&height=416&width=416&fit=bounds",
   "lakshmi-mittal": "https://specials-images.forbesimg.com/imageserve/65256679cd4895fa7365b15a/416x416.jpg?background=000000&cropX1=672&cropX2=1309&cropY1=40&cropY2=678",
-  "larry-ellison": "https://upload.wikimedia.org/wikipedia/commons/4/47/Larry_Ellison_2016.png",
-  "larry-page": "https://specials-images.forbesimg.com/imageserve/5c76bcaaa7ea43100043c836/416x416.jpg?background=000000&cropX1=227&cropX2=2022&cropY1=22&cropY2=1817",
+  "larry-ellison": "https://imageio.forbes.com/specials-images/imageserve/5e8b62cfc095010007bffea0/0x0.jpg?format=jpg&crop=4529,4532,x0,y652,safe&height=416&width=416&fit=bounds",
+  "larry-page": "https://specials-images.forbesimg.com/imageserve/5c76bcaaa7ea43100043c836/416x416.jpg?background=000000&cropX1=350&cropX2=1850&cropY1=40&cropY2=1540",
   "lee-jae-yong": "https://imageio.forbes.com/specials-images/imageserve/69d92071f818bcd1553283ed/0x0.jpg?format=jpg&crop=1299,1300,x141,y78,safe&height=416&width=416&fit=bounds",
   "len-blavatnik": "https://specials-images.forbesimg.com/imageserve/5c745d7b4bbe6f072958dac9/416x416.jpg?background=000000&cropX1=473&cropX2=2103&cropY1=123&cropY2=1753",
   "leonid-mikhelson": "https://specials-images.forbesimg.com/imageserve/6229141941920264022edc8a/416x416.jpg?background=000000&cropX1=81&cropX2=3456&cropY1=941&cropY2=4318",
@@ -76,19 +73,18 @@ export const VERIFIED_PORTRAITS: Record<string, string> = {
   "lukas-walton": "https://imageio.forbes.com/specials-images/imageserve/5d89f3c36de3150009a4e5bd/0x0.jpg?format=jpg&crop=454,454,x122,y26,safe&height=416&width=416&fit=bounds",
   "lyndal-stephens-greth": "https://imageio.forbes.com/specials-images/imageserve/66fb2bd596806737569ab7ef/0x0.jpg?format=jpg&crop=2143,2143,x0,y180,safe&height=416&width=416&fit=bounds",
   "ma-huateng": "https://specials-images.forbesimg.com/imageserve/605e23c0f0986f688fbd3e15/416x416.jpg?background=000000&cropX1=0&cropX2=1080&cropY1=0&cropY2=1080",
-  "mackenzie-scott": "https://upload.wikimedia.org/wikipedia/commons/1/16/MacKenzie_Scott.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-  "marilyn-simons": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7f/Jim_Simons_at_MSRI.jpg/500px-Jim_Simons_at_MSRI.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+  "mackenzie-scott": "https://imageio.forbes.com/specials-images/imageserve/63325f33de0e387de2dd5389/0x0.jpg?format=jpg&crop=1080,1080,x0,y0,safe&height=416&width=416&fit=bounds",
   "mark-mateschitz": "https://imageio.forbes.com/specials-images/imageserve/642b2ae09caa113a6ce1c15e/0x0.jpg?format=jpg&crop=2478,2475,x898,y239,safe&height=416&width=416&fit=bounds",
-  "mark-zuckerberg": "https://upload.wikimedia.org/wikipedia/commons/0/0e/F20250904AH-2824_%2854778373111%29_%283x4_cropped_on_Zuckerberg_following_the_rule_of_thirds%29.jpg",
+  "mark-zuckerberg": "https://imageio.forbes.com/specials-images/imageserve/5c76b7d331358e35dd2773a9/0x0.jpg?format=jpg&crop=4401,4401,x0,y0,safe&height=416&width=416&fit=bounds",
   "masayoshi-son": "https://specials-images.forbesimg.com/imageserve/5e8b632801879f000703e485/416x416.jpg?background=000000&cropX1=0&cropX2=4500&cropY1=833&cropY2=5330",
   "melinda-french-gates": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f5/Melinda_Gates_2014.jpg/500px-Melinda_Gates_2014.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
   "michael-bloomberg": "https://specials-images.forbesimg.com/imageserve/5c76b4104bbe6f24ad99c35d/416x416.jpg?background=000000&cropX1=165&cropX2=5613&cropY1=321&cropY2=5769",
   "michael-dell": "https://specials-images.forbesimg.com/imageserve/615c93f9da61f2ff5b9ecf9b/416x416.jpg?background=000000&cropX1=0&cropX2=1678&cropY1=118&cropY2=1797",
   "miriam-adelson": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8c/Miriam_Adelson_2023.jpg/500px-Miriam_Adelson_2023.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
   "mukesh-ambani": "https://specials-images.forbesimg.com/imageserve/5c7d7829a7ea434b351ba0b6/416x416.jpg?background=000000&cropX1=206&cropX2=2043&cropY1=250&cropY2=2089",
-  "palmer-luckey": "https://imageio.forbes.com/specials-images/imageserve/660c251294ad0b108cfcdf06/0x0.jpg?format=jpg&crop=1304,1304,x711,y56,safe&height=416&width=416&fit=bounds",
+  "palmer-luckey": "https://imageio.forbes.com/specials-images/imageserve/642b380e8cd52817a9deb166/0x0.jpg?format=jpg&crop=1351,1352,x333,y0,safe&height=416&width=416&fit=bounds",
   "paolo-ardoino": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/db/Paolo_Ardoino_by_Gage_Skidmore.jpg/500px-Paolo_Ardoino_by_Gage_Skidmore.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
-  "patrick-collison": "https://imageio.forbes.com/specials-images/imageserve/5e8b632801879f000703e485/0x0.jpg?format=jpg&crop=4500,4497,x0,y833,safe&height=416&width=416&fit=bounds",
+  "patrick-collison": "https://imageio.forbes.com/specials-images/imageserve/619e651e6b47f0c29e025b72/0x0.jpg?format=jpg&crop=1080,1080,x0,y0,safe&height=416&width=416&fit=bounds",
   "pavel-durov": "https://imageio.forbes.com/specials-images/imageserve/605e44a746821557fdbd3e15/0x0.jpg?format=jpg&crop=1080,1080,x0,y0,safe&height=416&width=416&fit=bounds",
   "peter-thiel": "https://specials-images.forbesimg.com/imageserve/5a836fff31358e4955ad6549/416x416.jpg?background=000000&cropX1=234&cropX2=790&cropY1=7&cropY2=563",
   "pham-nhat-vuong": "https://specials-images.forbesimg.com/imageserve/64e7640cfb10a26d2f4af6bf/416x416.jpg?background=000000&cropX1=389&cropX2=1225&cropY1=106&cropY2=944",
@@ -97,7 +93,7 @@ export const VERIFIED_PORTRAITS: Record<string, string> = {
   "reinhold-wuerth": "https://specials-images.forbesimg.com/imageserve/5e76350710380d0006fbadf8/416x416.jpg?background=000000&cropX1=2132&cropX2=5568&cropY1=0&cropY2=3434",
   "rob-walton": "https://specials-images.forbesimg.com/imageserve/59d50a9e4bbe6f37dd9ff712/416x416.jpg?background=000000&cropX1=244&cropX2=1841&cropY1=60&cropY2=1658",
   "robert-pera": "https://specials-images.forbesimg.com/imageserve/5f1f2df0e0da1e7313d9879a/416x416.jpg?background=000000&cropX1=217&cropX2=1125&cropY1=71&cropY2=980",
-  "robin-zeng": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d9/Robin_Zeng_2023.jpg/500px-Robin_Zeng_2023.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+  "robin-zeng": "https://specials-images.forbesimg.com/imageserve/690239904c2185472de3db28/416x416.jpg?background=000000&cropX1=305&cropX2=1307&cropY1=145&cropY2=1147",
   "sam-altman": "https://upload.wikimedia.org/wikipedia/commons/8/87/Sam_Altman_TechCrunch_Disrupt_2019_%28cropped%29.jpg",
   "satya-nadella": "https://upload.wikimedia.org/wikipedia/commons/7/78/MS-CEO-Satya-Nadella_%28cropped%29.jpg",
   "savitri-jindal": "https://specials-images.forbesimg.com/imageserve/55f77874e4b0ffa7afe4940e/416x416.jpg?background=000000&cropX1=90&cropX2=676&cropY1=53&cropY2=640",
@@ -108,12 +104,12 @@ export const VERIFIED_PORTRAITS: Record<string, string> = {
   "steve-ballmer": "https://specials-images.forbesimg.com/imageserve/59d50c47a7ea436b47b36d66/416x416.jpg?background=000000&cropX1=553&cropX2=2940&cropY1=322&cropY2=2708",
   "steve-cohen": "https://specials-images.forbesimg.com/imageserve/5a8d946e4bbe6f2652f61ca6/416x416.jpg?background=000000&cropX1=703&cropX2=3292&cropY1=80&cropY2=2667",
   "suleiman-kerimov": "https://imageio.forbes.com/specials-images/imageserve/62471d5c3ff014e6ce2b15f6/0x0.jpg?format=jpg&crop=2639,2639,x146,y0,safe&height=416&width=416&fit=bounds",
-  "suleiman-kerimov-family": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6f/Suleyman_Kerimov_%28cropped%29.jpg/500px-Suleyman_Kerimov_%28cropped%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+  "suleiman-kerimov-family": "https://imageio.forbes.com/specials-images/imageserve/62471d5c3ff014e6ce2b15f6/0x0.jpg?format=jpg&crop=2639,2639,x146,y0,safe&height=416&width=416&fit=bounds",
   "sundar-pichai": "https://upload.wikimedia.org/wikipedia/commons/d/d6/Sundar_pichai.png",
   "susanne-klatten": "https://imageio.forbes.com/specials-images/imageserve/605e281e4f49584f571c9c42/0x0.jpg?format=jpg&crop=1080,1080,x0,y0,safe&height=416&width=416&fit=bounds",
   "tadashi-yanai": "https://specials-images.forbesimg.com/imageserve/66560a756b74351d5b0711e8/416x416.jpg?background=000000&cropX1=689&cropX2=1604&cropY1=78&cropY2=992",
   "thomas-frist-jr": "https://specials-images.forbesimg.com/imageserve/ee825ff539047091cda533423b10d65b/416x416.jpg?background=000000&cropX1=16&cropX2=947&cropY1=153&cropY2=1084",
-  "thomas-peterffy": "https://specials-images.forbesimg.com/imageserve/5d8a5c6218444200084e6532/416x416.jpg?background=000000&cropX1=466&cropX2=1132&cropY1=297&cropY2=962",
+  "thomas-peterffy": "https://specials-images.forbesimg.com/imageserve/5d8a5c6218444200084e6532/416x416.jpg?background=000000&cropX1=550&cropX2=1150&cropY1=250&cropY2=850",
   "tim-cook": "https://upload.wikimedia.org/wikipedia/commons/d/d5/Tim_Cook_2017_%28cropped%29.jpg",
   "tobi-lutke": "https://imageio.forbes.com/specials-images/imageserve/65e8c56a05c1e4c93a490920/0x0.jpg?format=jpg&crop=2234,2233,x451,y297,safe&height=416&width=416&fit=bounds",
   "vagit-alekperov": "https://specials-images.forbesimg.com/imageserve/62291dbe5c22ffeaf37a7528/416x416.jpg?background=000000&cropX1=232&cropX2=1762&cropY1=83&cropY2=1614",
@@ -123,7 +119,7 @@ export const VERIFIED_PORTRAITS: Record<string, string> = {
   "wang-chuanfu": "https://imageio.forbes.com/specials-images/imageserve/6902404b2ffc12e03e0d702e/0x0.jpg?format=jpg&crop=1442,1442,x201,y58,safe&height=416&width=416&fit=bounds",
   "warren-buffett": "https://specials-images.forbesimg.com/imageserve/5babb7f1a7ea4342a948b79a/416x416.jpg?background=000000&cropX1=748&cropX2=3075&cropY1=1753&cropY2=4082",
   "william-ding": "https://specials-images.forbesimg.com/imageserve/65496210455fdb2807b461fc/416x416.jpg?background=000000&cropX1=376&cropX2=1713&cropY1=341&cropY2=1679",
-  "zhang-yiming": "https://upload.wikimedia.org/wikipedia/commons/e/e0/The_CEO_Magazine_Cover.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+  "zhang-yiming": "https://imageio.forbes.com/specials-images/imageserve/618e91e427fcd6441f93c0c6/0x0.jpg?format=jpg&crop=1067,1066,x227,y14,safe&height=416&width=416&fit=bounds",
   "zheng-shuliang": "https://imageio.forbes.com/specials-images/imageserve/6724f9cdf203631b720a86fe/0x0.jpg?format=jpg&crop=798,798,x2,y1,safe&height=416&width=416&fit=bounds",
   "zhong-shanshan": "https://imageio.forbes.com/specials-images/imageserve/60380e390357bc1fbfc0bc32/0x0.jpg?format=jpg&crop=1211,1212,x116,y201,safe&height=416&width=416&fit=bounds"
 };
@@ -131,7 +127,20 @@ export const VERIFIED_PORTRAITS: Record<string, string> = {
 export function isValidPhoto(url?: string | null): boolean {
   if (!url) return false;
   if (url.includes("unsplash.com")) return false;
-  if (url.includes("blank-m.jpg") || url.includes("blank-f.jpg")) return false;
+  // Block placeholder images, blank avatars, and magazine covers with publication logos
+  if (
+    url.includes("blank-m.jpg") ||
+    url.includes("blank-f.jpg") ||
+    url.includes("6050f48ca1ab099ed6e290cc") || // Forbes "F" logo placeholder
+    url.includes("48X48-F.png") ||
+    url.includes("57X57-F.png") ||
+    url.includes("72X72-F.png") ||
+    url.includes("114X114-F.png") ||
+    url.includes("144X144-F.png") ||
+    url.includes("The_CEO_Magazine_Cover.jpg")
+  ) {
+    return false;
+  }
   return url.startsWith("http") || url.startsWith("/");
 }
 

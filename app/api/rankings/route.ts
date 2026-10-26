@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getBillionairesFromDB } from "@/lib/db-people";
 import { getRTBLatestList } from "@/lib/rtb";
 import { formatCountryName } from "@/lib/countries";
-import { VERIFIED_PORTRAITS } from "@/lib/portraits";
+import { VERIFIED_PORTRAITS, isValidPhoto } from "@/lib/portraits";
 
 export const dynamic = "force-dynamic";
 
@@ -72,7 +72,7 @@ export async function GET(request: Request) {
         currentCity: "",
         citizenship: formatCountryName(item.citizenship) || "United States",
         mainCompany: item.source?.[0] || "Enterprise",
-        photoUrl: VERIFIED_PORTRAITS[item.uri] || item.image || undefined,
+        photoUrl: VERIFIED_PORTRAITS[item.uri] || (isValidPhoto(item.image) ? item.image : undefined),
         isTechTitan: true,
         isLive: true,
         bio: `${item.name} is a global billionaire ranked #${item.rank}.`,
@@ -105,7 +105,7 @@ export async function GET(request: Request) {
     current_country: formatCountryName(p.currentCountry) || "United States",
     citizenship: formatCountryName(p.citizenship || p.currentCountry) || "United States",
     primary_company: p.mainCompany,
-    photo_url: VERIFIED_PORTRAITS[p.slug] || p.photoUrl || null,
+    photo_url: VERIFIED_PORTRAITS[p.slug] || (isValidPhoto(p.photoUrl) ? p.photoUrl : null),
     bio: p.bio,
     grokipedia_summary: p.grokipediaSummary,
     wikipedia_url: p.wikipediaUrl,

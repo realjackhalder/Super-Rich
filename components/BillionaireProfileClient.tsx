@@ -182,7 +182,7 @@ export default function BillionaireProfileClient({
                   src={photoUrl}
                   alt={displayName}
                   referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover object-center"
+                  className="w-full h-full object-cover object-[50%_20%]"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center font-bold text-2xl text-neutral-400">

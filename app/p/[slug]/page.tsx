@@ -5,7 +5,7 @@ import { getGrokipediaPage, getGrokipediaUrl, normalizeGrokipediaSlug } from "@/
 import { getWikipediaSummary } from "@/lib/wikipedia";
 import { formatCountryName } from "@/lib/countries";
 import BillionaireProfileClient from "@/components/BillionaireProfileClient";
-import { VERIFIED_PORTRAITS } from "@/lib/portraits";
+import { VERIFIED_PORTRAITS, isValidPhoto } from "@/lib/portraits";
 
 import { getBillionaireSocials } from "@/lib/billionaire-socials";
 import { getBillionaireTimeline } from "@/lib/billionaire-timelines";
@@ -79,7 +79,10 @@ export default async function BillionaireProfilePage({
         ? dbPerson.currentCity
         : rtb?.info?.residence?.city || "",
     mainCompany: dbPerson?.mainCompany || rtb?.info?.source?.join(" & ") || "Enterprise",
-    photoUrl: VERIFIED_PORTRAITS[slug] || wiki?.photoUrl || dbPerson?.photoUrl,
+    photoUrl:
+      VERIFIED_PORTRAITS[slug] ||
+      (isValidPhoto(wiki?.photoUrl) ? wiki?.photoUrl : undefined) ||
+      (isValidPhoto(dbPerson?.photoUrl) ? dbPerson?.photoUrl : undefined),
     bio: wiki?.extract || dbPerson?.bio,
     grokipedia: {
       title: grok?.title || personName,

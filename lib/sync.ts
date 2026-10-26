@@ -17,7 +17,7 @@ import { getGrokipediaSummary } from "@/lib/grokipedia";
 import { getWikipediaSummary } from "@/lib/wikipedia";
 import { getBloombergForPerson, fetchBloombergIndex } from "@/lib/bloomberg";
 import { getLiveStockQuote } from "@/lib/stocks";
-import { VERIFIED_PORTRAITS } from "@/lib/portraits";
+import { VERIFIED_PORTRAITS, isValidPhoto } from "@/lib/portraits";
 import { formatCountryName } from "@/lib/countries";
 
 const TECH_KEYWORDS = [
@@ -165,7 +165,10 @@ export async function syncBillionairesToSupabase(limit = 150): Promise<SyncResul
         if (rtbRes.ok) {
           const info = await rtbRes.json();
           if (info?.image && typeof info.image === "string" && info.image.includes("forbesimg.com")) {
-            photoUrl = info.image.replace(/https:\/\/\/\//g, "https://").replace(/https:\/\/\//g, "https://");
+            const candidate = info.image.replace(/https:\/\/\/\//g, "https://").replace(/https:\/\/\//g, "https://");
+            if (isValidPhoto(candidate)) {
+              photoUrl = candidate;
+            }
           }
         }
       } catch {}
@@ -184,8 +187,9 @@ export async function syncBillionairesToSupabase(limit = 150): Promise<SyncResul
           const wJson = await wRes.json();
           const pages = wJson?.query?.pages || {};
           for (const k of Object.keys(pages)) {
-            if (pages[k]?.thumbnail?.source) {
-              photoUrl = pages[k].thumbnail.source;
+            const thumb = pages[k]?.thumbnail?.source;
+            if (thumb && isValidPhoto(thumb)) {
+              photoUrl = thumb;
               break;
             }
           }

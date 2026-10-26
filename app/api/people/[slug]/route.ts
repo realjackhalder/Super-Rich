@@ -9,6 +9,7 @@ import { getBillionaireSocials } from "@/lib/billionaire-socials";
 import { getBillionaireTimeline } from "@/lib/billionaire-timelines";
 import { getBillionaireCourtEmails, getBillionaireContactEmails } from "@/lib/billionaire-emails";
 import { getBillionaireLegal } from "@/lib/billionaire-legal";
+import { VERIFIED_PORTRAITS, isValidPhoto } from "@/lib/portraits";
 
 export const dynamic = "force-dynamic";
 
@@ -87,7 +88,10 @@ export async function GET(
         ? dbPerson.currentCity
         : rtb?.info?.residence?.city || "",
     mainCompany: dbPerson?.mainCompany || rtb?.info?.source?.join(" & ") || "Enterprise",
-    photoUrl: wiki?.photoUrl || dbPerson?.photoUrl,
+    photoUrl:
+      VERIFIED_PORTRAITS[slug] ||
+      (isValidPhoto(wiki?.photoUrl) ? wiki?.photoUrl : undefined) ||
+      (isValidPhoto(dbPerson?.photoUrl) ? dbPerson?.photoUrl : undefined),
     bio: wiki?.extract || dbPerson?.bio,
     grokipedia: {
       title: grok?.title || combinedName,
